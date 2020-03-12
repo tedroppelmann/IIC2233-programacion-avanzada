@@ -10,7 +10,7 @@ Todo el proceso de recolección de tareas y actividades está automatizado, por 
 
 | Nombre | Mail UC |
 | :-: | :-: |
-| {Tu nombre} | {Tu correo UC} |
+| {Tomás Droppelmann} | {tedroppelmann@uc.cl} |
 
 ## Sobre las entregas
 
