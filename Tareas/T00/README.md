@@ -18,9 +18,20 @@ en cierta línea del código o comentar una función>
 ### Cosas implementadas y no implementadas :white_check_mark: :x:
 
 * Menú de inicio: 
-    * 
     * Ingresar usuario:
-         * Ingres
+      * Ingresar si usuario existe: Hecho 
+      * Mostrar si nombre de usuario no existe: Hecho
+      * Opción de ingresar al menú de prograpost o seguidores: Hecho
+    * Crear usuario:
+      * Cumplir mínimo de 8 caracteres alfanuméricos: --
+      * Notificar si nombre de usuario esta registrado: Hecho
+      * Cumplir mínimo de una letra y un número: --
+      * Opción de ingresar al menú de prograpost o seguidores: --
+    * Salir:
+      * Finalización del programa: Hecho
+* Menú de prograpost:
+
+      
          
 * <Nombre item pauta<sub>2</sub>>: Me faltó hacer <insertar qué cosa faltó>
     * <Nombre subitem pauta<sub>2.1</sub>>: Hecha completa 
