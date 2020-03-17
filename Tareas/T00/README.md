@@ -75,7 +75,7 @@ El módulo principal de la tarea a ejecutar es  ```menu.py```.
 La lista de librerías externas que utilicé fue la siguiente:
 
 1. ```sys```: ```exit()```
-2. ```os```: ```path```
+2. ```os```: ```path.join()```
 3. ```datetime```: ```today()```, ```strftime()``` / ```date```
 
 ### Librerías propias
