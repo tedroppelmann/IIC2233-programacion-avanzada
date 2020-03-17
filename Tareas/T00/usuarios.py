@@ -4,7 +4,7 @@ import prograpost
 import seguidores
 
 ruta_usuarios = os.path.join("usuarios.csv")
-ruta_segudiores = os.path.join("seguidores.csv")
+ruta_seguidores = os.path.join("seguidores.csv")
 
 
 def agregar(usuario):
@@ -17,7 +17,7 @@ def agregar(usuario):
     file2 = open(ruta_usuarios, "a")
     file2.write(str(usuario) + "\n")
     file2.close()
-    file3 = open(ruta_segudiores, "a")
+    file3 = open(ruta_seguidores, "a")
     file3.write(str(usuario)+ "\n")
     file3.close()
     print("Usuario agregado exitosamente!")
