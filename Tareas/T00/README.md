@@ -74,16 +74,16 @@ El módulo principal de la tarea a ejecutar es  ```menu.py```.
 ### Librerías externas utilizadas
 La lista de librerías externas que utilicé fue la siguiente:
 
-1. ```librería_1```: ```función() / módulo```
-2. ```librería_2```: ```función() / módulo``` (debe instalarse)
-3. ...
+1. ```sys```: ```exit()```
+2. ```os```: ```path```
+3. ```datetime```: ```today()```, ```strftime()``` / ```date```
 
 ### Librerías propias
 Por otro lado, los módulos que fueron creados fueron los siguientes:
 
-1. ```librería_1```: Contiene a ```ClaseA```, ```ClaseB```, (ser general, tampoco es necesario especificar cada una)...
-2. ```librería_2```: Hecha para <insertar descripción **breve** de lo que hace o qué contiene>
-3. ...
+1. ```usuarios.py```: Contiene las funciones básicas en relación a los usuarios como ```agregar``` e```ingresar```.
+2. ```prograposts.py```: Contiene las funciones básicas en relación al manejo de posts como ```crear```, ```ver_posts```, ```eliminar``` o ```ver_posts_seguidores```.
+3. ```seguidores.py```: Contiene las funciones básicas en relación al manejo de los seguidores del usuario como ```seguir```, ```dejar``` y ```lista_seguidores```.
 
 ## Supuestos y consideraciones adicionales :thinking:
 Los supuestos que realicé durante la tarea son los siguientes:
