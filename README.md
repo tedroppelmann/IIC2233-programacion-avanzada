@@ -1,4 +1,4 @@
-# Repositorio de {Tu usuario de GitHub}
+# Repositorio de Tomás Droppelmann
 
 Este es el repositorio que utilizarás durante el resto del curso. Tanto profesores, ayudantes y bots tenemos acceso a este y podremos ver todos los cambios que hagas en tu código. **Es tu deber darle un buen uso y solo con fines académicos.**
 
@@ -10,7 +10,7 @@ Todo el proceso de recolección de tareas y actividades está automatizado, por 
 
 | Nombre | Mail UC |
 | :-: | :-: |
-| {Tomás Droppelmann} | {tedroppelmann@uc.cl} |
+| Tomás Droppelmann | tedroppelmann@uc.cl |
 
 ## Sobre las entregas
 
