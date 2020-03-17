@@ -17,7 +17,10 @@ en cierta línea del código o comentar una función>
 
 ### Cosas implementadas y no implementadas :white_check_mark: :x:
 
-* <Nombre item pauta<sub>1</sub>>: Hecha completa
+* Menú de inicio: 
+    * 
+    * Ingresar usuario:
+         *a
 * <Nombre item pauta<sub>2</sub>>: Me faltó hacer <insertar qué cosa faltó>
     * <Nombre subitem pauta<sub>2.1</sub>>: Hecha completa 
     * <Nombre subitem pauta<sub>2.2</sub>>: Me faltó hacer <insertar qué cosa faltó>
