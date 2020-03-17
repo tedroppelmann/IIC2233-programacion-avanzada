@@ -96,9 +96,12 @@ def eliminar(usuario):
         for i in range(len(mensajes)):
             print(str(i + 1))
             print(mensajes[i])
-        numero = int(input("¿Que post desea borrar? Elija el número de publicación (1, 2 , 3, ...):"))
+        numero = int(input("¿Que post desea borrar?"
+                           + " Elija el número de publicación"
+                           + " (1, 2 , 3, ...):"))
         if numero >0 and numero <= len(mensajes):
-            linea = [usuario, mensajes[numero-1][0],mensajes[numero-1][1]]
+            linea = [usuario, mensajes[numero-1][0],
+                     mensajes[numero-1][1]]
             linea =  ",".join(linea)
             file = open(ruta_posts)
             lineas = file.readlines()
