@@ -20,7 +20,8 @@ en cierta línea del código o comentar una función>
 * Menú de inicio: 
     * 
     * Ingresar usuario:
-         *a
+         * Ingres
+         
 * <Nombre item pauta<sub>2</sub>>: Me faltó hacer <insertar qué cosa faltó>
     * <Nombre subitem pauta<sub>2.1</sub>>: Hecha completa 
     * <Nombre subitem pauta<sub>2.2</sub>>: Me faltó hacer <insertar qué cosa faltó>
