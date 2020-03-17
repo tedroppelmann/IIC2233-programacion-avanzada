@@ -29,7 +29,11 @@ def seguir(usuario):
     linea_nueva = ""
     lines = file1.readlines()
     file1.close()
-    if str(seguidor) + "\n" in lines and lista_seguidores(usuario, seguidor) == False:
+    if usuario == seguidor:
+        print("No puedes seguirte a ti mismo. Intenta nuevamente.")
+    elif str(seguidor) + "\n" in lines and \
+                    lista_seguidores(usuario, seguidor) \
+                    == False:
         for line in lineas:
             linea = line.rstrip()
             columnas = linea.split(",")
@@ -44,9 +48,11 @@ def seguir(usuario):
             else:
                 file.write(linea_nueva + "\n")
         file.close()
-        print("El usuario " + str(seguidor)+ " fue seguido con éxito!")
+        print("El usuario " + str(seguidor)
+              + " fue seguido con éxito!")
     elif lista_seguidores(usuario, seguidor):
-        print("Ya sigues a " + str(seguidor) + ". Intenta nuevamente.")
+        print("Ya sigues a " + str(seguidor)
+              + ". Intenta nuevamente.")
     else:
         print("Nombre de usuario no existe. Intente nuevamente.")
 
@@ -82,6 +88,8 @@ def dejar(usuario):
             else:
                 file.write(str(linea_nueva) + "\n")
         file.close()
-        print("Dejaste de seguir a " + str(seguidor) + " con éxito.")
+        print("Dejaste de seguir a " + str(seguidor)
+              + " con éxito.")
     elif lista_seguidores(usuario, seguidor) == False:
-        print("Tu no sigues a " + str(seguidor) + ". Intenta nuevamente.")
+        print("Tu no sigues a " + str(seguidor)
+              + ". Intenta nuevamente.")
