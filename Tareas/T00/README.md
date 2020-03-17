@@ -17,30 +17,50 @@ en cierta línea del código o comentar una función>
 
 ### Cosas implementadas y no implementadas :white_check_mark: :x:
 
-* Menú de inicio: 
-    * Ingresar usuario:
-      * Ingresar si usuario existe: Hecho 
-      * Mostrar si nombre de usuario no existe: Hecho
-      * Opción de ingresar al menú de prograpost o seguidores: Hecho
-    * Crear usuario:
-      * Cumplir mínimo de 8 caracteres alfanuméricos: --
-      * Notificar si nombre de usuario esta registrado: Hecho
-      * Cumplir mínimo de una letra y un número: --
-      * Opción de ingresar al menú de prograpost o seguidores: --
-    * Salir:
-      * Finalización del programa: Hecho
-* Menú de prograpost:
-
+* **Menú de inicio**: 
+    * **Ingresar usuario**:
+      * **Ingresar si usuario existe**: Hecho 
+      * **Mostrar si nombre de usuario no existe**: Hecho
+      * **Opción de ingresar al menú de prograpost o seguidores**: Hecho
+    * **Crear usuario**:
+      * **Cumplir mínimo de 8 caracteres alfanuméricos**: --
+      * **Notificar si nombre de usuario esta registrado**: Hecho
+      * **Cumplir mínimo de una letra y un número**: --
+      * **Opción de ingresar al menú de prograpost o seguidores**: --
+    * **Salir**:
+      * **Finalización del programa**: Hecho
+* **Menú de prograpost**:
+    * **Crear prograpost**:
+      * **Agregar post con fecha, autor y cuerpo**: Hecho
+      * **Cumplir mínimo de 1 caracter y notificar si no**: Hecho
+      * **Cumplir el máximo de 140 caracteres y notificar si no**: Hecho
+      * **Regresar al menú anterior**: Hecho
+    * **Eliminar prograpost**:
+      * **Mostrar posts publicados por el usuario**: Hecho
+      * **Dar la opción de señalar cual quiere eliminar**: Hecho. El programa da la opción de seleccionar el número de post.
+      * **Eliminar post**: Hecho
+      * **Regresar al menú anterior**: Hecho
+    * **Ver prograposts**:
+      * **Dar la opción de mostrar posts de manera ascendente o descendente**: Hecho
+      * **Mostrar prograpost con fecha de publicación**: Hecho. El programa muestra en una lista el post [fecha, cuerpo]
+      * **Regresar al menú anterior**: Hecho
+    * **Ver prograprost de los usuarios seguidos**:
+      * **Dar la opción de mostrar posts de manera ascendente o descendente**: Hecho
+      * **Mostrar prograpost con fecha de publicación y autor**: Hecho. El programa muestra en una lista el post [fecha, autor, cuerpo]
+      * **Regresar al menú anterior**: Hecho
+    * **Regresar al menú anterior**: Hecho
+* **Menú de seguidores**:
+    * **Seguir a un usuario**:
+      * **Notificar si nombre de usuario no existe**: Hecho
+      * **Notificar si intentas seguirte a ti mismo**: Hecho
+      * **Notificar si ya sigues al usuario**: --
+      * **Regresar al menú anterior**: Hecho
+    * **Dejar de seguir a un usuario**:
+      * **Notificar si nombre de usuario no existe**: Hecho
+      * **Notificar si no sigues al usuario**: Hecho
+      * **Regresar al menú anterior**: Hecho
+    * **Regresar al menú anterior**: Hecho
       
-         
-* <Nombre item pauta<sub>2</sub>>: Me faltó hacer <insertar qué cosa faltó>
-    * <Nombre subitem pauta<sub>2.1</sub>>: Hecha completa 
-    * <Nombre subitem pauta<sub>2.2</sub>>: Me faltó hacer <insertar qué cosa faltó>
-    * ...
-* <Nombre item pauta<sub>3</sub>>: Me faltó hacer <insertar qué cosa faltó>
-* ...
-* <Nombre item pauta<sub>n</sub>>: Me faltó hacer <insertar qué cosa faltó>
-
 ## Ejecución :computer:
 El módulo principal de la tarea a ejecutar es  ```archivo.py```. Además se debe crear los siguientes archivos y directorios adicionales:
 1. ```archivo.ext``` en ```ubicación```
