@@ -11,7 +11,7 @@ def agregar(usuario):
     file = open(ruta_usuarios)
     for line in file:
         if line.rstrip() == usuario:
-            print("El nombre de usuario ya existe.")
+            print("El nombre de usuario ya existe. Intenta otro.")
             file.close()
             return
     file2 = open(ruta_usuarios, "a")
