@@ -56,7 +56,7 @@ en cierta línea del código o comentar una función>
       * **Seguir al usuario**: ✅ 
       * **Notificar si nombre de usuario no existe**: ✅ 
       * **Notificar si intentas seguirte a ti mismo**: ✅ 
-      * **Notificar si ya sigues al usuario**:❌
+      * **Notificar si ya sigues al usuario**:✅ 
       * **Regresar al menú anterior**: ✅ 
       
     * **Dejar de seguir a un usuario**:
@@ -65,7 +65,7 @@ en cierta línea del código o comentar una función>
       * **Notificar si no sigues al usuario**: ✅ 
       * **Regresar al menú anterior**: ✅ 
       
-    * **Regresar al menú anterior**: Hecho
+    * **Regresar al menú anterior**: ✅ 
       
 ## Ejecución :computer:
 El módulo principal de la tarea a ejecutar es  ```menu.py```.
