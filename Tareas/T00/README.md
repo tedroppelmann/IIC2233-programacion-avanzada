@@ -1,6 +1,6 @@
 # Tarea 0: DCCahuín
 
-## Consideraciones generales :octocat:
+## Consideraciones generales 🍕
 
 <Descripción de lo que hace y que **_no_** hace la tarea que entregaron junto
 con detalles de último minuto y consideraciones como por ejemplo cambiar algo
@@ -11,44 +11,44 @@ en cierta línea del código o comentar una función>
 * **Menú de inicio**: 
 
     * **Ingresar usuario**:
-      * **Ingresar si usuario existe**: Hecho 
-      * **Mostrar si nombre de usuario no existe**: Hecho
-      * **Opción de ingresar al menú de prograpost o seguidores**: Hecho
+      * **Ingresar si usuario existe**: ✅ 
+      * **Mostrar si nombre de usuario no existe**: ✅ 
+      * **Opción de ingresar al menú de prograpost o seguidores**: ✅ 
       
     * **Crear usuario**:
       * **Cumplir mínimo de 8 caracteres alfanuméricos**: --
-      * **Notificar si nombre de usuario esta registrado**: Hecho
+      * **Notificar si nombre de usuario esta registrado**: ✅ 
       * **Cumplir mínimo de una letra y un número**: --
       * **Opción de ingresar al menú de prograpost o seguidores**: --
       
     * **Salir**:
-      * **Finalización del programa**: Hecho
+      * **Finalización del programa**: ✅ 
       
 * **Menú de prograpost**:
 
     * **Crear prograpost**:
-      * **Agregar post con fecha, autor y cuerpo**: Hecho
-      * **Cumplir mínimo de 1 caracter y notificar si no**: Hecho
-      * **Cumplir el máximo de 140 caracteres y notificar si no**: Hecho
-      * **Regresar al menú anterior**: Hecho
+      * **Agregar post con fecha, autor y cuerpo**: ✅ 
+      * **Cumplir mínimo de 1 caracter y notificar si no**: ✅ 
+      * **Cumplir el máximo de 140 caracteres y notificar si no**: ✅ 
+      * **Regresar al menú anterior**: ✅ 
       
     * **Eliminar prograpost**:
-      * **Mostrar posts publicados por el usuario**: Hecho
-      * **Dar la opción de señalar cual quiere eliminar**: Hecho. El programa da la opción de seleccionar el número de post.
-      * **Eliminar post**: Hecho
-      * **Regresar al menú anterior**: Hecho
+      * **Mostrar posts publicados por el usuario**: ✅ 
+      * **Dar la opción de señalar cual quiere eliminar**: ✅ . El programa da la opción de seleccionar el número de post.
+      * **Eliminar post**: ✅ 
+      * **Regresar al menú anterior**: ✅ 
       
     * **Ver prograposts**:
-      * **Dar la opción de mostrar posts de manera ascendente o descendente**: Hecho
-      * **Mostrar prograpost con fecha de publicación**: Hecho. El programa muestra en una lista el post [fecha, cuerpo]
-      * **Regresar al menú anterior**: Hecho
+      * **Dar la opción de mostrar posts de manera ascendente o descendente**: ✅ 
+      * **Mostrar prograpost con fecha de publicación**: ✅ . El programa muestra en una lista el post [fecha, cuerpo]
+      * **Regresar al menú anterior**: ✅ 
       
     * **Ver prograprost de los usuarios seguidos**:
-      * **Dar la opción de mostrar posts de manera ascendente o descendente**: Hecho
-      * **Mostrar prograpost con fecha de publicación y autor**: Hecho. El programa muestra en una lista el post [fecha, autor, cuerpo]
-      * **Regresar al menú anterior**: Hecho
+      * **Dar la opción de mostrar posts de manera ascendente o descendente**: ✅ 
+      * **Mostrar prograpost con fecha de publicación y autor**: ✅ . El programa muestra en una lista el post [fecha, autor, cuerpo]
+      * **Regresar al menú anterior**: ✅ 
       
-    * **Regresar al menú anterior**: Hecho
+    * **Regresar al menú anterior**: ✅ 
     
 * **Menú de seguidores**:
 
