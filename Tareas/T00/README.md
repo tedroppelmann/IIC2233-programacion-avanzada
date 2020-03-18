@@ -1,6 +1,6 @@
-# Tarea 0: DCCahuín
+# Tarea 0: DCCahuín 🐦
 
-## Consideraciones generales 🍕
+## Consideraciones generales❗️
 
 <Descripción de lo que hace y que **_no_** hace la tarea que entregaron junto
 con detalles de último minuto y consideraciones como por ejemplo cambiar algo
@@ -34,18 +34,18 @@ en cierta línea del código o comentar una función>
       
     * **Eliminar prograpost**:
       * **Mostrar posts publicados por el usuario**: ✅ 
-      * **Dar la opción de señalar cual quiere eliminar**: ✅ . El programa da la opción de seleccionar el número de post.
+      * **Dar la opción de señalar cual quiere eliminar**: ✅ El programa da la opción de seleccionar el número de post.
       * **Eliminar post**: ✅ 
       * **Regresar al menú anterior**: ✅ 
       
     * **Ver prograposts**:
       * **Dar la opción de mostrar posts de manera ascendente o descendente**: ✅ 
-      * **Mostrar prograpost con fecha de publicación**: ✅ . El programa muestra en una lista el post [fecha, cuerpo]
+      * **Mostrar prograpost con fecha de publicación**: ✅ El programa muestra en una lista el post [fecha, cuerpo]
       * **Regresar al menú anterior**: ✅ 
       
     * **Ver prograprost de los usuarios seguidos**:
       * **Dar la opción de mostrar posts de manera ascendente o descendente**: ✅ 
-      * **Mostrar prograpost con fecha de publicación y autor**: ✅ . El programa muestra en una lista el post [fecha, autor, cuerpo]
+      * **Mostrar prograpost con fecha de publicación y autor**: ✅ El programa muestra en una lista el post [fecha, autor, cuerpo]
       * **Regresar al menú anterior**: ✅ 
       
     * **Regresar al menú anterior**: ✅ 
@@ -53,17 +53,17 @@ en cierta línea del código o comentar una función>
 * **Menú de seguidores**:
 
     * **Seguir a un usuario**:
-      * **Seguir al usuario**: Hecho
-      * **Notificar si nombre de usuario no existe**: Hecho
-      * **Notificar si intentas seguirte a ti mismo**: Hecho
-      * **Notificar si ya sigues al usuario**: --
-      * **Regresar al menú anterior**: Hecho
+      * **Seguir al usuario**: ✅ 
+      * **Notificar si nombre de usuario no existe**: ✅ 
+      * **Notificar si intentas seguirte a ti mismo**: ✅ 
+      * **Notificar si ya sigues al usuario**:❌
+      * **Regresar al menú anterior**: ✅ 
       
     * **Dejar de seguir a un usuario**:
-      * **Dejar de seguir al usuario**: Hecho
-      * **Notificar si nombre de usuario no existe**: Hecho
-      * **Notificar si no sigues al usuario**: Hecho
-      * **Regresar al menú anterior**: Hecho
+      * **Dejar de seguir al usuario**: ✅ 
+      * **Notificar si nombre de usuario no existe**: ✅ 
+      * **Notificar si no sigues al usuario**: ✅ 
+      * **Regresar al menú anterior**: ✅ 
       
     * **Regresar al menú anterior**: Hecho
       
