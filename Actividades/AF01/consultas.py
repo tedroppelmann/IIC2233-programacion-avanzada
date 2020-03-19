@@ -31,6 +31,8 @@ def promedio_rating_genero(animes):
 
         elif i[2] in promedios:
             n += 1
-            promedios[i[2]] += int(i[0])/n
+            promedios[i[2]] += int(i[0])
+
+            promedios[i[2]] = (promedios[i[2]]/n)
 
     return promedios
