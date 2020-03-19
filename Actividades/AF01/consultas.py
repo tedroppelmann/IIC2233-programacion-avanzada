@@ -24,15 +24,20 @@ def generos_distintos(anime, animes):
 
 def promedio_rating_genero(animes):
     promedios = dict()
-    n = 1
+    numero = dict()
+
     for i in animes:
+
         if i[2] not in promedios:
             promedios[i[2]] = int(i[0])
+            numero[i[2]] = 1
 
         elif i[2] in promedios:
-            n += 1
             promedios[i[2]] += int(i[0])
+            numero[i[2]] +=1
 
-            promedios[i[2]] = (promedios[i[2]]/n)
+    for i in promedios:
+        promedios[i] = promedios[i]/numero[i]
 
     return promedios
+
