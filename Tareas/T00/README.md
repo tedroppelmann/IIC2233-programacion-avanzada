@@ -16,10 +16,10 @@ en cierta línea del código o comentar una función>
       * **Opción de ingresar al menú de prograpost o seguidores**: ✅ 
       
     * **Crear usuario**:
-      * **Cumplir mínimo de 8 caracteres alfanuméricos**: ❌
+      * **Cumplir mínimo de 8 caracteres alfanuméricos**: ✅ 
       * **Notificar si nombre de usuario esta registrado**: ✅ 
-      * **Cumplir mínimo de una letra y un número**: ❌
-      * **Opción de ingresar al menú de prograpost o seguidores**: ❌
+      * **Cumplir mínimo de una letra y un número**: ✅ 
+      * **Opción de ingresar al menú de prograpost o seguidores**: ✅ 
       
     * **Salir**:
       * **Finalización del programa**: ✅ 
