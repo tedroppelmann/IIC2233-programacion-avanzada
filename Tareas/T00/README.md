@@ -1,15 +1,6 @@
-# Tarea X: Nombre de la tarea :school_satchel:
+# Tarea 0: DCCahuín 🐦
 
-
-Un buen ```README.md``` puede marcar una gran diferencia en la facilidad con la que corregimos una tarea, y consecuentemente cómo funciona su programa, por lo en general, entre más ordenado y limpio sea éste, mejor será 
-
-Para nuestra suerte, GitHub soporta el formato [MarkDown](https://es.wikipedia.org/wiki/Markdown), el cual permite utilizar una amplia variedad de estilos de texto, tanto para resaltar cosas importantes como para separar ideas o poner código de manera ordenada ([pueden ver casi todas las funcionalidades que incluye aquí](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet))
-
-Un buen ```README.md``` no tiene por que ser muy extenso tampoco, hay que ser **concisos** (a menos que lo consideren necesario) pero **tampoco pueden** faltar cosas. Lo importante es que sea claro y limpio 
-
-**Dejar claro lo que NO pudieron implementar y lo que no funciona a la perfección. Esto puede sonar innecesario pero permite que el ayudante se enfoque en lo que sí podría subir su puntaje.**
-
-## Consideraciones generales :octocat:
+## Consideraciones generales❗️
 
 <Descripción de lo que hace y que **_no_** hace la tarea que entregaron junto
 con detalles de último minuto y consideraciones como por ejemplo cambiar algo
@@ -17,36 +8,82 @@ en cierta línea del código o comentar una función>
 
 ### Cosas implementadas y no implementadas :white_check_mark: :x:
 
-* <Nombre item pauta<sub>1</sub>>: Hecha completa
-* <Nombre item pauta<sub>2</sub>>: Me faltó hacer <insertar qué cosa faltó>
-    * <Nombre subitem pauta<sub>2.1</sub>>: Hecha completa 
-    * <Nombre subitem pauta<sub>2.2</sub>>: Me faltó hacer <insertar qué cosa faltó>
-    * ...
-* <Nombre item pauta<sub>3</sub>>: Me faltó hacer <insertar qué cosa faltó>
-* ...
-* <Nombre item pauta<sub>n</sub>>: Me faltó hacer <insertar qué cosa faltó>
+* **Menú de inicio**: 
 
+    * **Ingresar usuario**:
+      * **Ingresar si usuario existe**: ✅ 
+      * **Mostrar si nombre de usuario no existe**: ✅ 
+      * **Opción de ingresar al menú de prograpost o seguidores**: ✅ 
+      
+    * **Crear usuario**:
+      * **Cumplir mínimo de 8 caracteres alfanuméricos**: ❌
+      * **Notificar si nombre de usuario esta registrado**: ✅ 
+      * **Cumplir mínimo de una letra y un número**: ❌
+      * **Opción de ingresar al menú de prograpost o seguidores**: ❌
+      
+    * **Salir**:
+      * **Finalización del programa**: ✅ 
+      
+* **Menú de prograpost**:
+
+    * **Crear prograpost**:
+      * **Agregar post con fecha, autor y cuerpo**: ✅ 
+      * **Cumplir mínimo de 1 caracter y notificar si no**: ✅ 
+      * **Cumplir el máximo de 140 caracteres y notificar si no**: ✅ 
+      * **Regresar al menú anterior**: ✅ 
+      
+    * **Eliminar prograpost**:
+      * **Mostrar posts publicados por el usuario**: ✅ 
+      * **Dar la opción de señalar cual quiere eliminar**: ✅ El programa da la opción de seleccionar el número de post.
+      * **Eliminar post**: ✅ 
+      * **Regresar al menú anterior**: ✅ 
+      
+    * **Ver prograposts**:
+      * **Dar la opción de mostrar posts de manera ascendente o descendente**: ✅ 
+      * **Mostrar prograpost con fecha de publicación**: ✅ El programa muestra en una lista el post [fecha, cuerpo]
+      * **Regresar al menú anterior**: ✅ 
+      
+    * **Ver prograprost de los usuarios seguidos**:
+      * **Dar la opción de mostrar posts de manera ascendente o descendente**: ✅ 
+      * **Mostrar prograpost con fecha de publicación y autor**: ✅ El programa muestra en una lista el post [fecha, autor, cuerpo]
+      * **Regresar al menú anterior**: ✅ 
+      
+    * **Regresar al menú anterior**: ✅ 
+    
+* **Menú de seguidores**:
+
+    * **Seguir a un usuario**:
+      * **Seguir al usuario**: ✅ 
+      * **Notificar si nombre de usuario no existe**: ✅ 
+      * **Notificar si intentas seguirte a ti mismo**: ✅ 
+      * **Notificar si ya sigues al usuario**:✅ 
+      * **Regresar al menú anterior**: ✅ 
+      
+    * **Dejar de seguir a un usuario**:
+      * **Dejar de seguir al usuario**: ✅ 
+      * **Notificar si nombre de usuario no existe**: ✅ 
+      * **Notificar si no sigues al usuario**: ✅ 
+      * **Regresar al menú anterior**: ✅ 
+      
+    * **Regresar al menú anterior**: ✅ 
+      
 ## Ejecución :computer:
-El módulo principal de la tarea a ejecutar es  ```archivo.py```. Además se debe crear los siguientes archivos y directorios adicionales:
-1. ```archivo.ext``` en ```ubicación```
-2. ```directorio``` en ```ubicación```
-3. ...
-
+El módulo principal de la tarea a ejecutar es  ```menu.py```.
 
 ## Librerías :books:
 ### Librerías externas utilizadas
 La lista de librerías externas que utilicé fue la siguiente:
 
-1. ```librería_1```: ```función() / módulo```
-2. ```librería_2```: ```función() / módulo``` (debe instalarse)
-3. ...
+1. ```sys```: ```exit()```
+2. ```os```: ```path.join()```
+3. ```datetime```: ```today()```, ```strftime()``` / ```date```
 
 ### Librerías propias
 Por otro lado, los módulos que fueron creados fueron los siguientes:
 
-1. ```librería_1```: Contiene a ```ClaseA```, ```ClaseB```, (ser general, tampoco es necesario especificar cada una)...
-2. ```librería_2```: Hecha para <insertar descripción **breve** de lo que hace o qué contiene>
-3. ...
+1. ```usuarios.py```: Contiene las funciones básicas en relación a los usuarios como ```agregar``` e```ingresar```.
+2. ```prograposts.py```: Contiene las funciones básicas en relación al manejo de posts como ```crear```, ```ver_posts```, ```eliminar``` o ```ver_posts_seguidores```.
+3. ```seguidores.py```: Contiene las funciones básicas en relación al manejo de los seguidores del usuario como ```seguir```, ```dejar``` y ```lista_seguidores```.
 
 ## Supuestos y consideraciones adicionales :thinking:
 Los supuestos que realicé durante la tarea son los siguientes:
