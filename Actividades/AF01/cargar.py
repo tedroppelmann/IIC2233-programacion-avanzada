@@ -29,6 +29,8 @@ def cargar_consultas(path):
         for line in file.readlines():
             # Los separamos por coma
             consulta = line.strip().split(";")
-            argumentos = consulta[1].split(";")
+            argumentos = ";".join(consulta[1:])
+            argumentos = argumentos.split(";")
             cola.append((consulta[0], argumentos))
+
     return cola

@@ -12,10 +12,25 @@ def cantidad_animes_genero(animes):
 
 
 def generos_distintos(anime, animes):
-    print(animes)
-    pass
+    genero = set()
+    genero.add(anime[2])
+    generos = set()
+    for i in animes:
+        generos.add(i[2])
+    diferencia = generos - genero
+
+    return diferencia
 
 
 def promedio_rating_genero(animes):
-    print(animes)
-    pass
+    promedios = dict()
+    n = 1
+    for i in animes:
+        if i[2] not in promedios:
+            promedios[i[2]] = int(i[0])
+
+        elif i[2] in promedios:
+            n += 1
+            promedios[i[2]] += int(i[0])/n
+
+    return promedios
