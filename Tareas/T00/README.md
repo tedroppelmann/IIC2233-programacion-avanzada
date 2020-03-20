@@ -2,9 +2,8 @@
 
 ## Consideraciones generales❗️
 
-<Descripción de lo que hace y que **_no_** hace la tarea que entregaron junto
-con detalles de último minuto y consideraciones como por ejemplo cambiar algo
-en cierta línea del código o comentar una función>
+Estimado ayudante:
+Creo haber implementado todo lo que se pedía en la tarea en mi programa.Cada función está explicada dentro de este con la descripción de lo que hace.
 
 ### Cosas implementadas y no implementadas :white_check_mark: :x:
 
