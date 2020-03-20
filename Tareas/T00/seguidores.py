@@ -90,6 +90,6 @@ def dejar(usuario):
         file.close()
         print("Dejaste de seguir a " + str(seguidor)
               + " con éxito.")
-    elif lista_seguidores(usuario, seguidor) == False:
+    elif not lista_seguidores(usuario, seguidor):
         print("Tu no sigues a " + str(seguidor)
               + ". Intenta nuevamente.")

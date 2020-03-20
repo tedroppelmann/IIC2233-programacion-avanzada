@@ -103,7 +103,7 @@ def eliminar(usuario):
                            + " (1, 2 , 3, ...):")
         try:
             numero = int(numero)
-            if numero >0 and numero <= len(mensajes):
+            if 0 < numero <= len(mensajes):
                 linea = [usuario, mensajes[numero - 1][0],
                          mensajes[numero - 1][1]]
                 linea =  ",".join(linea)
