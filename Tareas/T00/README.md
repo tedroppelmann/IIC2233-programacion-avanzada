@@ -3,7 +3,8 @@
 ## Consideraciones generales❗️
 
 Estimado ayudante:
-Creo haber implementado todo lo que se pedía en la tarea en mi programa.Cada función está explicada dentro de este con la descripción de lo que hace.
+
+Creo haber implementado todo lo que se pedía en la tarea en mi programa. Cada función está explicada dentro de esta con la descripción de lo que hace.
 
 ### Cosas implementadas y no implementadas :white_check_mark: :x:
 
