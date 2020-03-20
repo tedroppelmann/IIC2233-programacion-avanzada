@@ -13,11 +13,9 @@ def menu():
         print("[0] Salir")
         respuesta = input("Indique su opción (0, 1 o 2):")
         if respuesta == str(1):
-            usuario = input("Ingrese el nombre de usuario:")
-            usuarios.ingresar(usuario)
+            usuarios.ingresar()
         elif respuesta == str(2):
-            usuario = input("Indique el nuevo nombre de usuario:")
-            usuarios.agregar(usuario)
+            usuarios.agregar()
         elif respuesta == str(0):
             sys.exit()
         else:
