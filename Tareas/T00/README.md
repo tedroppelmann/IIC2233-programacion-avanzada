@@ -88,18 +88,6 @@ Por otro lado, los módulos que fueron creados fueron los siguientes:
 ## Supuestos y consideraciones adicionales :thinking:
 Los supuestos que realicé durante la tarea son los siguientes:
 
-1. <Descripción/consideración 1 y justificación del por qué es válido/a> 
-2. <Descripción/consideración 2 y justificación del por qué es válido/a>
-3. ...
-
-PD: <una última consideración (de ser necesaria) o comentario hecho anteriormente que se quiera **recalcar**>
-
-## Referencias de código externo :book:
-
-Para realizar mi tarea saqué código de:
-1. \<link de código>: este hace \<lo que hace> y está implementado en el archivo <nombre.py> en las líneas <número de líneas> y hace <explicación breve de que hace>
-
-
-
-## Descuentos
-La guía de descuentos se encuentra [link](https://github.com/IIC2233/syllabus/blob/master/Tareas/Descuentos.md).
+1. Cuando el usuario pide ver los prograspost que ha creado, el programa los visualiza en forma de lista con los siguientes elementos: [FECHA, MENSAJE].
+2. Cuando el usuario pide ver los prograspost de sus seguidores que ha creado, el programa los visualiza en forma de lista con los siguientes elementos: [FECHA, USUARIO, MENSAJE].
+3. Para eliminar algún post creado, enumero cada uno de los posts del usuario y le pregunto después cual es el número de post que desea eliminar.
