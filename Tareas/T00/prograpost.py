@@ -6,6 +6,9 @@ ruta_posts = os.path.join("posts.csv")
 ruta_seguidores = os.path.join("seguidores.csv")
 
 def menu(usuario):
+    """
+    Es el menú de prograpost del programa
+    """
     while True:
         print("MENÚ DE PROGRAPOSTS")
         print("Elija una opción:")
@@ -29,6 +32,9 @@ def menu(usuario):
             print("Input incorrecto. Intente nuevamente.")
 
 def crear(usuario):
+    """
+    Permite agregar un post al archivo posts.csv
+    """
     while True:
         mensaje = input("Escriba el mensaje:")
         if len(mensaje) < 1:
@@ -46,6 +52,9 @@ def crear(usuario):
             return False
 
 def ver_posts(usuario):
+    """
+    Permite ver los posts creados por el usuario.
+    """
     file = open(ruta_posts)
     mensajes = []
     for line in file:
@@ -80,6 +89,9 @@ def ver_posts(usuario):
             print("Input incorrecto. Intente nuevamente.")
 
 def eliminar(usuario):
+    """
+    Permite eliminar algún post del usuario y lo elimina del archivo posts.csv
+    """
     file = open(ruta_posts)
     mensajes = []
     for line in file:
@@ -123,6 +135,9 @@ def eliminar(usuario):
             print("Error. Ingresa un número.")
 
 def ver_posts_seguidores(usuario):
+    """
+    Permite ver los posts de los seguidores del usuario
+    """
     file = open(ruta_seguidores)
     seguidores = []
     for line in file:

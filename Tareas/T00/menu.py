@@ -5,6 +5,9 @@ import usuarios
 print("Bienvenido a DCCahuin!!")
 
 def menu():
+    """
+    Es el menú inicial del programa
+    """
     while True:
         print("MENÚ DE INICIO")
         print("Seleccione una opción:")

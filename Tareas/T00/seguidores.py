@@ -5,6 +5,9 @@ ruta_seguidores = os.path.join("seguidores.csv")
 ruta_usuarios = os.path.join("usuarios.csv")
 
 def menu(usuario):
+    """
+    Es el menú de seguidores del programa.
+    """
     while True:
         print("MENÚ DE SEGUIDORES")
         print("Elija una opción:")
@@ -20,6 +23,9 @@ def menu(usuario):
             return False
 
 def seguir(usuario):
+    """
+    Permite seguir a un usuario y lo agrega al archivo seguidores.csv
+    """
     file = open(ruta_seguidores)
     lineas = file.readlines()
     file.close()
@@ -57,6 +63,9 @@ def seguir(usuario):
         print("Nombre de usuario no existe. Intente nuevamente.")
 
 def lista_seguidores(usuario, seguidor):
+    """
+    Retorna True si el usuario es seguido por el seguidor
+    """
     file = open(ruta_seguidores)
     for line in file:
         linea = line.rstrip()
@@ -66,6 +75,9 @@ def lista_seguidores(usuario, seguidor):
     return False
 
 def dejar(usuario):
+    """
+    Permite dejar de seguir a algún usuario sacandolo del archivo seguidores.csv
+    """
     file = open(ruta_seguidores)
     lineas = file.readlines()
     file.close()

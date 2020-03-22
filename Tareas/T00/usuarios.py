@@ -8,6 +8,9 @@ ruta_seguidores = os.path.join("seguidores.csv")
 
 
 def agregar():
+    """
+    Permite agregar un usuario al archivo usuarios.csv
+    """
     while True:
         usuario = input("Ingrese el nuevo nombre de usuario:")
         if len(usuario) < 8:
@@ -35,6 +38,9 @@ def agregar():
                   " Intente nuevamente.")
 
 def ingresar():
+    """
+    Permite ingresar con un nombre de usuario inscrito
+    """
     usuario = input("Ingrese el nombre de usuario:")
     file = open(ruta_usuarios)
     lines = file.readlines()
@@ -45,6 +51,9 @@ def ingresar():
         print("El nombre de usuario no existe.")
 
 def menu_usuario(usuario):
+    """
+    Es el menú de usuario del programa
+    """
     while True:
         print("Bienvenido " + str(usuario) + ". Elija un menú:")
         print("[1] Menú de prograpost")
