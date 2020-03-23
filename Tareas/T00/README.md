@@ -89,5 +89,5 @@ Por otro lado, los módulos que fueron creados fueron los siguientes:
 Los supuestos que realicé durante la tarea son los siguientes:
 
 1. Cuando el usuario pide ver los prograspost que ha creado, el programa los visualiza en forma de lista con los siguientes elementos: [FECHA, MENSAJE].
-2. Cuando el usuario pide ver los prograspost de sus seguidores que ha creado, el programa los visualiza en forma de lista con los siguientes elementos: [FECHA, USUARIO, MENSAJE].
+2. Cuando el usuario pide ver los prograspost de sus seguidores, el programa los visualiza en forma de lista con los siguientes elementos: [FECHA, USUARIO, MENSAJE].
 3. Para eliminar algún post creado, enumero cada uno de los posts del usuario y le pregunto después cual es el número de post que desea eliminar.
