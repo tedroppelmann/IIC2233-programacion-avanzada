@@ -24,7 +24,9 @@ class DCCuarentena:
         # Acá debes rellenar con un código que sugiera una actividad
         # según el nivel de estres y felicidad.
         # Además, recuerda que el usuario debe realizar la actividad.
-        if self.usuario_actual.felicidad <= 50 or self.usuario_actual.estres >= 50:
+
+        if self.usuario_actual.felicidad <= 50 or self.usuario_actual.estres >= 50 and \
+                        len(self.usuario_actual.hobbies) != 0:
             print(f"Te sugiero el hobbie: {self.usuario_actual.hobbies[0]}")
             self.usuario_actual.realizar_actividad(self.actividades[self.usuario_actual.hobbies[0]])
             del self.usuario_actual.hobbies[0]
@@ -33,18 +35,20 @@ class DCCuarentena:
         else:
             if len(self.usuario_actual.deberes) == 0:
                 if len(self.usuario_actual.hobbies) == 0:
-                    print("¡No te puedo sugerir m´as actividades! Es hora de descansar :)")
+                    print("¡No te puedo sugerir más actividades! Es hora de descansar :)")
                 else:
-                    self.usuario_actual.realizar_actividad(self.usuario_actual.hobbies[0])
-                    print(f"Te sugiero el hobbie: {self.usuario_actual.hobbies.pop(0)}")
+                    print(f"Te sugiero el hobbie: {self.usuario_actual.hobbies[0]}")
+                    self.usuario_actual.realizar_actividad(
+                        self.actividades[self.usuario_actual.hobbies[0]])
+                    del self.usuario_actual.hobbies[0]
+
             else:
-                self.usuario_actual.realizar_actividad(self.usuario_actual.deberes[0])
-                print(f"Te sugiero el deber: {self.usuario_actual.deberes.pop(0)}")
+                print(f"Te sugiero el deber: {self.usuario_actual.deberes[0]}")
+                self.usuario_actual.realizar_actividad(
+                    self.actividades[self.usuario_actual.deberes[0]])
+                del self.usuario_actual.deberes[0]
 
 
-
-
-        pass
 
     def opcion(self):
         """
