@@ -25,7 +25,7 @@ class Estudiante:
             self.__felicidad = nueva_felicidad
         elif self.rango_felicidad[0] >= nueva_felicidad:
             self.__felicidad = self.rango_felicidad[0]
-        else:
+        elif self.rango_felicidad[1] <= nueva_felicidad:
             self.__felicidad = self.rango_felicidad[1]
 
     # Debes rellenar las property estres
@@ -39,7 +39,7 @@ class Estudiante:
             self.__estres = nuevo_estres
         elif self.rango_felicidad[0] >= nuevo_estres:
             self.__estres = self.rango_estres[0]
-        else:
+        elif self.rango_felicidad[1] <= nuevo_estres:
             self.__estres = self.rango_estres[1]
 
 
