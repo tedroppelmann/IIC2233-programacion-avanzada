@@ -25,11 +25,11 @@ class DCCuarentena:
         # según el nivel de estres y felicidad.
         # Además, recuerda que el usuario debe realizar la actividad.
 
-        if self.usuario_actual.felicidad <= 50 or self.usuario_actual.estres >= 50 and \
-                        len(self.usuario_actual.hobbies) != 0:
-            print(f"Te sugiero el hobbie: {self.usuario_actual.hobbies[0]}")
-            self.usuario_actual.realizar_actividad(self.actividades[self.usuario_actual.hobbies[0]])
-            del self.usuario_actual.hobbies[0]
+        if (self.usuario_actual.felicidad <= 50 or self.usuario_actual.estres >= 50)\
+                and len(self.usuario_actual.hobbies) != 0:
+                print(f"Te sugiero el hobbie: {self.usuario_actual.hobbies[0]}")
+                self.usuario_actual.realizar_actividad(self.actividades[self.usuario_actual.hobbies[0]])
+                del self.usuario_actual.hobbies[0]
 
 
         else:
