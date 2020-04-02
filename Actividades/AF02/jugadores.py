@@ -42,10 +42,6 @@ class Jugador(ABC):
 
 
 
-
-
-
-
 # Completar la siguiente clase.
 # Puedes agregarle herencia.
 # Puedes agregar métodos incluso.
@@ -71,7 +67,10 @@ class JugadorMesa(Jugador):
     def enfrentar(self, tipo_de_juego, enemigo):
         # Completar
         super().enfrentar(tipo_de_juego, enemigo)
-        self.jugar_mesa(enemigo)
+        if self.jugar_mesa(enemigo):
+            return True
+        else:
+            return False
 
 
 
@@ -101,7 +100,10 @@ class JugadorCartas(Jugador):
     def enfrentar(self, tipo_de_juego, enemigo):
         # Completar
         super().enfrentar(tipo_de_juego, enemigo)
-        self.jugar_cartas(enemigo)
+        if self.jugar_cartas(enemigo):
+            return True
+        else:
+            return False
 
 # Completar la siguiente clase.
 # Puedes agregarle herencia.
@@ -128,7 +130,11 @@ class JugadorCombate(Jugador):
     def enfrentar(self, tipo_de_juego, enemigo):
         # Completar
         super().enfrentar(tipo_de_juego, enemigo)
-        self.jugar_combate(enemigo)
+        if self.jugar_combate(enemigo):
+            return True
+        else:
+            return False
+
 
 
 # Completar la siguiente clase.
@@ -156,7 +162,10 @@ class JugadorCarreras(Jugador):
     def enfrentar(self, tipo_de_juego, enemigo):
         # Completar
         super().enfrentar(tipo_de_juego, enemigo)
-        self.jugar_carrera(enemigo)
+        if self.jugar_carrera(enemigo):
+            return True
+        else:
+            return False
 
 # Completar la siguiente clase.
 # Puedes agregarle herencia.
@@ -176,9 +185,15 @@ class JugadorInteligente(JugadorMesa, JugadorCartas):
         # Completar
         super().enfrentar(tipo_de_juego, enemigo)
         if tipo_de_juego == "mesa":
-            self.jugar_mesa(enemigo)
+            if self.jugar_mesa(enemigo):
+                return True
+            else:
+                return False
         elif tipo_de_juego == "cartas":
-            self.jugar_cartas(enemigo)
+            if self.jugar_cartas(enemigo):
+                return True
+            else:
+                return False
 
 
 
@@ -200,6 +215,12 @@ class JugadorIntrepido(JugadorCombate, JugadorCarreras):
         # Completar
         super().enfrentar(tipo_de_juego, enemigo)
         if tipo_de_juego == "combate":
-            self.jugar_combate(enemigo)
+            if self.jugar_combate(enemigo):
+                return True
+            else:
+                return False
         elif tipo_de_juego == "carreras":
-            self.jugar_carrera(enemigo)
+            if self.jugar_carrera(enemigo):
+                return True
+            else:
+                return False
