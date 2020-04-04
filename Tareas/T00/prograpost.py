@@ -113,26 +113,25 @@ def eliminar(usuario):
         numero = input("¿Que post desea borrar?"
                            + " Elija el número de publicación"
                            + " (1, 2 , 3, ...):")
-        try:
-            numero = int(numero)
-            if 0 < numero <= len(mensajes):
-                linea = [usuario, mensajes[numero - 1][0],
-                         mensajes[numero - 1][1]]
-                linea =  ",".join(linea)
-                file = open(ruta_posts)
-                lineas = file.readlines()
-                file.close()
-                file2 = open(ruta_posts, "w")
-                for line in lineas:
-                    if line.rstrip() != str(linea):
-                        file2.write(line)
-                file.close()
-                print("Post eliminado exitosamente.")
-                return False
-            else:
-                print("Número inválido. Intenta nuevamente.")
-        except:
-            print("Error. Ingresa un número.")
+        numero = int(numero)
+        if 0 < numero <= len(mensajes):
+            linea = [usuario, mensajes[numero - 1][0],
+                     mensajes[numero - 1][1]]
+            linea =  ",".join(linea)
+            file = open(ruta_posts)
+            lineas = file.readlines()
+            file.close()
+            file2 = open(ruta_posts, "w")
+            for line in lineas:
+                if line.rstrip() != str(linea):
+                    file2.write(line)
+            file.close()
+            print("Post eliminado exitosamente.")
+            return False
+        else:
+            print("Número inválido. Intenta nuevamente.")
+
+        print("Error. Ingresa un número.")
 
 def ver_posts_seguidores(usuario):
     """
