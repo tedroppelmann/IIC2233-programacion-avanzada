@@ -1,5 +1,4 @@
 
-import parametros as p
 
 def agregar_magizoologo(manizoologo, ruta_archivo_magizoologos):
     criaturas = ";".join(manizoologo.criaturas)
