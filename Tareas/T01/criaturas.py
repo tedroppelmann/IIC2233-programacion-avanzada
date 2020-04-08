@@ -1,5 +1,6 @@
 
 from magizoologos import Personajes
+import parametros as p
 
 class Criaturas(Personajes):
 
@@ -18,7 +19,7 @@ class Criaturas(Personajes):
         self.nivel_agresividad = nivel_agresividad
         self.dias_sin_comer = dias_sin_comer
         self.nivel_cleptomania = nivel_cleptomania
-
+        self.precio = None
 
 class Augurey(Criaturas):
 
@@ -29,6 +30,7 @@ class Augurey(Criaturas):
         super().__init__(nombre, tipo, nivel_magico, probabilidad_escape, probabilidad_enfermarse,
                  estado_salud, estado_escape, salud_total, salud_actual, nivel_hambre,
                  nivel_agresividad, dias_sin_comer, nivel_cleptomania)
+        self.precio = p.PRECIO_AUGEREY
 
 class Niffler(Criaturas):
 
@@ -39,6 +41,7 @@ class Niffler(Criaturas):
         super().__init__(nombre, tipo, nivel_magico, probabilidad_escape, probabilidad_enfermarse,
                  estado_salud, estado_escape, salud_total, salud_actual, nivel_hambre,
                  nivel_agresividad, dias_sin_comer, nivel_cleptomania)
+        self.precio = p.PRECIO_NIFFLER
 
 class Erkling(Criaturas):
 
@@ -49,3 +52,4 @@ class Erkling(Criaturas):
         super().__init__(nombre, tipo, nivel_magico, probabilidad_escape, probabilidad_enfermarse,
                  estado_salud, estado_escape, salud_total, salud_actual, nivel_hambre,
                  nivel_agresividad, dias_sin_comer, nivel_cleptomania)
+        self.precio = p.PRECIO_ERKLING

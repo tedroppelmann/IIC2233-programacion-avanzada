@@ -1,5 +1,6 @@
 
 import parametros as p
+from actualizaciones import actualizar_datos
 
 class Personajes:
 
@@ -8,13 +9,12 @@ class Personajes:
         self.tipo = tipo
         self.nivel_magico = nivel_magico
 
-
 class Magizoologo(Personajes):
 
     def __init__(self, nombre, tipo, sickles, criaturas, alimentos, licencia, nivel_magico,
                  destreza, energia, responsabilidad, habilidad_especial):
         super().__init__(nombre, tipo, nivel_magico)
-        self.sickles = sickles
+        self.sickles = int(sickles)
         self.criaturas = criaturas
         self.alimentos = alimentos
         self.licencia = licencia
@@ -27,24 +27,16 @@ class Magizoologo(Personajes):
 
     def adoptar(self, DCC):
         if self.licencia:
-            while True:
-                print("¿Qué tipo de DCCriatura quieres?\n[1] Augurey\n"
-                      "[2] Niffler\n[3] Erkling")
-                respuesta = input("Ingrese una opción (1, 2 o 3):")
-                if respuesta == "1":
-                    tipo = "Augerey"
-                    if self.sickles >= p.PRECIO_AUGEREY:
-                        DCC.vender_criatura(tipo)
-                elif respuesta == "2":
-                    tipo = "Niffler"
-                elif respuesta == "Erkling":
-                    tipo = "Erkling"
-                else:
-                    print("ERROR. Intenta nuevamente.")
+            print(f"Los precios son los siguientes:\nAugurey: {p.PRECIO_AUGEREY}\nNiffler: "
+                  f"{p.PRECIO_NIFFLER}\nErkling: {p.PRECIO_ERKLING}")
+            print(f"Tu saldo actual es de {self.sickles} Sickles")
+            self.sickles = DCC.vender_criatura(self.criaturas, self.sickles)
+            print("¡DCCriatura adoptada con éxito!")
+            print(f"Tu saldo actual es de {self.sickles} Sickles")
+            actualizar_datos(DCC.usuario_actual, p.RUTA_MAGIZOOLOGOS)
+
         else:
             print("No posees licencia, por lo que no puedes adpotar una DCCriatura.")
-
-
 
 class Docencio(Magizoologo):
 

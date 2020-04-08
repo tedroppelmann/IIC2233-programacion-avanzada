@@ -1,3 +1,7 @@
+import os
+
+RUTA_MAGIZOOLOGOS = os.path.join("magizoologos.csv")
+RUTA_CRIATURAS = os.path.join("criaturas.csv")
 
 SICKLES_INICIAL = 500
 
