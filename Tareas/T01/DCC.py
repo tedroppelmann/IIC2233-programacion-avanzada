@@ -3,8 +3,9 @@ import parametros as p
 import random
 from criaturas import Augurey, Niffler, Erkling
 from magizoologos import Docencio, Tareo, Hibrido
-from actualizaciones import agregar_magizoologo, agregar_criatura, actualizar_datos
-from menus import menu_error, menu_acciones
+from actualizaciones import agregar_magizoologo, agregar_criatura, actualizar_datos_magizoologo
+from menus import menu_error, menu_acciones, menu_inicio, menu_cuidar, menu_dcc
+
 
 class Dcc:
 
@@ -30,7 +31,8 @@ class Dcc:
                           "Docencio\n[2] Tareo\n[3] Híbrido")
                     respuesta = input("Ingrese una opción (1, 2 o 3):")
                     alimentos.append(random.choice(["Tarta de Melaza", "Hígado de Dragón",
-                                                    "Buñuelo de Guasarajo"]))
+                                                    "Buñuelo de Gusarajo"]))
+                    condicion = False
                     if respuesta == "1":
                         tipo = "Docencio"
                         nivel_magico = random.randint(p.NIVEL_MAGICO_DOCENCIO_MIN,
@@ -93,11 +95,11 @@ class Dcc:
             elif nombre.lower() in self.magizoologos:
                 print("Nombre ya existe.\n¿Qué desea hacer?")
                 menu_error(Dcc(self.magizoologos, self.criaturas, self.alimentos,
-                               self.usuario_actual))
+                               self.usuario_actual), menu_inicio)
             else:
                 print("Nombre inválido. Solo utilizar caracteres alfanuméricos.\n¿Qué desea hacer?")
                 menu_error(Dcc(self.magizoologos, self.criaturas, self.alimentos,
-                               self.usuario_actual))
+                               self.usuario_actual), menu_inicio)
             if self.usuario_actual is not None:
                 break
 
@@ -105,14 +107,14 @@ class Dcc:
         while True:
             nombre = input("Ingrese el nombre del Magizoólogo:").lower()
             if nombre.lower() in self.magizoologos and nombre.isalnum():
-                print(f"¡Bienvenido {nombre}!")
                 self.usuario_actual = self.magizoologos[nombre.lower()]
+                print(f"¡Bienvenido {self.usuario_actual.nombre}!")
                 menu_acciones(Dcc(self.magizoologos, self.criaturas, self.alimentos,
                                   self.usuario_actual))
             else:
                 print("Magizoologo no existe. \n¿Qué desea hacer?")
                 menu_error(Dcc(self.magizoologos, self.criaturas, self.alimentos,
-                               self.usuario_actual))
+                               self.usuario_actual), menu_inicio)
 
     def vender_criatura(self, criaturas, sickles):
         while True:
@@ -120,7 +122,7 @@ class Dcc:
                   "[2] Niffler\n[3] Erkling")
             respuesta = input("Ingrese una opción (1, 2 o 3):")
             nombre_criatura = None
-            estado_salud = True
+            estado_salud = False
             nivel_hambre = "satisfecha"
             estado_escape = False
             dias_sin_comer = 0
@@ -134,7 +136,7 @@ class Dcc:
                 salud_actual = p.SALUD_AUGUREY_MAX
                 nivel_agresividad = p.NIVEL_AGRESVIDAD_AUGUREY
                 cleptomania = p.CLEPTOMANIA_AUGUREY
-                nombre_criatura = self.elegir_nombre_criatura()
+                nombre_criatura = self.elegir_nombre_criatura(criaturas)
                 if nombre_criatura is not False:
                     self.criaturas[nombre_criatura] = Augurey(nombre_criatura, tipo_criatura,
                                                           nivel_magico_criatura, prob_escape,
@@ -153,7 +155,7 @@ class Dcc:
                 nivel_agresividad = p.NIVEL_AGRESVIDAD_NIFFLER
                 cleptomania = random.randint(p.CLEPTOMANIA_NIFFLER_MIN,
                                              p.CLEPTOMANIA_NIFFLER_MAX)
-                nombre_criatura = self.elegir_nombre_criatura()
+                nombre_criatura = self.elegir_nombre_criatura(criaturas)
                 if nombre_criatura is not False:
                     self.criaturas[nombre_criatura] = Niffler(nombre_criatura, tipo_criatura,
                                                           nivel_magico_criatura, prob_escape,
@@ -171,7 +173,7 @@ class Dcc:
                 salud_actual = p.SALUD_ERKLING_MAX
                 nivel_agresividad = p.NIVEL_AGRESVIDAD_ERKLING
                 cleptomania = p.CLEPTOMANIA_ERKLING
-                nombre_criatura = self.elegir_nombre_criatura()
+                nombre_criatura = self.elegir_nombre_criatura(criaturas)
 
                 if nombre_criatura is not False:
                     self.criaturas[nombre_criatura] = Erkling(nombre_criatura, tipo_criatura,
@@ -194,7 +196,10 @@ class Dcc:
                     return sickles
                 return True
 
-    def elegir_nombre_criatura(self):
+    def elegir_nombre_criatura(self, criaturas):
+        menu_anterior = menu_inicio
+        if len(criaturas) > 0:
+            menu_anterior = menu_dcc
         while True:
             nombre_criatura = input("¿Qué nombre quieres ponerle a "
                                     "tu DCC Criatura?")
@@ -204,14 +209,27 @@ class Dcc:
             else:
                 print("Nombre inválido. ¿Qué desea hacer?")
                 menu_error(Dcc(self.magizoologos, self.criaturas, self.alimentos,
-                               self.usuario_actual))
+                               self.usuario_actual), menu_anterior)
 
-class Alimento:
+    def mostrar_estado(self):
+        user = self.usuario_actual
+        print(f"DATOS MAGIZOÓLOGO\nNombre: {user.nombre}\nSickles: {user.sickles}\nEnergía actual: "
+              f"{user.energia_actual}\nLicencia: {user.licencia}\nNivel de aprobación: "
+              f"{user.nivel_aprobacion}\nNivel mágico: {user.nivel_magico}\nDestreza: "
+              f"{user.destreza}\nResponsabilidad: {user.responsabilidad}\n")
+        print(f"DATOS ALIMENTOS")
+        for alimento in self.alimentos:
+            alim = self.alimentos[alimento]
+            print(f"Nombre: {alim.nombre}\n  Cantidad: {user.alimentos.count(alim.nombre)}\n  "
+                  f"Efecto de Salud: {alim.efecto_salud}\n")
+        print("DATOS DCCRIATURAS")
+        for criaturas in self.usuario_actual.criaturas:
+            criat = self.criaturas[criaturas.lower()]
+            print(f"Nombre: {criat.nombre}\n  Tipo: {criat.tipo}\n  Nivel mágico: "
+                  f"{criat.nivel_magico}\n  Salud actual: {criat.salud_actual}\n  "
+                  f"Estado de salud: {criat.estado_salud}\n  Nivel de hambre: {criat.nivel_hambre}"
+                  f"\n  Nivel de agresividad: {criat.nivel_agresividad}\n")
 
-    def __init__(self, nombre, efecto_salud, precio):
-        self.nombre = nombre
-        self.efecto_salud = efecto_salud
-        self.precio = precio
 
 
 

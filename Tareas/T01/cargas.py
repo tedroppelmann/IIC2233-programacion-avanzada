@@ -2,7 +2,8 @@
 from collections import defaultdict
 from magizoologos import Docencio, Tareo, Hibrido
 from criaturas import Augurey, Niffler, Erkling
-from DCC import Alimento
+from alimentos import TartaDeMelaza, HigadoDeDragon, BuenueloDeGusarajo
+import parametros as p
 
 
 
@@ -64,10 +65,15 @@ def cargar_criaturas(ruta_archivo_criaturas):
 
     return criaturas
 
-def cargar_alimentos(ruta_archivo_alimentos):
+def cargar_alimentos():
 
     alimentos = defaultdict(lambda: "El alimento no existe.")
-    with open(ruta_archivo_alimentos, "r", encoding="utf-8") as file:
-        for line in file.readlines():
-            nombre, efecto_salud, precio = line.strip().split(",")
-            alimentos[nombre] = Alimento(nombre, efecto_salud, precio)
+
+    alimentos["Tarta de Melaza"] = TartaDeMelaza("Tarta de Melaza", p.SALUD_TARTA_MELAZA,
+                                                p.PRECIO_TARTA_MELAZA)
+    alimentos["Hígado de Dragón"] = HigadoDeDragon("Hígado de Dragón", p.SALUD_HIGADO_DRAGON,
+                                                   p.PRECIO_HIGADO_DRAGON)
+    alimentos["Buñuelo de Gusarajo"] = BuenueloDeGusarajo("Buñuelo de Gusarajo",
+                                                          p.SALUD_BUNUELO_GUSARAJO,
+                                                          p.PRECIO_BUNUELOS_GUSARAJO)
+    return alimentos

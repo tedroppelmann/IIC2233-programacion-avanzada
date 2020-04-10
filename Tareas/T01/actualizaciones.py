@@ -21,32 +21,64 @@ def agregar_criatura(criatura, ruta_archivo_magizoologos):
                    + str(criatura.nivel_agresividad) + "," + str(criatura.dias_sin_comer) + "," +
                    str(criatura.nivel_cleptomania) + "\n")
 
-def actualizar_datos(manizoologo, ruta_archivo_magizoologos):
+def actualizar_datos_magizoologo(manizoologo, ruta_archivo_magizoologos):
 
     alimentos_nuevos = ";".join(manizoologo.alimentos)
     criaturas_nuevas = ";".join(manizoologo.criaturas)
-    print(criaturas_nuevas)
+    filas = dict()
 
     with open(ruta_archivo_magizoologos, "r", encoding="utf-8") as file:
         lineas = file.readlines()
-        nombres = []
-        for linea in lineas:
-            columnas = linea.split(",")
-            nombres.append(columnas[0])
+        for line in lineas:
+            nombre, tipo, sickles, criaturas, alimentos, licencia, nivel_magico, destreza,\
+            energia, responsabilidad, habilidad_especial = line.strip().split(",")
+            filas[nombre] = line
 
-
+    key_list = list(filas.keys())
 
     with open(ruta_archivo_magizoologos, "w", encoding="utf-8") as file2:
-        for linea in lineas:
-            print(str(manizoologo.nombre))
-            for i in nombres:
-                if str(manizoologo.nombre) == i:
-                    file2.write(linea)
-                    print("!")
-                else:
-                    file2.write(manizoologo.nombre + "," + manizoologo.tipo + "," +
-                           str(manizoologo.sickles) + "," + criaturas_nuevas
-                           + "," + alimentos_nuevos + "," + str(manizoologo.licencia) + "," +
-                           str(manizoologo.nivel_magico) + "," + str(manizoologo.destreza) + "," +
-                           str(manizoologo.energia) + "," + str(manizoologo.responsabilidad) + ","
-                           + str(manizoologo.habilidad_especial) +"\n")
+        for key in key_list:
+            if key != manizoologo.nombre:
+                file2.write(filas[key])
+            elif key == manizoologo.nombre:
+                file2.write(manizoologo.nombre + "," + manizoologo.tipo + "," +
+                            str(manizoologo.sickles) + "," + criaturas_nuevas
+                            + "," + alimentos_nuevos + "," + str(manizoologo.licencia) + "," +
+                            str(manizoologo.nivel_magico) + "," + str(
+                    manizoologo.destreza) + "," +
+                            str(manizoologo.energia) + "," + str(
+                    manizoologo.responsabilidad) + ","
+                            + str(manizoologo.habilidad_especial) + "\n")
+
+def actualizar_datos_criaturas(criatura, ruta_archivo_criaturas):
+
+    filas = dict()
+    with open(ruta_archivo_criaturas, "r", encoding="utf-8") as file:
+        lineas = file.readlines()
+        for line in lineas:
+            nombre, tipo, nivel_magico, probabilidad_escape, probabilidad_enfermarse, estado_salud,\
+            estado_escape, salud_total, salud_actual, nivel_hambre, nivel_agresividad,\
+            dias_sin_comer, nivel_cleptomania = line.strip().split(",")
+            filas[nombre] = line
+
+    key_list = list(filas.keys())
+
+    with open(ruta_archivo_criaturas, "w", encoding="utf-8") as file2:
+        for key in key_list:
+            if key != criatura.nombre:
+                file2.write(filas[key])
+            elif key == criatura.nombre:
+                file2.write(criatura.nombre + "," + criatura.tipo + "," + str(criatura.nivel_magico)
+                            + "," + str(criatura.probabilidad_escape) + "," +
+                            str(criatura.probabilidad_enfermarse) + "," + str(criatura.estado_salud)
+                            + "," + str(criatura.estado_escape) + "," + str(criatura.salud_total) +
+                            "," + str(criatura.salud_actual) + "," + str(criatura.nivel_hambre) +
+                            "," + str(criatura.nivel_agresividad) + "," +
+                            str(criatura.dias_sin_comer) + "," + str(criatura.nivel_cleptomania)
+                            + "\n")
+
+def str_bool(str):
+    if str == "True":
+        return True
+    else:
+        return False
