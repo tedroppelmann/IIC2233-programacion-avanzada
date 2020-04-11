@@ -28,6 +28,7 @@ def menu_error(DCC, menu_anterior):
         elif respuesta == "2":
             menu_anterior(DCC)
         elif respuesta == "0":
+            print("Adiós ¡Vuelve pronto!")
             sys.exit()
 
 def menu_acciones(DCC):
@@ -45,7 +46,7 @@ def menu_acciones(DCC):
         elif respuesta == "2":
             menu_dcc(DCC)
         elif respuesta == "3":
-            pass
+            DCC.pasar_dia()
         elif respuesta == "4":
             menu_inicio(DCC)
         elif respuesta == "0":
@@ -70,7 +71,7 @@ def menu_cuidar(DCC):
         elif respuesta == "2":
             DCC.usuario_actual.recuperar_criatura(DCC)
         elif respuesta == "3":
-            pass
+            DCC.usuario_actual.sanar_criatura(DCC)
         elif respuesta == "4":
             DCC.usuario_actual.usar_habilidad_especial(DCC)
         elif respuesta == "5":
@@ -104,6 +105,3 @@ def menu_dcc(DCC):
             sys.exit()
         else:
             print("ERROR. Intente nuevamente.")
-
-
-

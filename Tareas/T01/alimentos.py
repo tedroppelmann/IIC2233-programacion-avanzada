@@ -18,12 +18,12 @@ class Alimento(ABC):
 class TartaDeMelaza(Alimento):
 
     def particularidad_alimento(self,DCC, criatura):
-
         if criatura.tipo == "Niffler":
             if random.random() < p.PROB_CAMBIO_ARISCA_INOFENSIVA:
                 print(f"¡Enhorabuena! Gacias a la Tarta de Melaza lograste disminuir la "
                       f"agresividad de {criatura.nombre} de arisca a "
                       f"inofensiva de forma permanente.")
+                criatura.nivel_agresividad = "inofensiva"
         criatura.nivel_hambre = "satisfecha"
 
 class HigadoDeDragon(Alimento):
@@ -31,7 +31,6 @@ class HigadoDeDragon(Alimento):
     def particularidad_alimento(self,DCC, criatura):
         if criatura.estado_salud:
             criatura.estado_salud = False
-            actualizar_datos_criaturas(criatura, p.RUTA_CRIATURAS)
             print(f"Gracias al Hígado de Dragón, {criatura.nombre} ha sanado.")
         else:
             print(f"{criatura.nombre} ya está sana por lo que el Hígado de Dragón solo "

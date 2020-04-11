@@ -4,7 +4,7 @@ import random
 from criaturas import Augurey, Niffler, Erkling
 from magizoologos import Docencio, Tareo, Hibrido
 from actualizaciones import agregar_magizoologo, agregar_criatura, actualizar_datos_magizoologo
-from menus import menu_error, menu_acciones, menu_inicio, menu_cuidar, menu_dcc
+from menus import menu_error, menu_acciones, menu_inicio, menu_dcc
 
 
 class Dcc:
@@ -22,6 +22,8 @@ class Dcc:
         sickles = p.SICKLES_INICIAL
         licencia = True
         habilidad_especial = True
+        alimentos.append(random.choice(["Tarta de Melaza", "Hígado de Dragón",
+                                        "Buñuelo de Gusarajo"]))
         while True:
             nombre = input("Ingrese el nombre de su Magizoólogo:")
             if nombre.lower() not in self.magizoologos and nombre.isalnum():
@@ -30,8 +32,6 @@ class Dcc:
                     print("¿Qué tipo de Magizoólogo quieres ser?\n[1] "
                           "Docencio\n[2] Tareo\n[3] Híbrido")
                     respuesta = input("Ingrese una opción (1, 2 o 3):")
-                    alimentos.append(random.choice(["Tarta de Melaza", "Hígado de Dragón",
-                                                    "Buñuelo de Gusarajo"]))
                     condicion = False
                     if respuesta == "1":
                         tipo = "Docencio"
@@ -45,7 +45,7 @@ class Dcc:
                                                          p.RESPONSABILIDAD_DOCENCIO_MAX)
                         condicion = self.vender_criatura(criaturas, sickles)
                         if condicion:
-                            self.magizoologos[nombre] = Docencio(nombre, tipo, sickles, criaturas,
+                            self.magizoologos[nombre.lower()] = Docencio(nombre, tipo, sickles, criaturas,
                                                              alimentos, licencia, nivel_magico,
                                                              destreza, energia_total,
                                                              responsabilidad,
@@ -62,7 +62,7 @@ class Dcc:
                                                          p.RESPONSABILIDAD_TAREO_MAX)
                         condicion = self.vender_criatura(criaturas, sickles)
                         if condicion:
-                            self.magizoologos[nombre] = Tareo(nombre, tipo, sickles, criaturas,
+                            self.magizoologos[nombre.lower()] = Tareo(nombre, tipo, sickles, criaturas,
                                                           alimentos, licencia, nivel_magico,
                                                           destreza, energia_total,
                                                           responsabilidad,
@@ -79,7 +79,7 @@ class Dcc:
                                                          p.RESPONSABILIDAD_HIBRIDO_MAX)
                         condicion = self.vender_criatura(criaturas, sickles)
                         if condicion:
-                            self.magizoologos[nombre] = Hibrido(nombre, tipo, sickles, criaturas,
+                            self.magizoologos[nombre.lower()] = Hibrido(nombre, tipo, sickles, criaturas,
                                                             alimentos, licencia, nivel_magico,
                                                             destreza, energia_total,
                                                             responsabilidad,
@@ -89,17 +89,15 @@ class Dcc:
                     if (respuesta == "1" or respuesta == "2" or respuesta == "3") and condicion:
                         print(self.magizoologos[nombre].__dict__)
                         self.usuario_actual = self.magizoologos[nombre]
+                        self.usuario_actual.nivel_aprobacion = p.APROBACION_MAXIMA
                         agregar_magizoologo(self.magizoologos[nombre], p.RUTA_MAGIZOOLOGOS)
-                        menu_acciones(Dcc(self.magizoologos, self.criaturas, self.alimentos,
-                                          self.usuario_actual))
+                        menu_acciones(self)
             elif nombre.lower() in self.magizoologos:
                 print("Nombre ya existe.\n¿Qué desea hacer?")
-                menu_error(Dcc(self.magizoologos, self.criaturas, self.alimentos,
-                               self.usuario_actual), menu_inicio)
+                menu_error(self, menu_inicio)
             else:
                 print("Nombre inválido. Solo utilizar caracteres alfanuméricos.\n¿Qué desea hacer?")
-                menu_error(Dcc(self.magizoologos, self.criaturas, self.alimentos,
-                               self.usuario_actual), menu_inicio)
+                menu_error(self, menu_inicio)
             if self.usuario_actual is not None:
                 break
 
@@ -109,12 +107,11 @@ class Dcc:
             if nombre.lower() in self.magizoologos and nombre.isalnum():
                 self.usuario_actual = self.magizoologos[nombre.lower()]
                 print(f"¡Bienvenido {self.usuario_actual.nombre}!")
-                menu_acciones(Dcc(self.magizoologos, self.criaturas, self.alimentos,
-                                  self.usuario_actual))
+                self.calcular_aprobacion()
+                menu_acciones(self)
             else:
                 print("Magizoologo no existe. \n¿Qué desea hacer?")
-                menu_error(Dcc(self.magizoologos, self.criaturas, self.alimentos,
-                               self.usuario_actual), menu_inicio)
+                menu_error(self, menu_inicio)
 
     def vender_criatura(self, criaturas, sickles):
         while True:
@@ -126,62 +123,73 @@ class Dcc:
             nivel_hambre = "satisfecha"
             estado_escape = False
             dias_sin_comer = 0
-            if respuesta == "1" and sickles >= p.PRECIO_AUGEREY:
-                tipo_criatura = "Augurey"
-                nivel_magico_criatura = random.randint(p.NIVEL_MAGICO_AUGUREY_MIN,
-                                                       p.NIVEL_MAGICO_AUGUREY_MAX)
-                prob_escape = p.PROB_ESCAPE_AUGUREY
-                prob_enfermar = p.PROB_ENFERMAR_AUGUREY
-                salud_total = p.SALUD_AUGUREY_MAX
-                salud_actual = p.SALUD_AUGUREY_MAX
-                nivel_agresividad = p.NIVEL_AGRESVIDAD_AUGUREY
-                cleptomania = p.CLEPTOMANIA_AUGUREY
-                nombre_criatura = self.elegir_nombre_criatura(criaturas)
-                if nombre_criatura is not False:
-                    self.criaturas[nombre_criatura] = Augurey(nombre_criatura, tipo_criatura,
-                                                          nivel_magico_criatura, prob_escape,
-                                                          prob_enfermar, estado_salud,
-                                                          estado_escape, salud_total, salud_actual,
-                                                          nivel_hambre, nivel_agresividad,
-                                                          dias_sin_comer, cleptomania)
-            elif respuesta == "2" and sickles >= p.PRECIO_NIFFLER:
-                tipo_criatura = "Niffler"
-                nivel_magico_criatura = random.randint(p.NIVEL_MAGICO_NIFFLER_MIN,
-                                                       p.NIVEL_MAGICO_NIFFLER_MAX)
-                prob_escape = p.PROB_ESCAPE_NIFFLER
-                prob_enfermar = p.PROB_ENFERMAR_NIFFLER
-                salud_total = p.SALUD_NIFFLER_MAX
-                salud_actual = p.SALUD_NIFFLER_MAX
-                nivel_agresividad = p.NIVEL_AGRESVIDAD_NIFFLER
-                cleptomania = random.randint(p.CLEPTOMANIA_NIFFLER_MIN,
-                                             p.CLEPTOMANIA_NIFFLER_MAX)
-                nombre_criatura = self.elegir_nombre_criatura(criaturas)
-                if nombre_criatura is not False:
-                    self.criaturas[nombre_criatura] = Niffler(nombre_criatura, tipo_criatura,
-                                                          nivel_magico_criatura, prob_escape,
-                                                          prob_enfermar, estado_salud,
-                                                          estado_escape, salud_total, salud_actual,
-                                                          nivel_hambre, nivel_agresividad,
-                                                          dias_sin_comer, cleptomania)
-            elif respuesta == "3" and sickles >= p.PRECIO_ERKLING:
-                tipo_criatura = "Erkling"
-                nivel_magico_criatura = random.randint(p.NIVEL_MAGICO_ERKLING_MIN,
-                                                       p.NIVEL_MAGICO_ERKLING_MAX)
-                prob_escape = p.PROB_ESCAPE_ERKLING
-                prob_enfermar = p.PROB_ENFERMAR_ERKLING
-                salud_total = p.SALUD_ERKLING_MAX
-                salud_actual = p.SALUD_ERKLING_MAX
-                nivel_agresividad = p.NIVEL_AGRESVIDAD_ERKLING
-                cleptomania = p.CLEPTOMANIA_ERKLING
-                nombre_criatura = self.elegir_nombre_criatura(criaturas)
-
-                if nombre_criatura is not False:
-                    self.criaturas[nombre_criatura] = Erkling(nombre_criatura, tipo_criatura,
-                                                          nivel_magico_criatura, prob_escape,
-                                                          prob_enfermar, estado_salud,
-                                                          estado_escape, salud_total, salud_actual,
-                                                          nivel_hambre, nivel_agresividad,
-                                                          dias_sin_comer, cleptomania)
+            if respuesta == "1":
+                if sickles >= p.PRECIO_AUGEREY:
+                    tipo_criatura = "Augurey"
+                    nivel_magico_criatura = random.randint(p.NIVEL_MAGICO_AUGUREY_MIN,
+                                                           p.NIVEL_MAGICO_AUGUREY_MAX)
+                    prob_escape = p.PROB_ESCAPE_AUGUREY
+                    prob_enfermar = p.PROB_ENFERMAR_AUGUREY
+                    salud_total = p.SALUD_AUGUREY_MAX
+                    salud_actual = p.SALUD_AUGUREY_MAX
+                    nivel_agresividad = p.NIVEL_AGRESVIDAD_AUGUREY
+                    cleptomania = p.CLEPTOMANIA_AUGUREY
+                    nombre_criatura = self.elegir_nombre_criatura(criaturas)
+                    if nombre_criatura is not False:
+                        self.criaturas[nombre_criatura.lower()] = Augurey(nombre_criatura, tipo_criatura,
+                                                              nivel_magico_criatura, prob_escape,
+                                                              prob_enfermar, estado_salud,
+                                                              estado_escape, salud_total, salud_actual,
+                                                              nivel_hambre, nivel_agresividad,
+                                                              dias_sin_comer, cleptomania)
+                elif sickles < p.PRECIO_AUGEREY:
+                    print("No tienes dinero suficiente.")
+                    menu_dcc(self)
+            elif respuesta == "2":
+                if sickles >= p.PRECIO_NIFFLER:
+                    tipo_criatura = "Niffler"
+                    nivel_magico_criatura = random.randint(p.NIVEL_MAGICO_NIFFLER_MIN,
+                                                           p.NIVEL_MAGICO_NIFFLER_MAX)
+                    prob_escape = p.PROB_ESCAPE_NIFFLER
+                    prob_enfermar = p.PROB_ENFERMAR_NIFFLER
+                    salud_total = p.SALUD_NIFFLER_MAX
+                    salud_actual = p.SALUD_NIFFLER_MAX
+                    nivel_agresividad = p.NIVEL_AGRESVIDAD_NIFFLER
+                    cleptomania = random.randint(p.CLEPTOMANIA_NIFFLER_MIN,
+                                                 p.CLEPTOMANIA_NIFFLER_MAX)
+                    nombre_criatura = self.elegir_nombre_criatura(criaturas)
+                    if nombre_criatura is not False:
+                        self.criaturas[nombre_criatura.lower()] = Niffler(nombre_criatura, tipo_criatura,
+                                                              nivel_magico_criatura, prob_escape,
+                                                              prob_enfermar, estado_salud,
+                                                              estado_escape, salud_total, salud_actual,
+                                                              nivel_hambre, nivel_agresividad,
+                                                              dias_sin_comer, cleptomania)
+                elif sickles < p.PRECIO_NIFFLER:
+                    print("No tienes dinero suficiente.")
+                    menu_dcc(self)
+            elif respuesta == "3":
+                if sickles >= p.PRECIO_ERKLING:
+                    tipo_criatura = "Erkling"
+                    nivel_magico_criatura = random.randint(p.NIVEL_MAGICO_ERKLING_MIN,
+                                                           p.NIVEL_MAGICO_ERKLING_MAX)
+                    prob_escape = p.PROB_ESCAPE_ERKLING
+                    prob_enfermar = p.PROB_ENFERMAR_ERKLING
+                    salud_total = p.SALUD_ERKLING_MAX
+                    salud_actual = p.SALUD_ERKLING_MAX
+                    nivel_agresividad = p.NIVEL_AGRESVIDAD_ERKLING
+                    cleptomania = p.CLEPTOMANIA_ERKLING
+                    nombre_criatura = self.elegir_nombre_criatura(criaturas)
+                    if nombre_criatura is not False:
+                        self.criaturas[nombre_criatura.lower()] = Erkling(nombre_criatura, tipo_criatura,
+                                                              nivel_magico_criatura, prob_escape,
+                                                              prob_enfermar, estado_salud,
+                                                              estado_escape, salud_total, salud_actual,
+                                                              nivel_hambre, nivel_agresividad,
+                                                              dias_sin_comer, cleptomania)
+                elif sickles < p.PRECIO_ERKLING:
+                    print("No tienes dinero suficiente.")
+                    menu_dcc(self)
             else:
                 print("ERROR. Intente nuevamente")
 
@@ -208,8 +216,7 @@ class Dcc:
                 return nombre_criatura
             else:
                 print("Nombre inválido. ¿Qué desea hacer?")
-                menu_error(Dcc(self.magizoologos, self.criaturas, self.alimentos,
-                               self.usuario_actual), menu_anterior)
+                menu_error(self, menu_anterior)
 
     def mostrar_estado(self):
         user = self.usuario_actual
@@ -226,10 +233,135 @@ class Dcc:
         for criaturas in self.usuario_actual.criaturas:
             criat = self.criaturas[criaturas.lower()]
             print(f"Nombre: {criat.nombre}\n  Tipo: {criat.tipo}\n  Nivel mágico: "
-                  f"{criat.nivel_magico}\n  Salud actual: {criat.salud_actual}\n  "
+                  f"{criat.nivel_magico}\n  Salud actual: {criat.salud_actual}\n  Salud total: {criat.salud_total}\n  "
                   f"Estado de salud: {criat.estado_salud}\n  Nivel de hambre: {criat.nivel_hambre}"
-                  f"\n  Nivel de agresividad: {criat.nivel_agresividad}\n")
+                  f"\n  Nivel de agresividad: {criat.nivel_agresividad}\n  Días sin comer: {criat.dias_sin_comer}")
 
+    def calcular_aprobacion(self):
+        criaturas_sanas = 0
+        criaturas_retenidas = 0
+        criaturas_totales = 0
+        for nombre_criatura in self.usuario_actual.criaturas:
+            if not self.criaturas[nombre_criatura.lower()].estado_salud:
+                criaturas_sanas += 1
+            if not self.criaturas[nombre_criatura.lower()].estado_escape:
+                criaturas_retenidas += 1
+            criaturas_totales += 1
+        aprobacion = min(100, max(0, ((criaturas_sanas + criaturas_retenidas)/
+                                      (2 * criaturas_totales)) * 100))
+        self.usuario_actual.nivel_aprobacion = int(aprobacion)
+        print(f"Nivel de aprobación: {self.usuario_actual.nivel_aprobacion}")
+        if self.usuario_actual.nivel_aprobacion >= p.NIVEL_APROBACION_LICENCIA and self.usuario_actual.licencia:
+            print(f"¡Felicidades! Continúas con tu licencia")
+        elif self.usuario_actual.nivel_aprobacion >= p.NIVEL_APROBACION_LICENCIA and not self.usuario_actual.licencia:
+            self.usuario_actual.licencia = True
+            print(f"¡Felicidades! Has recuperado tu licencia")
+        elif self.usuario_actual.nivel_aprobacion < p.NIVEL_APROBACION_LICENCIA and not self.usuario_actual.licencia:
+            print(f"Lamentablemente aún no logras recuperar tu licencia")
+        else:
+            self.usuario_actual.licencia = False
+            print(f"Lamentablemente pierdes tu licencia")
+        actualizar_datos_magizoologo(self.usuario_actual, p.RUTA_MAGIZOOLOGOS)
 
+    def pagar(self):
+        pago = self.usuario_actual.nivel_aprobacion * 4 + \
+               len(self.usuario_actual.alimentos) * 15 + self.usuario_actual.nivel_magico * 3
+        self.usuario_actual.sickles += int(pago)
+        print(f"El DCC te ha pagado {int(pago)} Sickles")
 
+    def fiscalizar(self, enfermos_nuevos, escapadores_nuevos):
+        enfermos_nuevos = enfermos_nuevos.split(",")
+        escapadores_nuevos = escapadores_nuevos.split(",")
+        total_multas = 0
+        escape = 0
+        enfermedad = 0
+        salud_baja = 0
+        if escapadores_nuevos != [""]:
+            for nombre_criatura in escapadores_nuevos:
+                criatura = self.criaturas[nombre_criatura.lower()]
+                if random.random() < p.PROB_FISCALIZAR_ESCAPE:
+                    print(f"Recibiste una multa porque {criatura.nombre} escapó")
+                    total_multas += p.MULTA_ESCAPE
+                    escape += 1
+        if enfermos_nuevos != [""]:
+            for nombre_criatura in enfermos_nuevos:
+                criatura = self.criaturas[nombre_criatura.lower()]
+                if random.random() < p.PROB_FISCALIZAR_ENFERMEDAD:
+                    print(f"Recibiste una multa porque {criatura.nombre} enfermó")
+                    total_multas += p.MULTA_ENFERMEDAD
+                    enfermedad += 1
+        for nombre_criatura in self.usuario_actual.criaturas:
+            criatura = self.criaturas[nombre_criatura.lower()]
+            if criatura.salud_actual == p.SALUD_MINIMA:
+                print(f"Recibiste una multa porque {criatura.nombre} tiene su salud muy baja")
+                total_multas += p.MULTA_SALUD_BAJA
+                salud_baja += 1
+        if escape == 0:
+            print("No recibiste multas por criaturas que escaparon :D")
+        if enfermedad == 0:
+            print("No recibiste multas por criaturas que enfermaron :D")
+        if salud_baja == 0:
+            print("No recibiste multas por criaturas con salud muy baja :D")
 
+        if total_multas > self.usuario_actual.sickles:
+            print("No tienes el suficiente dinero para pagar tus multas")
+            print("No se te cobrará el dinero pero perderás tu licencia")
+            self.usuario_actual.licencia = False
+        else:
+            print(f"Se te descontaron {total_multas} Sickles en multas")
+            self.usuario_actual.sickles -= total_multas
+        print(f"Tu saldo actual es: {self.usuario_actual.sickles} Sickles")
+
+    def pasar_dia(self):
+        print("¡Has pasado al día siguiente!")
+        print("*********************************************")
+        print("Resumen de los eventos de hoy:\n")
+        enfermos_nuevos = ""
+        escapadores_nuevos = ""
+        hambrientos_nuevos = ""
+        for nombre_criatura in self.usuario_actual.criaturas:
+            criatura = self.criaturas[nombre_criatura.lower()]
+            criatura.cambiar_hambre()
+            criat = criatura.enfermarse(self)
+            if criat:
+                if enfermos_nuevos == "":
+                    enfermos_nuevos += criat.nombre
+                else:
+                    enfermos_nuevos += ","
+                    enfermos_nuevos += criat.nombre
+            criat = criatura.escaparse(self)
+            if criat:
+                if escapadores_nuevos == "":
+                    escapadores_nuevos += criat.nombre
+                else:
+                    escapadores_nuevos += ","
+                    escapadores_nuevos += criat.nombre
+            if not criatura.comio_hoy:
+                criatura.dias_sin_comer += 1
+            criat = criatura.cambiar_hambre()
+            if criat:
+                if criat.nivel_hambre == "hambrienta":
+                    if hambrientos_nuevos == "":
+                        hambrientos_nuevos += criat.nombre
+                    else:
+                        hambrientos_nuevos += ","
+                        hambrientos_nuevos += criat.nombre
+        print(f"Criaturas que enfermaron hoy: {enfermos_nuevos}")
+        print(f"Criaturas que escaparon hoy: {escapadores_nuevos}")
+        print(f"Criaturas hambrientas desde hoy: {hambrientos_nuevos}")
+        for nombre_criatura in self.usuario_actual.criaturas:
+            criatura = self.criaturas[nombre_criatura.lower()]
+            if criatura.estado_salud:
+                criatura.salud_actual -= p.DISMINUCION_SALUD_POR_DIA_ENFERMO
+                print(f"{criatura.nombre} perdió salud por enfermedad :(")
+            if criatura.nivel_hambre == "hambrienta":
+                criatura.salud_actual -= p.DISMINUCION_SALUD_POR_DIA_HAMBRE
+                print(f"{criatura.nombre} perdió salud por hambre :(")
+        print("*********************************************")
+        self.calcular_aprobacion()
+        self.pagar()
+        self.fiscalizar(enfermos_nuevos, escapadores_nuevos)
+        for nombre_criatura in self.usuario_actual.criaturas:
+            criatura = self.criaturas[nombre_criatura.lower()]
+            criatura.habilidad_comienzo_dia(self)
+        self.mostrar_estado()

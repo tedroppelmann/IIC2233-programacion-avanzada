@@ -5,7 +5,6 @@ from menus import menu_error, menu_dcc, menu_cuidar
 from abc import ABC, abstractmethod
 import random
 
-
 class Magizoologo(ABC):
 
     def __init__(self, nombre, tipo, sickles, criaturas, alimentos, licencia, nivel_magico,
@@ -19,11 +18,25 @@ class Magizoologo(ABC):
         self.licencia = licencia
         self.destreza = int(destreza)
         self.energia = int(energia)
-        self.responsabilidad = responsabilidad
+        self.responsabilidad = int(responsabilidad)
         self.habilidad_especial = habilidad_especial
 
-        self.energia_actual = int(energia)
+        self.__energia_actual = int(energia)
         self.nivel_aprobacion = None
+        self.dias_jugando = 1
+
+    @property
+    def energia_actual(self):
+        return self.__energia_actual
+
+    @energia_actual.setter
+    def energia_actual(self, k):
+        if k < 0:
+            self.__energia_actual = 0
+        elif k > self.energia:
+            self.__energia_actual = self.energia
+        else:
+            self.__energia_actual = k
 
     def adoptar(self, DCC):
         if self.licencia:
@@ -80,113 +93,200 @@ class Magizoologo(ABC):
 
     @abstractmethod
     def alimentar_criatura(self, DCC):
-        if len(self.alimentos) >= 1 and self.alimentos[0] != "":
-            if self.energia_actual >= p.GASTO_ALIMENTAR:
-                while True:
-                    print(f"¿A cuál de tus DCCriaturas quieres alimentar?")
-                    i = 0
+        while True:
+            if len(self.alimentos) >= 1 and self.alimentos[0] != "":
+                if self.energia_actual >= p.GASTO_ALIMENTAR:
+                    j = 0
                     for criaturas in self.criaturas:
-                        criat = DCC.criaturas[criaturas.lower()]
-                        if not criat.estado_escape:
-                            print(f"[{i+1}] {criat.nombre} ({criat.tipo}): {criat.nivel_hambre}")
-                            i += 1
-                        elif i == 0:
-                            print("Hay un problema. Todas tus criaturas han escapado. "
-                                  "¡Ve a recuperarlas!")
-                            return criat, False
-                    nombre = input("Escribe su nombre:")
-                    while True:
-                        print("Posees los siguientes alimentos:")
-                        for alimento in DCC.alimentos:
-                            alim = DCC.alimentos[alimento]
-                            if alim.nombre in self.alimentos:
-                                print(f"{alim.nombre}\n  Cantidad: "
-                                      f"{self.alimentos.count(alim.nombre)}")
-                        resp = input("¿Que alimento quieres utilizar? "
-                                     "Escribe su nombre (con tildes):")
-                        j = 0
-                        alimento_elegido = None
-                        for alimento in DCC.alimentos:
-                            alim = DCC.alimentos[alimento]
-                            if resp.lower() == alim.nombre.lower() and resp.lower() in \
-                                    (element.lower() for element in self.alimentos):
-                                alimento_elegido = alim
-                                j += 1
-                        if j == 1:
-                            break
+                        escape = DCC.criaturas[criaturas.lower()].estado_escape
+                        if not escape:
+                            j += 1
+                    if j > 0:
+                        print(f"¿A cuál de tus DCCriaturas quieres alimentar?")
+                        i = 0
+                        for criaturas in self.criaturas:
+                            criat = DCC.criaturas[criaturas.lower()]
+                            if not criat.estado_escape:
+                                print(f"[{i+1}] {criat.nombre} ({criat.tipo}): {criat.nivel_hambre}")
+                                i += 1
+                        nombre = input("Escribe su nombre:")
+                        k = 0
+                        for criaturas in self.criaturas:
+                            criat = DCC.criaturas[criaturas.lower()]
+                            if nombre.lower() == criat.nombre.lower():
+                                k += 1
+                        if k > 0:
+                            while True:
+                                print("Posees los siguientes alimentos:")
+                                for alimento in DCC.alimentos:
+                                    alim = DCC.alimentos[alimento]
+                                    if alim.nombre in self.alimentos:
+                                        print(f"{alim.nombre}\n  Cantidad: "
+                                              f"{self.alimentos.count(alim.nombre)}\n"
+                                              f"  Efecto en salud: {alim.efecto_salud}")
+                                resp = input("¿Que alimento quieres utilizar? "
+                                             "Escribe su nombre (con tildes):")
+                                j = 0
+                                alimento_elegido = None
+                                for alimento in DCC.alimentos:
+                                    alim = DCC.alimentos[alimento]
+                                    if resp.lower() == alim.nombre.lower() and resp.lower() in \
+                                            (element.lower() for element in self.alimentos):
+                                        alimento_elegido = alim
+                                        j += 1
+                                if j == 1:
+                                    break
+                                else:
+                                    print("Nombre incorrecto. ¿Qué deseas hacer?")
+                                    menu_error(DCC, menu_cuidar)
+                            for criaturas in self.criaturas:
+                                criat = DCC.criaturas[criaturas.lower()]
+                                if nombre.lower() == criat.nombre.lower() and alimento_elegido:
+                                    criat.alimentarse(DCC)
+                                    criat.salud_actual += alimento_elegido.efecto_salud
+                                    self.alimentos.remove(alimento_elegido.nombre)
+                                    self.energia_actual -= p.GASTO_ALIMENTAR
+                                    alimento_elegido.particularidad_alimento(DCC, criat)
+                                    if criat.nivel_hambre == "satisfecha":
+                                        criat.comio_hoy = True
+                                        criat.dias_sin_comer = 0
+                                        actualizar_datos_criaturas(criat, p.RUTA_CRIATURAS)
+                                        actualizar_datos_magizoologo(DCC.usuario_actual,
+                                                                     p.RUTA_MAGIZOOLOGOS)
+                                        print(f"La salud actual de {criat.nombre} es {criat.salud_actual}")
+                                        print(f"Tu energía actual es de {self.energia_actual}")
+                                        return criat, True
+                                    else:
+                                        actualizar_datos_criaturas(criat, p.RUTA_CRIATURAS)
+                                        actualizar_datos_magizoologo(DCC.usuario_actual,p.RUTA_MAGIZOOLOGOS)
+                                        print(f"Tu energía actual es de {self.energia_actual}")
+                                        return criat, False
                         else:
                             print("Nombre incorrecto. ¿Qué deseas hacer?")
                             menu_error(DCC, menu_cuidar)
+                    else:
+                        print("Hay un problema. Todas tus criaturas han escapado. "
+                              "¡Ve a recuperarlas!")
+                        return None, False
+                else:
+                    print("No posees la suficiente energía actualmente para "
+                          "alimentar una DCCriatura.")
+                    return None, False
+            else:
+                print("No posees alimentos actualmente.")
+                return None, False
+
+    @abstractmethod
+    def recuperar_criatura(self, DCC):
+        while True:
+            if self.energia_actual >= p.GASTO_RECUPERAR:
+                j = 0
+                for criaturas in self.criaturas:
+                    escape = DCC.criaturas[criaturas.lower()].estado_escape
+                    if escape:
+                        j += 1
+                if j > 0:
+                    i = 1
+                    print("Las DCCriaturas que han escapado son:")
                     for criaturas in self.criaturas:
                         criat = DCC.criaturas[criaturas.lower()]
-                        if nombre.lower() == criat.nombre.lower() and not criat.estado_escape and \
-                                alimento_elegido:
-                            self.energia_actual -= int(criat.alimentarse(DCC))
-                            criat.salud_actual += alimento_elegido.efecto_salud
-                            self.alimentos.remove(alimento_elegido.nombre)
-                            self.energia_actual -= p.GASTO_ALIMENTAR
-                            alimento_elegido.particularidad_alimento(DCC, criat)
-                            if criat.nivel_hambre == "satisfecha":
-                                criat.dias_sin_comer = 0
+                        if criat.estado_escape:
+                            print(f"[{i}] {criat.nombre} ({criat.tipo}):"
+                                  f"\n  Nivel mágico: {criat.nivel_magico}")
+                            i += 1
+                    nombre = input("Escribe el nombre de la DCCriatura que quieres rescatar:")
+                    k = 0
+                    for criaturas in self.criaturas:
+                        criat = DCC.criaturas[criaturas.lower()]
+                        if nombre.lower() == criat.nombre.lower() and criat.estado_escape:
+                            self.energia_actual -= p.GASTO_RECUPERAR
+                            prob_exito = min(1, max(0,(self.destreza + self.nivel_magico
+                                                       - criat.nivel_magico)/
+                                                    (self.destreza + self.nivel_magico +
+                                                     criat.nivel_magico)))
+                            if random.random() <= prob_exito:
+                                criat.estado_escape = False
                                 actualizar_datos_criaturas(criat, p.RUTA_CRIATURAS)
-                                actualizar_datos_magizoologo(DCC.usuario_actual,
-                                                             p.RUTA_MAGIZOOLOGOS)
+                                print(f"Has recuperado a {criat.nombre} ¡Felicitiaciones!")
                                 print(f"Tu energía actual es de {self.energia_actual}")
                                 return criat, True
                             else:
                                 actualizar_datos_criaturas(criat, p.RUTA_CRIATURAS)
-                                actualizar_datos_magizoologo(DCC.usuario_actual,p.RUTA_MAGIZOOLOGOS)
+                                print(f"No lograste recuperar a {criat.nombre}.")
                                 print(f"Tu energía actual es de {self.energia_actual}")
-                                return criat, False
-                    print("Nombre incorrecto. ¿Qué deseas hacer?")
-                    menu_error(DCC, menu_cuidar)
+                                k += 1
+                                menu_cuidar(DCC)
+                    if k == 0:
+                        print("Nombre incorrecto. ¿Qué deseas hacer?")
+                        menu_error(DCC, menu_cuidar)
+                else:
+                    print("¡Felicitaciones! No se ha escapado ninguna DCCriatura")
+                    return None, False
             else:
-                print("No posees la suficiente energía actualmente para alimentar una DCCriatura.")
-        else:
-            print("No posees alimentos actualmente.")
-            return None, False
+                print("No posees la sufiente energía actualmente para recuperar una DCCriatura.")
+                return None, False
+
+    def sanar_criatura(self, DCC):
+        while True:
+            if self.energia_actual >= p.GASTO_SANAR:
+                i = 0
+                for criaturas in self.criaturas:
+                    salud = DCC.criaturas[criaturas.lower()].estado_salud
+                    if salud:
+                        i += 1
+                if i > 0:
+                    j = 0
+                    print("Las DCCriaturas enfermas (que no han escapado) son:")
+                    for criaturas in self.criaturas:
+                        criat = DCC.criaturas[criaturas.lower()]
+                        if not criat.estado_escape and criat.estado_salud:
+                            print(f"[{j+1}] {criat.nombre} ({criat.tipo}):"
+                                  f"\n  Salud actual: {criat.salud_actual}")
+                            j += 1
+                        elif j == 0:
+                            print("Tienes un problema. Todas las DCCriaturas enfermas han"
+                                  " escapado. Primero tienes que recuperarlas.")
+                    nombre = input("Escribe el nombre de la DCCriatura que quieres sanar:")
+                    k = 0
+                    for criaturas in self.criaturas:
+                        criat = DCC.criaturas[criaturas.lower()]
+                        if nombre.lower() == criat.nombre.lower() and not criat.estado_escape\
+                                and criat.estado_salud:
+                            self.energia_actual -= p.GASTO_SANAR
+                            print((self.nivel_magico - criat.nivel_magico)/(self.nivel_magico
+                                                                            + criat.salud_total))
+                            prob_exito = min(1, max(0, (self.nivel_magico -
+                                                        criat.nivel_magico)/
+                                                    (self.nivel_magico + criat.salud_total)))
+                            print(prob_exito)
+                            if random.random() <= prob_exito:
+                                criat.estado_salud = False
+                                print(f"¡Has logrado sanar a {criat.nombre}!")
+                                print(f"Tu energía actual es de {self.energia_actual}")
+                                actualizar_datos_criaturas(criat, p.RUTA_CRIATURAS)
+                                actualizar_datos_magizoologo(DCC.usuario_actual,
+                                                             p.RUTA_MAGIZOOLOGOS)
+                                k += 1
+                                return
+                            else:
+                                print(f"Lamentablemente no lograste sanar a {criat.nombre}.")
+                                print(f"Tu energía actual es de {self.energia_actual}")
+                                actualizar_datos_criaturas(criat, p.RUTA_CRIATURAS)
+                                actualizar_datos_magizoologo(DCC.usuario_actual,
+                                                             p.RUTA_MAGIZOOLOGOS)
+                                k += 1
+                                menu_error(DCC, menu_cuidar)
+                    if k == 0:
+                        print("Nombre incorrecto. ¿Qué deseas hacer?")
+                        menu_error(DCC, menu_cuidar)
+                else:
+                    print("¡Felicitaciones! No tienes DCCriaturas enfermas.")
+                    return
+            else:
+                print("No posees la sufiente energía actualmente para recuperar una DCCriatura.")
+                return
 
     @abstractmethod
-    def recuperar_criatura(self, DCC):
-        if self.energia_actual >= p.GASTO_RECUPERAR:
-            while True:
-                i = 0
-                print("Las DCCriaturas que han escapado son:")
-                for criaturas in self.criaturas:
-                    criat = DCC.criaturas[criaturas.lower()]
-                    if criat.estado_escape:
-                        print(f"[{i+1}] {criat.nombre} ({criat.tipo}):"
-                              f"\n  Nivel mágico: {criat.nivel_magico}")
-                        i += 1
-                    elif i == 0:
-                        print("¡Felicitaciones! No se ha escapado ninguna DCCriatura")
-                        return None, False
-                nombre = input("Escribe el nombre de la DCCriatura que quieres rescatar:")
-                for criaturas in self.criaturas:
-                    criat = DCC.criaturas[criaturas.lower()]
-                    if nombre.lower() == criat.nombre.lower() and criat.estado_escape:
-                        self.energia_actual -= p.GASTO_RECUPERAR
-                        prob_exito = min(1, max(0,(self.destreza + self.nivel_magico
-                                                   - criat.nivel_magico)/
-                                                (self.destreza + self.nivel_magico +
-                                                 criat.nivel_magico)))
-                        if random.random() <= prob_exito:
-                            criat.estado_escape = False
-                            actualizar_datos_criaturas(criat, p.RUTA_CRIATURAS)
-                            print(f"Has recuperado a {criat.nombre} ¡Felicitiaciones!")
-                            print(f"Tu energía actual es de {self.energia_actual}")
-                            return criat, True
-                        else:
-                            actualizar_datos_criaturas(criat, p.RUTA_CRIATURAS)
-                            print(f"No lograste recuperar a {criat.nombre}.")
-                            print(f"Tu energía actual es de {self.energia_actual}")
-                            menu_cuidar(DCC)
-                print("Nombre incorrecto. ¿Qué deseas hacer?")
-                menu_error(DCC, menu_cuidar)
-        else:
-            print("No posees la sufiente energía actualmente para recuperar una DCCriatura.")
-            return None, False
-
     def usar_habilidad_especial(self, DCC):
         pass
 
@@ -198,7 +298,6 @@ class Docencio(Magizoologo):
             criatura.salud_total += p.DOCENCIO_AUMENTO_SALUD_TOTAL_CRIATURA
             print(f"Como eres Docencio, {criatura.nombre} ahora posee "
                   f"{criatura.salud_total} puntos de salud total.")
-            actualizar_datos_criaturas(criatura, p.RUTA_CRIATURAS)
 
     def recuperar_criatura(self, DCC):
         criatura, condicion = super().recuperar_criatura(DCC)
@@ -235,9 +334,8 @@ class Tareo(Magizoologo):
             if random.random() < p.PROB_SALUD_TAREO:
                 criatura.salud_actual = criatura.salud_total
                 print(f"¡Enhorabuena! Como eres Tareo, {criatura.nombre} ahora posee "
-                      f"{criatura.salud_total} puntos de salud actual, el total de sus "
+                      f"{criatura.salud_actual} puntos de salud actual, el total de sus "
                       f"puntos de salud.")
-                actualizar_datos_criaturas(criatura, p.RUTA_CRIATURAS)
 
     def recuperar_criatura(self, DCC):
         criatura, condicion = super().recuperar_criatura(DCC)
@@ -268,10 +366,9 @@ class Hibrido(Magizoologo):
     def alimentar_criatura(self,DCC):
         criatura, condicion = super().alimentar_criatura(DCC)
         if condicion:
-            criatura.salud_total += p.HIBRIDO_AUMENTO_SALUD_ACTUAL_CRIATURA
+            criatura.salud_actual += p.HIBRIDO_AUMENTO_SALUD_ACTUAL_CRIATURA
             print(f"¡Enhorabuena! Como eres Híbrido, {criatura.nombre} ahora posee "
-                  f"{criatura.salud_total} puntos de salud actual.")
-            actualizar_datos_criaturas(criatura, p.RUTA_CRIATURAS)
+                  f"{criatura.salud_actual} puntos de salud actual.")
 
     def recuperar_criatura(self, DCC):
         criatura, condicion = super().recuperar_criatura(DCC)

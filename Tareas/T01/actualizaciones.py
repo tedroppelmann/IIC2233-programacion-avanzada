@@ -23,6 +23,8 @@ def agregar_criatura(criatura, ruta_archivo_magizoologos):
 
 def actualizar_datos_magizoologo(manizoologo, ruta_archivo_magizoologos):
 
+    if "" in manizoologo.alimentos:
+        manizoologo.alimentos.remove("")
     alimentos_nuevos = ";".join(manizoologo.alimentos)
     criaturas_nuevas = ";".join(manizoologo.criaturas)
     filas = dict()
