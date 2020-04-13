@@ -5,8 +5,6 @@ from criaturas import Augurey, Niffler, Erkling
 from alimentos import TartaDeMelaza, HigadoDeDragon, BuenueloDeGusarajo
 import parametros as p
 
-
-
 def cargar_magizoologos(ruta_archivo_magizoologos):
 
     magizoologos = defaultdict(lambda: "El Magizoólogo no existe.")
@@ -31,9 +29,7 @@ def cargar_magizoologos(ruta_archivo_magizoologos):
                 magizoologos[nombre.lower()] = Hibrido(nombre, tipo, sickles, criaturas, alimentos,
                                              licencia, nivel_magico, destreza, energia,
                                              responsabilidad, habilidad_especial)
-
     return magizoologos
-
 
 def cargar_criaturas(ruta_archivo_criaturas):
 
@@ -62,7 +58,6 @@ def cargar_criaturas(ruta_archivo_criaturas):
                                             probabilidad_enfermarse, estado_salud, estado_escape,
                                             salud_total, salud_actual, nivel_hambre,
                                             nivel_agresividad, dias_sin_comer, nivel_cleptomania)
-
     return criaturas
 
 def cargar_alimentos():

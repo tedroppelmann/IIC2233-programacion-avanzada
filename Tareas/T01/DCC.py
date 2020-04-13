@@ -3,7 +3,7 @@ import parametros as p
 import random
 from criaturas import Augurey, Niffler, Erkling
 from magizoologos import Docencio, Tareo, Hibrido
-from actualizaciones import agregar_magizoologo, agregar_criatura, actualizar_datos_magizoologo
+from actualizaciones import agregar_magizoologo, agregar_criatura, actualizar_datos_magizoologo, actualizar_datos_criaturas
 from menus import menu_error, menu_acciones, menu_inicio, menu_dcc
 
 
@@ -50,6 +50,7 @@ class Dcc:
                                                              destreza, energia_total,
                                                              responsabilidad,
                                                              habilidad_especial)
+                            print(self.magizoologos[nombre.lower()])
                     elif respuesta == "2":
                         tipo = "Tareo"
                         nivel_magico = random.randint(p.NIVEL_MAGICO_TAREO_MIN,
@@ -87,10 +88,10 @@ class Dcc:
                     else:
                         print("ERROR. Intenta nuevamente.")
                     if (respuesta == "1" or respuesta == "2" or respuesta == "3") and condicion:
-                        print(self.magizoologos[nombre].__dict__)
-                        self.usuario_actual = self.magizoologos[nombre]
+                        self.usuario_actual = self.magizoologos[nombre.lower()]
+                        print(self.usuario_actual.__dict__)
                         self.usuario_actual.nivel_aprobacion = p.APROBACION_MAXIMA
-                        agregar_magizoologo(self.magizoologos[nombre], p.RUTA_MAGIZOOLOGOS)
+                        agregar_magizoologo(self.usuario_actual, p.RUTA_MAGIZOOLOGOS)
                         menu_acciones(self)
             elif nombre.lower() in self.magizoologos:
                 print("Nombre ya existe.\n¿Qué desea hacer?")
@@ -107,7 +108,6 @@ class Dcc:
             if nombre.lower() in self.magizoologos and nombre.isalnum():
                 self.usuario_actual = self.magizoologos[nombre.lower()]
                 print(f"¡Bienvenido {self.usuario_actual.nombre}!")
-                self.calcular_aprobacion()
                 menu_acciones(self)
             else:
                 print("Magizoologo no existe. \n¿Qué desea hacer?")
@@ -130,8 +130,8 @@ class Dcc:
                                                            p.NIVEL_MAGICO_AUGUREY_MAX)
                     prob_escape = p.PROB_ESCAPE_AUGUREY
                     prob_enfermar = p.PROB_ENFERMAR_AUGUREY
-                    salud_total = p.SALUD_AUGUREY_MAX
-                    salud_actual = p.SALUD_AUGUREY_MAX
+                    salud_total = random.randint(p.SALUD_AUGUREY_MIN, p.SALUD_AUGUREY_MAX)
+                    salud_actual = salud_total
                     nivel_agresividad = p.NIVEL_AGRESVIDAD_AUGUREY
                     cleptomania = p.CLEPTOMANIA_AUGUREY
                     nombre_criatura = self.elegir_nombre_criatura(criaturas)
@@ -152,8 +152,8 @@ class Dcc:
                                                            p.NIVEL_MAGICO_NIFFLER_MAX)
                     prob_escape = p.PROB_ESCAPE_NIFFLER
                     prob_enfermar = p.PROB_ENFERMAR_NIFFLER
-                    salud_total = p.SALUD_NIFFLER_MAX
-                    salud_actual = p.SALUD_NIFFLER_MAX
+                    salud_total = random.randint(p.SALUD_NIFFLER_MIN, p.SALUD_NIFFLER_MAX)
+                    salud_actual = salud_total
                     nivel_agresividad = p.NIVEL_AGRESVIDAD_NIFFLER
                     cleptomania = random.randint(p.CLEPTOMANIA_NIFFLER_MIN,
                                                  p.CLEPTOMANIA_NIFFLER_MAX)
@@ -175,8 +175,8 @@ class Dcc:
                                                            p.NIVEL_MAGICO_ERKLING_MAX)
                     prob_escape = p.PROB_ESCAPE_ERKLING
                     prob_enfermar = p.PROB_ENFERMAR_ERKLING
-                    salud_total = p.SALUD_ERKLING_MAX
-                    salud_actual = p.SALUD_ERKLING_MAX
+                    salud_total = random.randint(p.SALUD_ERKLING_MIN, p.SALUD_ERKLING_MAX)
+                    salud_actual = salud_total
                     nivel_agresividad = p.NIVEL_AGRESVIDAD_ERKLING
                     cleptomania = p.CLEPTOMANIA_ERKLING
                     nombre_criatura = self.elegir_nombre_criatura(criaturas)
@@ -197,10 +197,10 @@ class Dcc:
                 sickles >= p.PRECIO_NIFFLER) or (respuesta == "3" and sickles >= p.PRECIO_ERKLING))\
                     and nombre_criatura is not False :
                 criaturas.append(nombre_criatura)
-                print(self.criaturas[nombre_criatura].__dict__)
-                agregar_criatura(self.criaturas[nombre_criatura], p.RUTA_CRIATURAS)
+                print(self.criaturas[nombre_criatura.lower()].__dict__)
+                agregar_criatura(self.criaturas[nombre_criatura.lower()], p.RUTA_CRIATURAS)
                 if len(criaturas) != 1:
-                    sickles -= self.criaturas[nombre_criatura].precio
+                    sickles -= self.criaturas[nombre_criatura.lower()].precio
                     return sickles
                 return True
 
@@ -220,10 +220,10 @@ class Dcc:
 
     def mostrar_estado(self):
         user = self.usuario_actual
-        print(f"DATOS MAGIZOÓLOGO\nNombre: {user.nombre}\nSickles: {user.sickles}\nEnergía actual: "
-              f"{user.energia_actual}\nLicencia: {user.licencia}\nNivel de aprobación: "
-              f"{user.nivel_aprobacion}\nNivel mágico: {user.nivel_magico}\nDestreza: "
-              f"{user.destreza}\nResponsabilidad: {user.responsabilidad}\n")
+        print(f"DATOS MAGIZOÓLOGO\nNombre: {user.nombre}\n  Tipo: {user.tipo}\n  Sickles: {user.sickles}\n  Energía actual: "
+              f"{user.energia_actual}\n  Licencia: {user.licencia}\n  Nivel de aprobación: "
+              f"{user.nivel_aprobacion}\n  Nivel mágico: {user.nivel_magico}\n  Destreza: "
+              f"{user.destreza}\n  Responsabilidad: {user.responsabilidad}\n")
         print(f"DATOS ALIMENTOS")
         for alimento in self.alimentos:
             alim = self.alimentos[alimento]
@@ -253,11 +253,13 @@ class Dcc:
         print(f"Nivel de aprobación: {self.usuario_actual.nivel_aprobacion}")
         if self.usuario_actual.nivel_aprobacion >= p.NIVEL_APROBACION_LICENCIA and self.usuario_actual.licencia:
             print(f"¡Felicidades! Continúas con tu licencia")
+            self.usuario_actual.licencia = True
         elif self.usuario_actual.nivel_aprobacion >= p.NIVEL_APROBACION_LICENCIA and not self.usuario_actual.licencia:
             self.usuario_actual.licencia = True
             print(f"¡Felicidades! Has recuperado tu licencia")
         elif self.usuario_actual.nivel_aprobacion < p.NIVEL_APROBACION_LICENCIA and not self.usuario_actual.licencia:
             print(f"Lamentablemente aún no logras recuperar tu licencia")
+            self.usuario_actual.licencia = False
         else:
             self.usuario_actual.licencia = False
             print(f"Lamentablemente pierdes tu licencia")
@@ -358,10 +360,15 @@ class Dcc:
                 criatura.salud_actual -= p.DISMINUCION_SALUD_POR_DIA_HAMBRE
                 print(f"{criatura.nombre} perdió salud por hambre :(")
         print("*********************************************")
+        self.usuario_actual.energia_actual = self.usuario_actual.energia
         self.calcular_aprobacion()
         self.pagar()
         self.fiscalizar(enfermos_nuevos, escapadores_nuevos)
         for nombre_criatura in self.usuario_actual.criaturas:
             criatura = self.criaturas[nombre_criatura.lower()]
             criatura.habilidad_comienzo_dia(self)
-        self.mostrar_estado()
+            actualizar_datos_criaturas(criatura, p.RUTA_CRIATURAS)
+        print(f"Además recuperas tu energía total ({self.usuario_actual.energia_actual})")
+        actualizar_datos_magizoologo(self.usuario_actual, p.RUTA_MAGIZOOLOGOS)
+
+

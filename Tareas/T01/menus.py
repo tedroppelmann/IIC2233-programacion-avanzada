@@ -1,7 +1,7 @@
 
 import sys
 
-def menu_inicio(DCC):
+def menu_inicio(dcc):
     while True:
         print("\n***** MENÚ DE INICIO *****")
         print("Selecciones una opción:")
@@ -10,28 +10,28 @@ def menu_inicio(DCC):
         print("[0] Salir")
         respuesta = input("Indique una opción (1, 2 o 0):")
         if respuesta == "1":
-            DCC.crear_magizoologo()
+            dcc.crear_magizoologo()
         elif respuesta == "2":
-            DCC.cargar_magizoologo()
+            dcc.cargar_magizoologo()
         elif respuesta == "0":
             print("Adiós ¡Vuelve pronto!")
             sys.exit()
         else:
             print("ERROR. Intente nuevamente.")
 
-def menu_error(DCC, menu_anterior):
+def menu_error(dcc, menu_anterior):
     while True:
         print("[1] Intentar de nuevo \n[2] Volver atrás \n[0] Salir")
         respuesta = input("Ingrese una opción (1, 2 o 0):")
         if respuesta == "1":
             return True
         elif respuesta == "2":
-            menu_anterior(DCC)
+            menu_anterior(dcc)
         elif respuesta == "0":
             print("Adiós ¡Vuelve pronto!")
             sys.exit()
 
-def menu_acciones(DCC):
+def menu_acciones(dcc):
     while True:
         print("\n***** MENÚ DE ACCIONES *****")
         print("Selecciones una opción:")
@@ -42,20 +42,20 @@ def menu_acciones(DCC):
         print("[0] Salir")
         respuesta = input("Indique una opción (1, 2, 3, 4 o 0):")
         if respuesta == "1":
-            menu_cuidar(DCC)
+            menu_cuidar(dcc)
         elif respuesta == "2":
-            menu_dcc(DCC)
+            menu_dcc(dcc)
         elif respuesta == "3":
-            DCC.pasar_dia()
+            dcc.pasar_dia()
         elif respuesta == "4":
-            menu_inicio(DCC)
+            menu_inicio(dcc)
         elif respuesta == "0":
             print("Adiós ¡Vuelve pronto!")
             sys.exit()
         else:
             print("ERROR. Intente nuevamente.")
 
-def menu_cuidar(DCC):
+def menu_cuidar(dcc):
     while True:
         print("\n***** MENÚ DE CUIDAR DCCRIATURAS *****")
         print("Selecciones una opción:")
@@ -67,22 +67,22 @@ def menu_cuidar(DCC):
         print("[0] Salir")
         respuesta = input("Indique una opción (1, 2, 3, 4, 5 o 0):")
         if respuesta == "1":
-            DCC.usuario_actual.alimentar_criatura(DCC)
+            dcc.usuario_actual.alimentar_criatura(dcc)
         elif respuesta == "2":
-            DCC.usuario_actual.recuperar_criatura(DCC)
+            dcc.usuario_actual.recuperar_criatura(dcc)
         elif respuesta == "3":
-            DCC.usuario_actual.sanar_criatura(DCC)
+            dcc.usuario_actual.sanar_criatura(dcc)
         elif respuesta == "4":
-            DCC.usuario_actual.usar_habilidad_especial(DCC)
+            dcc.usuario_actual.usar_habilidad_especial(dcc)
         elif respuesta == "5":
-            menu_acciones(DCC)
+            menu_acciones(dcc)
         elif respuesta == "0":
             print("Adiós ¡Vuelve pronto!")
             sys.exit()
         else:
             print("ERROR. Intente nuevamente.")
 
-def menu_dcc(DCC):
+def menu_dcc(dcc):
     while True:
         print("\n***** MENÚ DE DCC *****")
         print("Selecciones una opción:")
@@ -93,13 +93,13 @@ def menu_dcc(DCC):
         print("[0] Salir")
         respuesta = input("Indique una opción (1, 2, 3, 4 o 0):")
         if respuesta == "1":
-            DCC.usuario_actual.adoptar(DCC)
+            dcc.usuario_actual.adoptar(dcc)
         elif respuesta == "2":
-            DCC.usuario_actual.comprar_alimento(DCC)
+            dcc.usuario_actual.comprar_alimento(dcc)
         elif respuesta == "3":
-            DCC.mostrar_estado()
+            dcc.mostrar_estado()
         elif respuesta == "4":
-            menu_acciones(DCC)
+            menu_acciones(dcc)
         elif respuesta == "0":
             print("Adiós ¡Vuelve pronto!")
             sys.exit()

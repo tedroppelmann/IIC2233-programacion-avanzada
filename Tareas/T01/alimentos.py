@@ -2,7 +2,6 @@
 from abc import ABC, abstractmethod
 import parametros as p
 import random
-from actualizaciones import actualizar_datos_criaturas
 
 class Alimento(ABC):
 
@@ -12,12 +11,12 @@ class Alimento(ABC):
         self.precio = int(precio)
 
     @abstractmethod
-    def particularidad_alimento(self,DCC, criatura):
+    def particularidad_alimento(self, criatura):
         pass
 
 class TartaDeMelaza(Alimento):
 
-    def particularidad_alimento(self,DCC, criatura):
+    def particularidad_alimento(self, criatura):
         if criatura.tipo == "Niffler":
             if random.random() < p.PROB_CAMBIO_ARISCA_INOFENSIVA:
                 print(f"¡Enhorabuena! Gacias a la Tarta de Melaza lograste disminuir la "
@@ -28,7 +27,7 @@ class TartaDeMelaza(Alimento):
 
 class HigadoDeDragon(Alimento):
 
-    def particularidad_alimento(self,DCC, criatura):
+    def particularidad_alimento(self, criatura):
         if criatura.estado_salud:
             criatura.estado_salud = False
             print(f"Gracias al Hígado de Dragón, {criatura.nombre} ha sanado.")
@@ -39,7 +38,7 @@ class HigadoDeDragon(Alimento):
 
 class BuenueloDeGusarajo(Alimento):
 
-    def particularidad_alimento(self,DCC, criatura):
+    def particularidad_alimento(self, criatura):
         if random.random() < p.PROB_RECHAZAR_BUNUELO:
             print(f"{criatura.nombre} ha rechazdo tu Buñuelo de Gusarajo")
             criatura.salud_actual -= self.efecto_salud

@@ -40,7 +40,6 @@ class Criatura(ABC):
             self.__salud_actual = k
 
     @property
-    @abstractmethod
     def salud_total(self):
         return self.__salud_total
 
@@ -49,7 +48,7 @@ class Criatura(ABC):
     def salud_total(self, k):
         pass
 
-    def alimentarse(self, DCC):
+    def alimentarse(self, dcc):
         if self.nivel_hambre == "satisfecha":
             efecto_hambre = p.EFECTO_HAMBRE_SATISFECHA
         else:
@@ -61,34 +60,29 @@ class Criatura(ABC):
             efecto_agresividad = p.EFECTO_AGRESIVIDAD_ARISCA
         else:
             efecto_agresividad = p.EFECTO_AGRESIVIDAD_PELIGROSA
-
         prob_ataque = min(1, (efecto_hambre + efecto_agresividad)/100)
         prob = random.random()
         if prob <= prob_ataque:
-            puntos_perdidos = max(10, DCC.usuario_actual.nivel_magico - self.nivel_magico)
+            puntos_perdidos = max(10, dcc.usuario_actual.nivel_magico - self.nivel_magico)
             print(f"¡{self.nombre} te ha atacado! Has perdido {puntos_perdidos} puntos de energía.")
-            DCC.usuario_actual.energia_actual -= puntos_perdidos
+            dcc.usuario_actual.energia_actual -= puntos_perdidos
         else:
             print("¡No hubo ataque de la DCCriatura!")
 
 
-    def escaparse(self, DCC):
+    def escaparse(self, dcc):
         if not self.estado_escape:
             efecto_hambre = p.EFECTO_HAMBRE_MIN_ESCAPARSE
             if self.nivel_hambre == "hambrienta":
                 efecto_hambre = p.EFECTO_HAMBRE_MAX_ESCAPARSE
-            prob_escape = min(1, self.probabilidad_escape +
-                              max(0,(efecto_hambre - DCC.usuario_actual.responsabilidad) / 100))
+            prob_escape = min(1, self.probabilidad_escape + max(0,(efecto_hambre - dcc.usuario_actual.responsabilidad) / 100))
             if random.random() < prob_escape:
                 self.estado_escape = True
                 return self
 
-    def enfermarse(self, DCC):
+    def enfermarse(self, dcc):
         if not self.estado_salud:
-            prob_enfermarse = min(1, self.probabilidad_enfermarse +
-                                  max(0, ((self.salud_total - self.salud_actual)
-                                          /self.salud_total -
-                                          (DCC.usuario_actual.responsabilidad/100))))
+            prob_enfermarse = min(1, self.probabilidad_enfermarse + max(0, ((self.salud_total - self.salud_actual)/self.salud_total - (dcc.usuario_actual.responsabilidad/100))))
             if random.random() < prob_enfermarse:
                 self.estado_salud = True
                 return self
@@ -97,7 +91,7 @@ class Criatura(ABC):
     def cambiar_hambre(self):
         pass
 
-    def habilidad_comienzo_dia(self, DCC):
+    def habilidad_comienzo_dia(self, dcc):
         pass
 
 class Augurey(Criatura):
@@ -111,11 +105,7 @@ class Augurey(Criatura):
                  nivel_agresividad, dias_sin_comer, nivel_cleptomania)
         self.precio = p.PRECIO_AUGEREY
 
-    @property
-    def salud_total(self):
-        return self.__salud_total
-
-    @salud_total.setter
+    @Criatura.salud_total.setter
     def salud_total(self, k):
         if k > p.SALUD_AUGUREY_MAX:
             self.__salud_total = p.SALUD_AUGUREY_MAX
@@ -128,28 +118,24 @@ class Augurey(Criatura):
                 self.nivel_hambre = "hambrienta"
                 return self
 
-    def habilidad_comienzo_dia(self, DCC):
+    def habilidad_comienzo_dia(self, dcc):
         if self.nivel_hambre == "satisfecha" and not self.estado_salud and self.salud_actual == self.salud_total:
             ofrenda = random.choice(["Tarta de Melaza", "Hígado de Dragón",
                                         "Buñuelo de Gusarajo"])
             print(f"¡Tu Augurey {self.nombre} te ha traído como ofrenda un un(a) {ofrenda}!")
-            DCC.usuario_actual.alimentos.append(ofrenda)
+            dcc.usuario_actual.alimentos.append(ofrenda)
 
 class Niffler(Criatura):
 
     def __init__(self, nombre, tipo, nivel_magico, probabilidad_escape, probabilidad_enfermarse,
-                 estado_salud, estado_escape, salud_total, salud_actual, nivel_hambre,
+                 estado_salud, estado_escape, __salud_total, salud_actual, nivel_hambre,
                  nivel_agresividad, dias_sin_comer, nivel_cleptomania):
         super().__init__(nombre, tipo, nivel_magico, probabilidad_escape, probabilidad_enfermarse,
-                 estado_salud, estado_escape, salud_total, salud_actual, nivel_hambre,
+                 estado_salud, estado_escape, __salud_total, salud_actual, nivel_hambre,
                  nivel_agresividad, dias_sin_comer, nivel_cleptomania)
         self.precio = p.PRECIO_NIFFLER
 
-    @property
-    def salud_total(self):
-        return self.__salud_total
-
-    @salud_total.setter
+    @Criatura.salud_total.setter
     def salud_total(self, k):
         if k > p.SALUD_NIFFLER_MAX:
             self.__salud_total = p.SALUD_NIFFLER_MAX
@@ -162,34 +148,30 @@ class Niffler(Criatura):
                 self.nivel_hambre = "hambrienta"
                 return self
 
-    def habilidad_comienzo_dia(self, DCC):
+    def habilidad_comienzo_dia(self, dcc):
         if self.nivel_hambre == "satisfecha":
             ofrenda = self.nivel_cleptomania * 2
             print(f"¡Tu Niffler {self.nombre} te ha traído como ofrenda {ofrenda} Sickles!")
-            DCC.usuario_actual.sickles += ofrenda
-            print(f"Tu saldo actual es: {DCC.usuario_actual.sickles} Sickles")
+            dcc.usuario_actual.sickles += ofrenda
+            print(f"Tu saldo actual es: {dcc.usuario_actual.sickles} Sickles")
         else:
             robo = self.nivel_cleptomania * 2
             print(f"¡Tu Niffler {self.nombre} te ha robado {robo} Sickles!")
-            DCC.usuario_actual.sickles -= robo
-            print(f"Tu saldo actual es: {DCC.usuario_actual.sickles} Sickles")
+            dcc.usuario_actual.sickles -= robo
+            print(f"Tu saldo actual es: {dcc.usuario_actual.sickles} Sickles")
 
 class Erkling(Criatura):
 
     def __init__(self, nombre, tipo, nivel_magico, probabilidad_escape, probabilidad_enfermarse,
-                 estado_salud, estado_escape, salud_total, salud_actual, nivel_hambre,
+                 estado_salud, estado_escape, __salud_total, salud_actual, nivel_hambre,
                  nivel_agresividad, dias_sin_comer, nivel_cleptomania):
 
         super().__init__(nombre, tipo, nivel_magico, probabilidad_escape, probabilidad_enfermarse,
-                 estado_salud, estado_escape, salud_total, salud_actual, nivel_hambre,
+                 estado_salud, estado_escape, __salud_total, salud_actual, nivel_hambre,
                  nivel_agresividad, dias_sin_comer, nivel_cleptomania)
         self.precio = p.PRECIO_ERKLING
 
-    @property
-    def salud_total(self):
-        return self.__salud_total
-
-    @salud_total.setter
+    @Criatura.salud_total.setter
     def salud_total(self, k):
         if k > p.SALUD_ERKLING_MAX:
             self.__salud_total = p.SALUD_ERKLING_MAX
@@ -202,11 +184,12 @@ class Erkling(Criatura):
                 self.nivel_hambre = "hambrienta"
                 return self
 
-    def habilidad_comienzo_dia(self, DCC):
+    def habilidad_comienzo_dia(self, dcc):
         if self.nivel_hambre == "hambrienta":
-            if len(DCC.usuario_actual.alimentos) > 0:
-                robo = random.choice(DCC.usuario_actual.alimentos)
-                DCC.usuario_actual.alimentos.remove(robo)
+            if len(dcc.usuario_actual.alimentos) > 0:
+                robo = random.choice(dcc.usuario_actual.alimentos)
+                dcc.usuario_actual.alimentos.remove(robo)
                 print(f"¡Tu Erkling {self.nombre} te ha robado un(a) {robo}! Ahora está satisfecha")
                 self.comio_hoy = True
+                self.dias_sin_comer = 0
                 self.nivel_hambre = "satisfecha"

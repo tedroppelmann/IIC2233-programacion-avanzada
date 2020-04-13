@@ -79,8 +79,8 @@ def actualizar_datos_criaturas(criatura, ruta_archivo_criaturas):
                             str(criatura.dias_sin_comer) + "," + str(criatura.nivel_cleptomania)
                             + "\n")
 
-def str_bool(str):
-    if str == "True":
+def str_bool(string):
+    if string == "True":
         return True
     else:
         return False
