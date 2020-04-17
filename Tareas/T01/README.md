@@ -43,30 +43,60 @@ NOTA: La explicación de los atributos y métodos de cada clase están en el arc
       * **Se descuenta el costo de energía mágica correspondiente a las acciones alimentar, recuperar y sanar**: ✅ 
       * **Se notifica en caso de no tener energía suficiente para realizar la acción**: ✅ 
    * **DCC**:
-* ...
-* <Nombre item pauta<sub>n</sub>>: Me faltó hacer <insertar qué cosa faltó>
+      * **Se puede adoptar una DCCriatura correctamente, si se cumplen las condiciones**: ✅ 
+      * **Se puede comprar cualquiera de los alimentos disponibles correctamente**: ✅ 
+      * **Se descuenta el valor de sickles corespondiente al adoptar DCCriaturas y se notifica en caso de no poder realizarse la acción**: ✅ 
+      * **Se descuenta el valor de sickles corespondiente al comprar alimentos y se notifica en caso de no poder realizarse la acción**: ✅ 
+      * **Se pueden visualizar los datos actualizados del estado del Magizoólogo y de las DCCriaturas correctamente**: ✅ 
+   * **Pasar al día siguiente**:
+      * **Se aplican correctamente las habilidades especiales de cada DCCriatura**: ✅ 
+      * **Se actualizan los puntos de salud de las DCCriaturas dependiendo de su hambre y estado de salud**: ✅ 
+      * **Se actualiza el estado de hambre de cada DCCriatura dependiendo del tiempo que lleva sin comer**: ✅ 
+      * **Se actualiza correctamente el estado de salud de las DCCriaturas**: ✅ 
+      * **Se actualiza correctamente la cantidad de DCCriaturas escapadas**: ✅ 
+      * **Se actualiza correctamente el nivel de aprobación y el estado de la licencia del Magizoólogo**: ✅ 
+      * **Se paga correctamente la cantidad de sickles al Magizoólogo y se actualiza la cantidad de sickles que tiene**: ✅ 
+      * **La fiscalización se realiza correctamente: se calculan multas según los eventos de DCCriaturas**: ✅ 
+
+* **Consola**:
+   * **Menú de inicio**: ✅ 
+   * **Menú de acciones**: ✅ 
+   * **Menú DCCriaturas**: ✅ 
+   * **Menú DCC**: ✅ 
+   * **Pasar al día siguiente**: ✅ 
+   * **Robustez**: ✅ 
+
+* **Manejo de archivos**:
+   * **Trabaja correctamente con todos los archivos CSV entregados**: ✅ 
+   * **Utiliza e importa correctamente parametros.py**: ✅ 
+   * **Archivo parametros.py contiene todos los parámetros especificados en el enunciado**: ✅ 
+
+* **Bonus**: ❌ No alcancé a hacer ningún bonus 😞
 
 ## Ejecución :computer:
-El módulo principal de la tarea a ejecutar es  ```archivo.py```. Además se debe crear los siguientes archivos y directorios adicionales:
-1. ```archivo.ext``` en ```ubicación```
-2. ```directorio``` en ```ubicación```
-3. ...
-
+El módulo principal de la tarea a ejecutar es  ```main.py```. 
 
 ## Librerías :books:
 ### Librerías externas utilizadas
 La lista de librerías externas que utilicé fue la siguiente:
 
-1. ```librería_1```: ```función() / módulo```
-2. ```librería_2```: ```función() / módulo``` (debe instalarse)
-3. ...
+1. ```sys```: ```exit()```
+2. ```os```: ```path.join()```
+3. ```collections```: ```defauldict()```
+4. ```abc```: ```ABC```, ```abstractmethod```
+5. ```random```: ```randint```, ```choice```
 
 ### Librerías propias
 Por otro lado, los módulos que fueron creados fueron los siguientes:
 
-1. ```librería_1```: Contiene a ```ClaseA```, ```ClaseB```, (ser general, tampoco es necesario especificar cada una)...
-2. ```librería_2```: Hecha para <insertar descripción **breve** de lo que hace o qué contiene>
-3. ...
+1. ```actualizaciones.py```: Contiene las funciones que permiten actualizar los archivos .csv.
+2. ```alimentos.py```: Contiene la clase ```Alimento```y sus subclases ```TartaDeMelaza```, ```HigadoDeDragon```y ```BunueloDeGusarajo```.
+3. ```cargas.py```: Contiene las funciones que permiten cargar y poblar las clases desde los archivos .csv. 
+4. ```criaturas.py```: Contiene la clase ```Criatura```y sus subclases ```Augurey```, ```Niffler```y ```Erkling```.
+5. ```DCC.py```: Contiene a la clase ```Dcc```.
+6. ```magizoologos.py```: Contiene a la clase ```Magizoologo```y sus subclases ```Docencio```, ```Tareo```y ```Híbrido```. Además posee la función ```sickles_suficientes(sickles, precio)```.
+7. ```menus.py```: Contiene todas las funciones que representan menús dentro del programa.
+8. ```parametros.py```: Contiene todos los parámetros que se utilizan en el programa. 
 
 ## Supuestos y consideraciones adicionales :thinking:
 Los supuestos que realicé durante la tarea son los siguientes:
