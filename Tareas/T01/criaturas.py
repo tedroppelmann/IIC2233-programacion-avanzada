@@ -16,7 +16,7 @@ class Criatura(ABC):
         self.probabilidad_enfermarse = float(probabilidad_enfermarse)
         self.estado_salud = str_bool(estado_salud)
         self.estado_escape = str_bool(estado_escape)
-        self.__salud_total = int(salud_total)
+        self._salud_total = int(salud_total)
         self.__salud_actual = int(salud_actual)
         self.nivel_hambre = nivel_hambre
         self.nivel_agresividad = nivel_agresividad
@@ -41,7 +41,7 @@ class Criatura(ABC):
 
     @property
     def salud_total(self):
-        return self.__salud_total
+        return self._salud_total
 
     @salud_total.setter
     @abstractmethod
@@ -108,9 +108,9 @@ class Augurey(Criatura):
     @Criatura.salud_total.setter
     def salud_total(self, k):
         if k > p.SALUD_AUGUREY_MAX:
-            self.__salud_total = p.SALUD_AUGUREY_MAX
+            self._salud_total = p.SALUD_AUGUREY_MAX
         else:
-            self.__salud_total = k
+            self._salud_total = k
 
     def cambiar_hambre(self):
         if self.nivel_hambre == "satisfecha":
@@ -128,19 +128,19 @@ class Augurey(Criatura):
 class Niffler(Criatura):
 
     def __init__(self, nombre, tipo, nivel_magico, probabilidad_escape, probabilidad_enfermarse,
-                 estado_salud, estado_escape, __salud_total, salud_actual, nivel_hambre,
+                 estado_salud, estado_escape, salud_total, salud_actual, nivel_hambre,
                  nivel_agresividad, dias_sin_comer, nivel_cleptomania):
         super().__init__(nombre, tipo, nivel_magico, probabilidad_escape, probabilidad_enfermarse,
-                 estado_salud, estado_escape, __salud_total, salud_actual, nivel_hambre,
+                 estado_salud, estado_escape, salud_total, salud_actual, nivel_hambre,
                  nivel_agresividad, dias_sin_comer, nivel_cleptomania)
         self.precio = p.PRECIO_NIFFLER
 
     @Criatura.salud_total.setter
     def salud_total(self, k):
         if k > p.SALUD_NIFFLER_MAX:
-            self.__salud_total = p.SALUD_NIFFLER_MAX
+            self._salud_total = p.SALUD_NIFFLER_MAX
         else:
-            self.__salud_total = k
+            self._salud_total = k
 
     def cambiar_hambre(self):
         if self.nivel_hambre == "satisfecha":
@@ -163,20 +163,20 @@ class Niffler(Criatura):
 class Erkling(Criatura):
 
     def __init__(self, nombre, tipo, nivel_magico, probabilidad_escape, probabilidad_enfermarse,
-                 estado_salud, estado_escape, __salud_total, salud_actual, nivel_hambre,
+                 estado_salud, estado_escape, salud_total, salud_actual, nivel_hambre,
                  nivel_agresividad, dias_sin_comer, nivel_cleptomania):
 
         super().__init__(nombre, tipo, nivel_magico, probabilidad_escape, probabilidad_enfermarse,
-                 estado_salud, estado_escape, __salud_total, salud_actual, nivel_hambre,
+                 estado_salud, estado_escape, salud_total, salud_actual, nivel_hambre,
                  nivel_agresividad, dias_sin_comer, nivel_cleptomania)
         self.precio = p.PRECIO_ERKLING
 
     @Criatura.salud_total.setter
     def salud_total(self, k):
         if k > p.SALUD_ERKLING_MAX:
-            self.__salud_total = p.SALUD_ERKLING_MAX
+            self._salud_total = p.SALUD_ERKLING_MAX
         else:
-            self.__salud_total = k
+            self._salud_total = k
 
     def cambiar_hambre(self):
         if self.nivel_hambre == "satisfecha":

@@ -23,7 +23,6 @@ class Magizoologo(ABC):
 
         self.__energia_actual = int(energia)
         self.nivel_aprobacion = None
-        self.dias_jugando = 1
 
     @property
     def energia_actual(self):

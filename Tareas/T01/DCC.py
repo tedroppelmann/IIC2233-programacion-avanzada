@@ -13,7 +13,6 @@ class Dcc:
         self.magizoologos = magizoologos
         self.criaturas = criaturas
         self.alimentos = alimentos
-        self.dias = 1
         self.usuario_actual = usuario_actual
 
     def crear_magizoologo(self):
@@ -89,7 +88,6 @@ class Dcc:
                         print("ERROR. Intenta nuevamente.")
                     if (respuesta == "1" or respuesta == "2" or respuesta == "3") and condicion:
                         self.usuario_actual = self.magizoologos[nombre.lower()]
-                        print(self.usuario_actual.__dict__)
                         self.usuario_actual.nivel_aprobacion = p.APROBACION_MAXIMA
                         agregar_magizoologo(self.usuario_actual, p.RUTA_MAGIZOOLOGOS)
                         menu_acciones(self)
@@ -197,7 +195,6 @@ class Dcc:
                 sickles >= p.PRECIO_NIFFLER) or (respuesta == "3" and sickles >= p.PRECIO_ERKLING))\
                     and nombre_criatura is not False :
                 criaturas.append(nombre_criatura)
-                print(self.criaturas[nombre_criatura.lower()].__dict__)
                 agregar_criatura(self.criaturas[nombre_criatura.lower()], p.RUTA_CRIATURAS)
                 if len(criaturas) != 1:
                     sickles -= self.criaturas[nombre_criatura.lower()].precio
