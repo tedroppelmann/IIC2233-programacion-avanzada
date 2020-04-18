@@ -11,7 +11,7 @@ El programa consta de 14 clases, las cuales interactúan entre ellas de cierta f
       * **BunueloDeGusarajo**: Clase que representa al alimento Buñuelo de Gusarajo
       
       
-      Estas clases poseen un único método que representa la particularidad del alimento al ser comido por una DCCriatura.
+      Estas clases poseen un único método (```particularidad_alimento```) que representa la particularidad del alimento al ser comido por una DCCriatura.
     * **Personajes**: Es la clase que contiene a todos los personajes del juego. Posee los atributos, nombre, tipo y nivel_magico. De esta clase heredan las siguientes:
       * **Magizoologo**: Esta clase representa a todos los magizoólogos y posee todos los atributos de estos. Además, contiene los métodos respecto a las acciones que puede realizar un magizoólogo. De esta clase heredan 3 subclases:
         * **Docencio**: Es un tipo de Magizoólogo. No posee atributos nuevos, ya que comparte todos los de su clase padre, excepto que cambia su valor. Posee todos los métodos de clase padre, pero algunos se modifican, ya que dependen del tipo de Magizoólogo. Estos métodos son ```alimentar_criatura(DCC)```,```recuperar_criatura(DCC)```y ```habilidad_especial(DCC)```. 
