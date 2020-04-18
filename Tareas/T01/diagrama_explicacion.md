@@ -1,4 +1,4 @@
-# Explicación del Diagrama de Clases:
+# Explicación del Diagrama de Clases
 
 El programa consta de 14 clases, las cuales interactúan entre ellas de cierta forma. Para la creación del diagrama de clases utilizamos las siguientes relaciones: composición, agregación y herencia. 
 ## Clases implementadas:
