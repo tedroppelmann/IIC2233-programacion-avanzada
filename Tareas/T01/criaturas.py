@@ -49,6 +49,11 @@ class Criatura(ABC):
         pass
 
     def alimentarse(self, dcc):
+        """
+        Permite que la criatura ataque al magizoologo
+        :param dcc: Dcc
+        :return: None
+        """
         if self.nivel_hambre == "satisfecha":
             efecto_hambre = p.EFECTO_HAMBRE_SATISFECHA
         else:
@@ -69,29 +74,50 @@ class Criatura(ABC):
         else:
             print("¡No hubo ataque de la DCCriatura!")
 
-
     def escaparse(self, dcc):
+        """
+        Permite que la criatura tenga la posibilidad de escaparse
+        :param dcc: Dcc
+        :return: Criatura
+        """
         if not self.estado_escape:
             efecto_hambre = p.EFECTO_HAMBRE_MIN_ESCAPARSE
             if self.nivel_hambre == "hambrienta":
                 efecto_hambre = p.EFECTO_HAMBRE_MAX_ESCAPARSE
-            prob_escape = min(1, self.probabilidad_escape + max(0,(efecto_hambre - dcc.usuario_actual.responsabilidad) / 100))
+            prob_escape = min(1, self.probabilidad_escape +
+                              max(0,(efecto_hambre - dcc.usuario_actual.responsabilidad) / 100))
             if random.random() < prob_escape:
                 self.estado_escape = True
                 return self
 
     def enfermarse(self, dcc):
+        """
+        Permite que la criatura se enferme
+        :param dcc: Dcc
+        :return: Criatura
+        """
         if not self.estado_salud:
-            prob_enfermarse = min(1, self.probabilidad_enfermarse + max(0, ((self.salud_total - self.salud_actual)/self.salud_total - (dcc.usuario_actual.responsabilidad/100))))
+            prob_enfermarse = min(1, self.probabilidad_enfermarse +
+                                  max(0, ((self.salud_total - self.salud_actual)/self.salud_total
+                                          - (dcc.usuario_actual.responsabilidad/100))))
             if random.random() < prob_enfermarse:
                 self.estado_salud = True
                 return self
 
     @abstractmethod
     def cambiar_hambre(self):
+        """
+        Permite cambiar el nivel de hambre de la criatura cuando pasan los días.
+        :return: Criatura
+        """
         pass
 
     def habilidad_comienzo_dia(self, dcc):
+        """
+        Permite que la criatura haga su cualidad al comenzar cada día.
+        :param dcc: Dcc
+        :return: None
+        """
         pass
 
 class Augurey(Criatura):
@@ -119,7 +145,8 @@ class Augurey(Criatura):
                 return self
 
     def habilidad_comienzo_dia(self, dcc):
-        if self.nivel_hambre == "satisfecha" and not self.estado_salud and self.salud_actual == self.salud_total:
+        if self.nivel_hambre == "satisfecha" and not self.estado_salud and \
+                        self.salud_actual == self.salud_total:
             ofrenda = random.choice(["Tarta de Melaza", "Hígado de Dragón",
                                         "Buñuelo de Gusarajo"])
             print(f"¡Tu Augurey {self.nombre} te ha traído como ofrenda un un(a) {ofrenda}!")

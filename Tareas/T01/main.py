@@ -7,6 +7,10 @@ import parametros as p
 class Juego:
 
     def iniciar(self):
+        """
+        Inicia el juego
+        :return: None
+        """
         magizoologos = cargar_magizoologos(p.RUTA_MAGIZOOLOGOS)
         criaturas = cargar_criaturas(p.RUTA_CRIATURAS)
         alimentos = cargar_alimentos()

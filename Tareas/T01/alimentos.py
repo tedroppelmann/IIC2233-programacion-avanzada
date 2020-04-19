@@ -12,6 +12,11 @@ class Alimento(ABC):
 
     @abstractmethod
     def particularidad_alimento(self, criatura):
+        """
+        Verifica que alimento es e implementa su característica al consumirlo
+        :param criatura: Criatura
+        :return: None
+        """
         pass
 
 class TartaDeMelaza(Alimento):

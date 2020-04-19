@@ -20,6 +20,12 @@ def menu_inicio(dcc):
             print("ERROR. Intente nuevamente.")
 
 def menu_error(dcc, menu_anterior):
+    """
+    Aparece cuando ocurre un error en el programa y permite volver al menu anterior
+    :param dcc: Dcc
+    :param menu_anterior: str
+    :return: bool
+    """
     while True:
         print("[1] Intentar de nuevo \n[2] Volver atrás \n[0] Salir")
         respuesta = input("Ingrese una opción (1, 2 o 0):")

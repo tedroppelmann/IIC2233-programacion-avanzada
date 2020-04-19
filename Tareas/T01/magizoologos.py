@@ -38,6 +38,11 @@ class Magizoologo(ABC):
             self.__energia_actual = k
 
     def adoptar(self, dcc):
+        """
+        Permite adoptar una criatura
+        :param dcc: Dcc
+        :return: None
+        """
         if self.licencia:
             print(f"Los precios son los siguientes:\nAugurey: {p.PRECIO_AUGEREY}\nNiffler: "
                   f"{p.PRECIO_NIFFLER}\nErkling: {p.PRECIO_ERKLING}")
@@ -50,6 +55,11 @@ class Magizoologo(ABC):
             print("No posees licencia, por lo que no puedes adpotar una DCCriatura.")
 
     def comprar_alimento(self, dcc):
+        """
+        Permite comprar alimento
+        :param dcc: Dcc
+        :return: None
+        """
         print(f"Los precios son los siguientes:")
         i = 1
         for nombre in dcc.alimentos.keys():
@@ -93,6 +103,11 @@ class Magizoologo(ABC):
 
     @abstractmethod
     def alimentar_criatura(self, dcc):
+        """
+        Permite alimentar una criatura
+        :param dcc: Dcc
+        :return: Criatura, bool
+        """
         while True:
             if len(self.alimentos) >= 1 and self.alimentos[0] != "":
                 if self.energia_actual >= p.GASTO_ALIMENTAR:
@@ -177,6 +192,11 @@ class Magizoologo(ABC):
 
     @abstractmethod
     def recuperar_criatura(self, dcc):
+        """
+        Permite recuperar una criatura que se escapó
+        :param dcc: Dcc
+        :return: Criatura, bool
+        """
         while True:
             if self.energia_actual >= p.GASTO_RECUPERAR:
                 j = 0
@@ -226,6 +246,11 @@ class Magizoologo(ABC):
                 return None, False
 
     def sanar_criatura(self, dcc):
+        """
+        Permite sanar una criatura que enfermó
+        :param dcc: Dcc
+        :return: None
+        """
         while True:
             if self.energia_actual >= p.GASTO_SANAR:
                 i = 0
@@ -282,6 +307,11 @@ class Magizoologo(ABC):
 
     @abstractmethod
     def usar_habilidad_especial(self, dcc):
+        """
+        Permite utilizar la habilidad especial de magizoologo
+        :param dcc: Dcc
+        :return: None
+        """
         pass
 
 class Docencio(Magizoologo):
@@ -399,6 +429,12 @@ class Hibrido(Magizoologo):
                   "especial.")
 
 def sickles_suficiente(sickles, precio):
+    """
+    Verifica si alcanzas a comprar algo con los sickles que tienes
+    :param sickles: int
+    :param precio: int
+    :return: bool, int
+    """
     if sickles >= precio:
         sickles -= precio
         return True, sickles

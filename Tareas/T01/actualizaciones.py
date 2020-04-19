@@ -1,6 +1,11 @@
 
-
 def agregar_magizoologo(manizoologo, ruta_archivo_magizoologos):
+    """
+    Agrega un magizoologo nuevo al archivo .csv de magizoologos
+    :param manizoologo: Magizoologo
+    :param ruta_archivo_magizoologos: str
+    :return: None
+    """
     criaturas = ";".join(manizoologo.criaturas)
     alimentos = ";".join(manizoologo.alimentos)
     with open(ruta_archivo_magizoologos, "a", encoding="utf-8") as file:
@@ -11,7 +16,12 @@ def agregar_magizoologo(manizoologo, ruta_archivo_magizoologos):
                    "," + str(manizoologo.habilidad_especial) +"\n")
 
 def agregar_criatura(criatura, ruta_archivo_magizoologos):
-
+    """
+    Agrega una criatura nueva al archivo .csv de criaturas
+    :param criatura: Criatura
+    :param ruta_archivo_magizoologos: str
+    :return: None
+    """
     with open(ruta_archivo_magizoologos, "a", encoding="utf-8") as file:
         file.write(criatura.nombre + "," + criatura.tipo + "," + str(criatura.nivel_magico) +
                    "," + str(criatura.probabilidad_escape) + "," +
@@ -22,7 +32,12 @@ def agregar_criatura(criatura, ruta_archivo_magizoologos):
                    str(criatura.nivel_cleptomania) + "\n")
 
 def actualizar_datos_magizoologo(manizoologo, ruta_archivo_magizoologos):
-
+    """
+    Permite actualizar cualquier cambio en el archivo .csv de magizoologos
+    :param manizoologo: Magizoologo
+    :param ruta_archivo_magizoologos: str
+    :return: None
+    """
     if "" in manizoologo.alimentos:
         manizoologo.alimentos.remove("")
     alimentos_nuevos = ";".join(manizoologo.alimentos)
@@ -53,7 +68,12 @@ def actualizar_datos_magizoologo(manizoologo, ruta_archivo_magizoologos):
                             + str(manizoologo.habilidad_especial) + "\n")
 
 def actualizar_datos_criaturas(criatura, ruta_archivo_criaturas):
-
+    """
+    Permite actualizar cualquier cambio en el archivo .csv de criaturas
+    :param criatura: Criatura
+    :param ruta_archivo_criaturas: str
+    :return: None
+    """
     filas = dict()
     with open(ruta_archivo_criaturas, "r", encoding="utf-8") as file:
         lineas = file.readlines()
@@ -80,6 +100,11 @@ def actualizar_datos_criaturas(criatura, ruta_archivo_criaturas):
                             + "\n")
 
 def str_bool(string):
+    """
+    Transforma un string a un bool
+    :param string: str
+    :return: bool
+    """
     if string == "True":
         return True
     else:

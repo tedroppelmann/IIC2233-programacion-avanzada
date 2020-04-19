@@ -6,7 +6,11 @@ from alimentos import TartaDeMelaza, HigadoDeDragon, BuenueloDeGusarajo
 import parametros as p
 
 def cargar_magizoologos(ruta_archivo_magizoologos):
-
+    """
+    Permite poblar la clase Magizoologo con un archivo .csv
+    :param ruta_archivo_magizoologos: str
+    :return: dict
+    """
     magizoologos = defaultdict(lambda: "El Magizoólogo no existe.")
     with open(ruta_archivo_magizoologos, "r", encoding = "utf-8") as file:
         for line in file.readlines():
@@ -32,7 +36,11 @@ def cargar_magizoologos(ruta_archivo_magizoologos):
     return magizoologos
 
 def cargar_criaturas(ruta_archivo_criaturas):
-
+    """
+    Permite poblar la clase Criatura con un archivo .csv
+    :param ruta_archivo_criaturas: str
+    :return: dict
+    """
     criaturas = defaultdict(lambda: "La criatura no existe.")
     with open(ruta_archivo_criaturas, "r", encoding="utf-8") as file:
         for line in file.readlines():
@@ -61,7 +69,10 @@ def cargar_criaturas(ruta_archivo_criaturas):
     return criaturas
 
 def cargar_alimentos():
-
+    """
+    Permite poblar la clase Alimento con los alimentos que existen
+    :return: dict
+    """
     alimentos = defaultdict(lambda: "El alimento no existe.")
 
     alimentos["Tarta de Melaza"] = TartaDeMelaza("Tarta de Melaza", p.SALUD_TARTA_MELAZA,
