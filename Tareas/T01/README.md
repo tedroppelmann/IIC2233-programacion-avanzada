@@ -20,7 +20,7 @@ NOTA: La explicación de los atributos y métodos de cada clase están en el arc
     * **Dcc**: ✅ Es la clase que maneja casi todo dentro del juego. Posee como atributos diccionarios con la información de los magizoólogos creados, las criaturas creadas y los alimentos que existen. Posee gran parte de los métodos que moldean el juego, desde crear un usuario hasta pasar al día siguiente. 
     
 * **Partidas**:
-   * **Crear partida**:
+   * **Crear partida**:Esta fue la primera función que hice en el programa por lo que está bastante desordenada 😕 ojalá se entienda 
       * **Verificar nombre válidos y únicos**: ✅ 
       * **Perimite elegir tipo de Magizoólogo y DCCriatura**: ✅ 
       * **Se instancia correctamente el Magizoólogo seleccionado, considerando los valores iniciales de sus atributos**: ✅ 
