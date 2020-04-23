@@ -32,6 +32,10 @@ class IterableOfertones:
 class IteradorOfertones:
     def __init__(self, iterable):
         self.iterable = copy(iterable)
+        self.index = 0
+        self.iterable.productos = sorted(self.iterable.productos, key=lambda t: t.descuento_oferta,
+                                         reverse=True)
+
 
     def __iter__(self):
         # Completar
@@ -39,8 +43,14 @@ class IteradorOfertones:
 
     def __next__(self):
         # Completar
-        if self.iterable is None:
+        try:
+            producto = self.iterable.productos[self.index]
+            valor_descuento = producto.precio * ((100 - producto.descuento_oferta) / 100)
+            print(valor_descuento)
+            producto.precio = valor_descuento
+        except:
             raise StopIteration("Llegamos al final")
-        else:
-            valor_con_descuento = self.iterable.precio - self.iterable.precio * self.iterable.descuento_oferta/100
-            return valor_con_descuento
+        self.index += 1
+        return producto
+
+
