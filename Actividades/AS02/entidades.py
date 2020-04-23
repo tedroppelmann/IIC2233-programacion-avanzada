@@ -46,7 +46,6 @@ class IteradorOfertones:
         try:
             producto = self.iterable.productos[self.index]
             valor_descuento = producto.precio * ((100 - producto.descuento_oferta) / 100)
-            print(valor_descuento)
             producto.precio = valor_descuento
         except:
             raise StopIteration("Llegamos al final")
