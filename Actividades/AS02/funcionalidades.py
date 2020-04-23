@@ -22,19 +22,28 @@ def desencriptar(cliente_encriptado):
 
 def obtener_clientes(lista_clientes_encriptados):
     # Completar
-    pass
+    mapeo = map(lambda x: desencriptar(x), lista_clientes_encriptados)
+    return list(mapeo)
 
 
 def categorizar(productos, categoria):
     # Completar
-    pass
+    filtrado = filter(lambda x: x.categoria == categoria, productos)
+    return list(filtrado)
 
 
 def calcular_precio(productos):
     # Completar
-    pass
-
+    mapeo = map(lambda x: x.precio, productos)
+    precios = list(mapeo)
+    suma = reduce(lambda x, y: x + y, precios)
+    return suma
 
 def generar_productos_disponibles(clientes):
     # Completar
-    pass
+    for cliente in clientes:
+        for producto in cliente.carrito:
+            if producto.disponible:
+                yield (cliente, producto)
+
+

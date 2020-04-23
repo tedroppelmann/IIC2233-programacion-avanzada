@@ -35,8 +35,12 @@ class IteradorOfertones:
 
     def __iter__(self):
         # Completar
-        pass
+        return self
 
     def __next__(self):
         # Completar
-        pass
+        if self.iterable is None:
+            raise StopIteration("Llegamos al final")
+        else:
+            valor_con_descuento = self.iterable.precio - self.iterable.precio * self.iterable.descuento_oferta/100
+            return valor_con_descuento
