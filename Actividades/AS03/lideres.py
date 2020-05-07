@@ -38,7 +38,7 @@ class LiderMundial(Thread):
         # Completar o modificar si es necesario
         while self.puede_twitear:
             self.twitear()
-            sleep(max(5 * (1.05) ** (- self.enojo), 0.25))
+            sleep(max(5 * (1.05 ** (- self.enojo)), 0.25))
 
 
     def twitear(self):
