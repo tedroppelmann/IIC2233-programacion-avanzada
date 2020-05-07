@@ -61,15 +61,15 @@ if __name__ == '__main__':
 
     # Categorizar
     print('\n---------- CATEGORIAS ----------\n')
-    print(f'Abarrotes: {categorizar(productos, 'abarrotes')}')
-    print(f'Frutas: {categorizar(productos, 'frutas')}')
-    print(f'Verduras: {categorizar(productos, 'verduras')}')
-    print(f'Baño: {categorizar(productos, 'baño')}')
-    print(f'Limpieza: {categorizar(productos, 'limpieza')}')
-    print(f'Congelados: {categorizar(productos, 'congelados')}')
-    print(f'Golosinas: {categorizar(productos, 'golosinas')}')
-    print(f'Despensa: {categorizar(productos, 'despensa')}')
-    print(f'Líquidos: {categorizar(productos, 'líquidos')}')
+    print(f'Abarrotes: {categorizar(productos, "abarrotes")}')
+    print(f'Frutas: {categorizar(productos, "frutas")}')
+    print(f'Verduras: {categorizar(productos, "verduras")}')
+    print(f'Baño: {categorizar(productos, "baño")}')
+    print(f'Limpieza: {categorizar(productos, "limpieza")}')
+    print(f'Congelados: {categorizar(productos, "congelados")}')
+    print(f'Golosinas: {categorizar(productos, "golosinas")}')
+    print(f'Despensa: {categorizar(productos, "despensa")}')
+    print(f'Líquidos: {categorizar(productos, "líquidos")}')
 
     # Calcular precio
     print('\n---------- TOTAL A PAGAR POR CLIENTE ----------\n')
