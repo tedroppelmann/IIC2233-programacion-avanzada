@@ -8,11 +8,12 @@ from cargar_tweets import cargar_tweets
 from parametros import ENOJO_INICIAL, PROBABILIDAD_DESAPARECER, PROBABILIDAD_HACKEO
 
 
-class LiderMundial:
+class LiderMundial(Thread):
 
     def __init__(self, nombre, tweets, enojo, reloj):
         # Completar
-
+        Thread.__init__(self)
+        self.daemon = True
 
         # No modificar
         self.nombre = nombre
@@ -34,11 +35,18 @@ class LiderMundial:
 
     def run(self):
         # Completar o modificar si es necesario
-        pass
+        while self.puede_twitear:
+            self.twitear()
+            sleep(max(5 * (1.05) ** (- self.enojo), 0.25))
+
 
     def twitear(self):
         # Completar o modificar si es necesario
-        pass
+        while Lock:
+            enojo, texto = random.choice(self.tweets)
+            print(f"{self.nombre}: {texto}")
+            self.enojo += enojo
+            self.reloj.acelerar(self.nombre, enojo)
 
 
 class Hacker(LiderMundial, Thread):

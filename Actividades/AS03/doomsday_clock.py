@@ -6,12 +6,11 @@ from cargar_tweets import cargar_tweets
 from parametros import BOMBA_NUCLEAR, TIEMPO_INICIAL, VELOCIDAD_INICIAL
 
 
-class DoomsdayClock:
+class DoomsdayClock(Thread):
 
     def __init__(self, velocidad, tiempo_restante):
         # Completar
-
-
+        Thread.__init__(self)
         # No modificar siguientes líneas
         self.velocidad = velocidad
         self._tiempo_restante = tiempo_restante
@@ -36,7 +35,9 @@ class DoomsdayClock:
 
     def run(self):
         # Completar o modificar si es necesario
-
+        while self.tiempo_restante > 0 and self.quedan_lideres:
+            self.contar()
+            sleep(1 / self.velocidad)
 
         # No modificar siguientes líneas
         if self.tiempo_restante == 0:
@@ -44,7 +45,9 @@ class DoomsdayClock:
 
     def acelerar(self, nombre, enojo):
         # Completar o modificar si es necesario
-        pass
+        self.velocidad += (enojo/10)
+        print(f"{nombre} ha acelerado el reloj en {enojo/10}")
+
 
 
 if __name__ == "__main__":
