@@ -7,6 +7,7 @@ from time import sleep
 from cargar_tweets import cargar_tweets
 from parametros import ENOJO_INICIAL, PROBABILIDAD_DESAPARECER, PROBABILIDAD_HACKEO
 
+lock_global = Lock()
 
 class LiderMundial(Thread):
 
@@ -42,7 +43,7 @@ class LiderMundial(Thread):
 
     def twitear(self):
         # Completar o modificar si es necesario
-        while Lock:
+        with lock_global:
             enojo, texto = random.choice(self.tweets)
             print(f"{self.nombre}: {texto}")
             self.enojo += enojo
