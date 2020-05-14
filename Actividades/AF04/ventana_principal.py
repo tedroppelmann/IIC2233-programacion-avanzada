@@ -34,8 +34,11 @@ class VentanaPrincipal(QWidget):
         self.label_6 = QLabel("E", self)
 
         self.label_7 = QLabel()
+        self.label_7.setGeometry(1, 1, 238, 452)
         self.label_8 = QLabel()
+        self.label_8.setGeometry(1, 1, 238, 452)
         self.label_9 = QLabel()
+        self.label_9.setGeometry(1, 1, 238, 452)
 
         self.grilla = QGridLayout()
         self.grilla.addWidget(self.label_1, 0, 0)
@@ -47,7 +50,6 @@ class VentanaPrincipal(QWidget):
         self.grilla.addWidget(self.label_7, 2, 0)
         self.grilla.addWidget(self.label_8, 2, 1)
         self.grilla.addWidget(self.label_9, 2, 2)
-
         self.setLayout(self.grilla)
 
 
@@ -58,18 +60,12 @@ class VentanaPrincipal(QWidget):
         self.label_1.setText(f"Usuario: {datos['usuario']}")
         self.label_2.setText(f"Victorias: {datos['victorias']}")
         self.label_3.setText(f"Derrotas: {datos['derrotas']}")
-        self.label_7.setGeometry(1, 1, 238, 452)
-        pixeles_1 = QPixmap(datos['infanteria']['ruta'])
+        pixeles_1 = QPixmap(datos['infanteria']['ruta']).scaled(238, 452)
         self.label_7.setPixmap(pixeles_1)
-        self.label_7.setScaledContents(True)
-        self.label_8.setGeometry(1, 1, 238, 452)
-        pixeles_2 = QPixmap(datos['rango']['ruta'])
+        pixeles_2 = QPixmap(datos['rango']['ruta']).scaled(238, 452)
         self.label_8.setPixmap(pixeles_2)
-        self.label_8.setScaledContents(True)
-        self.label_9.setGeometry(1, 1, 238, 452)
-        pixeles_3 = QPixmap(datos['artilleria']['ruta'])
+        pixeles_3 = QPixmap(datos['artilleria']['ruta']).scaled(238, 452)
         self.label_9.setPixmap(pixeles_3)
-        self.label_9.setScaledContents(True)
         # Al final, se muestra la ventana.
         self.show()
 
