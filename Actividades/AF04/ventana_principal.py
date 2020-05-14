@@ -3,7 +3,7 @@ import sys
 from random import choice
 
 from PyQt5.QtWidgets import QLabel, QWidget, QLineEdit, \
-    QHBoxLayout, QVBoxLayout, QPushButton
+    QHBoxLayout, QVBoxLayout, QPushButton, QGridLayout
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QApplication
@@ -17,6 +17,7 @@ class VentanaPrincipal(QWidget):
     def __init__(self, *args):
         super().__init__(*args)
         self.crear_pantalla()
+        self.datos = None
 
 
     def crear_pantalla(self):
@@ -24,19 +25,63 @@ class VentanaPrincipal(QWidget):
         self.setWindowTitle("DCCuent")
         # Es decir, agregar y crear labels respectivos a datos del juego, pero sin contenido
         # Si usas layout recuerda agregar los labels al layout y finalmente setear el layout
-        pass
+        self.label_1 = QLabel("Usuario:", self)
+        self.label_2 = QLabel("Victorias", self)
+        self.label_3 = QLabel("Derrotas:", self)
+
+        self.label_4 = QLabel("Q", self)
+        self.label_5 = QLabel("W", self)
+        self.label_6 = QLabel("E", self)
+
+        self.label_7 = QLabel()
+        self.label_8 = QLabel()
+        self.label_9 = QLabel()
+
+        self.grilla = QGridLayout()
+        self.grilla.addWidget(self.label_1, 0, 0)
+        self.grilla.addWidget(self.label_2, 0, 1)
+        self.grilla.addWidget(self.label_3, 0, 2)
+        self.grilla.addWidget(self.label_4, 1, 0)
+        self.grilla.addWidget(self.label_5, 1, 1)
+        self.grilla.addWidget(self.label_6, 1, 2)
+        self.grilla.addWidget(self.label_7, 2, 0)
+        self.grilla.addWidget(self.label_8, 2, 1)
+        self.grilla.addWidget(self.label_9, 2, 2)
+
+        vbox = QVBoxLayout()
+        vbox.addLayout(self.grilla)
+        self.setLayout(vbox)
+
 
     def actualizar(self, datos):
+        self.datos = datos
         # Esta es la funcion que se encarga de actualizar el contenido de la ventana y abrirla
         # Recibe las nuevas cartas y la puntuación actual en un diccionario
-
+        self.label_1 = QLabel(f"Usuario: {datos['usuario']}", self)
+        self.label_2 = QLabel(f"Victorias: {datos['victorias']}", self)
+        self.label_3 = QLabel(f"Derrotas: {datos['derrotas']}", self)
+        self.label_7.setGeometry(0, 0, 238, 452)
+        pixeles = QPixmap(datos['infanteria']['ruta'])
+        self.label_7.setPixmap(pixeles)
+        self.label_7.setScaledContents(True)
+        self.label_8.setGeometry(0, 0, 238, 452)
+        pixeles = QPixmap(datos['rango']['ruta'])
+        self.label_8.setPixmap(pixeles)
+        self.label_8.setScaledContents(True)
+        self.label_9.setGeometry(0, 0, 238, 452)
+        pixeles = QPixmap(datos['artilleria']['ruta'])
+        self.label_9.setPixmap(pixeles)
+        self.label_9.setScaledContents(True)
         # Al final, se muestra la ventana.
         self.show()
 
     def keyPressEvent(self, evento):
         # Aquí debes capturar la techa apretara,
         # y enviar la carta que es elegida
-        pass
+        print(evento.text())
+        if evento.text() == "q":
+            self.senal_enviar_jugada.emit(self.datos)
+
 
 
 class VentanaCombate(QWidget):
