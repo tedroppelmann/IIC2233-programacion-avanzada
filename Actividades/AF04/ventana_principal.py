@@ -25,9 +25,9 @@ class VentanaPrincipal(QWidget):
         self.setWindowTitle("DCCuent")
         # Es decir, agregar y crear labels respectivos a datos del juego, pero sin contenido
         # Si usas layout recuerda agregar los labels al layout y finalmente setear el layout
-        self.label_1 = QLabel("Usuario:", self)
-        self.label_2 = QLabel("Victorias", self)
-        self.label_3 = QLabel("Derrotas:", self)
+        self.label_1 = QLabel()
+        self.label_2 = QLabel()
+        self.label_3 = QLabel()
 
         self.label_4 = QLabel("Q", self)
         self.label_5 = QLabel("W", self)
@@ -57,9 +57,9 @@ class VentanaPrincipal(QWidget):
         self.datos = datos
         # Esta es la funcion que se encarga de actualizar el contenido de la ventana y abrirla
         # Recibe las nuevas cartas y la puntuación actual en un diccionario
-
-        self.label_2 = QLabel(f"Victorias: {datos['victorias']}", self)
-        self.label_3 = QLabel(f"Derrotas: {datos['derrotas']}", self)
+        self.label_1.setText(f"Usuario: {datos['usuario']}")
+        self.label_2.setText(f"Victorias: {datos['victorias']}")
+        self.label_3.setText(f"Derrotas: {datos['derrotas']}")
         self.label_7.setGeometry(0, 0, 238, 452)
         pixeles = QPixmap(datos['infanteria']['ruta'])
         self.label_7.setPixmap(pixeles)
@@ -80,10 +80,13 @@ class VentanaPrincipal(QWidget):
         # y enviar la carta que es elegida
         if evento.text() == "q":
             self.senal_enviar_jugada.emit(self.datos['infanteria'])
+            self.hide()
         elif evento.text() == "w":
             self.senal_enviar_jugada.emit(self.datos['rango'])
+            self.hide()
         elif evento.text() == "e":
             self.senal_enviar_jugada.emit(self.datos['artilleria'])
+            self.hide()
 
 
 
