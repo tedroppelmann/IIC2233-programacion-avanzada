@@ -57,7 +57,7 @@ class VentanaPrincipal(QWidget):
         self.datos = datos
         # Esta es la funcion que se encarga de actualizar el contenido de la ventana y abrirla
         # Recibe las nuevas cartas y la puntuación actual en un diccionario
-        self.label_1 = QLabel(f"Usuario: {datos['usuario']}", self)
+
         self.label_2 = QLabel(f"Victorias: {datos['victorias']}", self)
         self.label_3 = QLabel(f"Derrotas: {datos['derrotas']}", self)
         self.label_7.setGeometry(0, 0, 238, 452)
@@ -78,9 +78,12 @@ class VentanaPrincipal(QWidget):
     def keyPressEvent(self, evento):
         # Aquí debes capturar la techa apretara,
         # y enviar la carta que es elegida
-        print(evento.text())
         if evento.text() == "q":
-            self.senal_enviar_jugada.emit(self.datos)
+            self.senal_enviar_jugada.emit(self.datos['infanteria'])
+        elif evento.text() == "w":
+            self.senal_enviar_jugada.emit(self.datos['rango'])
+        elif evento.text() == "e":
+            self.senal_enviar_jugada.emit(self.datos['artilleria'])
 
 
 

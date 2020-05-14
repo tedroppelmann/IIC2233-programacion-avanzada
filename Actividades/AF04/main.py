@@ -35,7 +35,9 @@ if __name__ == "__main__":
 
     # ---- Completa y conecta el resto de las señales aquí...
     logica_dccuent.senal_comenzar_juego.connect(ventana_principal.actualizar)
-    
+    ventana_principal.senal_enviar_jugada.connect(logica_dccuent.jugar_carta)
+    logica_dccuent.senal_enviar_resultado_ronda.connect(ventana_combate.mostrar_resultado_ronda)
+    ventana_combate.senal_regresar(ventana_principal.actualizar)
     
     
     # -------------------
