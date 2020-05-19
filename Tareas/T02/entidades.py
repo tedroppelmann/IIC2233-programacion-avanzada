@@ -1,4 +1,11 @@
 
+class Mesero:
+
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.direccion = 'down'
+
 class Chef:
 
     def __init__(self, x, y):

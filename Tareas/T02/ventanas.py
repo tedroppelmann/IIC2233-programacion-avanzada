@@ -26,3 +26,6 @@ class VentanaInicio(WINDOW_NAME_1, BASE_CLASS_1):
     def crear_juego(self):
         self.signal_crear_juego.emit()
         self.hide()
+
+class VentanaPostRonda:
+    pass
