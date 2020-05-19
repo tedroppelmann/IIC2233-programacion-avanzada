@@ -23,10 +23,10 @@ if __name__ == '__main__':
     juego.signal_cargar_juego = ventana_inicio.signal_cargar_juego
     ventana_principal.signal_cargar_juego = juego.signal_comenzar_juego
     #crear juego
-    ventana_principal.signal_crear_juego = ventana_inicio.signal_crear_juego
+    juego.signal_crear_juego = ventana_inicio.signal_crear_juego
 
 
-    #Iniciar señales
+    #Iniciar señales:
     juego.init_signals()
     ventana_principal.init_signals()
 
