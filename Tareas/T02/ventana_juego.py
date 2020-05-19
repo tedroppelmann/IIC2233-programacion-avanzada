@@ -5,16 +5,16 @@ from PyQt5 import uic
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QLabel
 from drag_and_drop import DraggableLabel, DropLabel
-from PyQt5.QtCore import pyqtSignal, Qt
+from PyQt5.QtCore import pyqtSignal
 
 WINDOW_NAME_2, BASE_CLASS_2 = uic.loadUiType("ventana_juego.ui")
 
 class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
 
-    #Señales:
+    #Señales back-end:
     signal_cargar_juego = None
     signal_drag_and_drop = pyqtSignal(int, int, str)
-    signal_update = None
+    signal_comenzar_ronda = pyqtSignal()
 
     def __init__(self):
         super().__init__()
@@ -25,8 +25,8 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
         self.signal_cargar_juego.connect(self.comenzar_juego)
         # Botones:
         self.boton_salir.clicked.connect(self.salir)
-        # Update:
-        self.signal_update.connect(self.comenzar_juego)
+        self.boton_comenzar_ronda.clicked.connect(self.comenzar_ronda)
+
 
     def init_gui(self):
         self.espacio_posible = QLabel(self.mapa)
@@ -92,9 +92,8 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
             self.label_chefs[f'({chefs[chef].x},{chefs[chef].y})'].move(chefs[chef].x, chefs[chef].y)
             self.label_chefs[f'({chefs[chef].x},{chefs[chef].y})'].show()
 
-
-    def update_chef(self, chef):
-        print("Llega")
+    def comenzar_ronda(self):
+        self.signal_comenzar_ronda.emit()
 
     def salir(self):
         sys.exit()

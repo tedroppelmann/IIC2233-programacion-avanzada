@@ -27,7 +27,8 @@ if __name__ == '__main__':
     juego.signal_crear_juego = ventana_inicio.signal_crear_juego
     # drag and drop
     juego.signal_drag_and_drop = ventana_principal.signal_drag_and_drop
-    ventana_principal.signal_update = juego.signal_update
+    # comenzar ronda
+    juego.signal_comenzar_ronda = ventana_principal.signal_comenzar_ronda
 
 
 

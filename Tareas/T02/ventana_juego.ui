@@ -175,7 +175,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButton">
+          <widget class="QPushButton" name="boton_comenzar_ronda">
            <property name="text">
             <string>COMENZAR</string>
            </property>

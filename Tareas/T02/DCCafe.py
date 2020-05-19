@@ -9,7 +9,7 @@ class DCCafe(QObject):
     signal_crear_juego = None
     signal_comenzar_juego = pyqtSignal(dict)
     signal_drag_and_drop = None
-    signal_update = pyqtSignal(dict)
+    signal_comenzar_ronda = None
 
     def __init__(self):
         super().__init__()
@@ -23,6 +23,8 @@ class DCCafe(QObject):
         self.reputacion = 0
         self.rondas_terminadas = 0
 
+        self.pre_ronda = True
+
         #Ocupo este diccionario para mandar todas las actualizaciones
         self.diccionario_datos = dict()
 
@@ -30,6 +32,7 @@ class DCCafe(QObject):
         self.signal_cargar_juego.connect(self.cargar)
         self.signal_crear_juego.connect(self.crear)
         self.signal_drag_and_drop.connect(self.drag_and_drop)
+        self.signal_comenzar_ronda.connect(self.comenzar_ronda)
 
     def cargar(self):
         print("Se carga juego antiguo")
@@ -60,6 +63,7 @@ class DCCafe(QObject):
 
     def crear(self):
         print("Se crea nuevo juego")
+        self.dinero += p.DINERO_INICIAL
         self.mesero = Mesero(p.POS_INICIAL_MESERO_X,p.POS_INICIAL_MESERO_Y)
         self.update_diccionario_datos()
 
@@ -69,22 +73,21 @@ class DCCafe(QObject):
 
         print("Llega señal al Drag and Drop de DCCafe")
 
-        if nombre == 'chef' and self.dinero >= p.PRECIO_CHEF:
+        if nombre == 'chef' and self.dinero >= p.PRECIO_CHEF and self.pre_ronda:
             self.dinero -= p.PRECIO_CHEF
             self.chefs[f'({pos_x},{pos_y})'] = Chef(pos_x, pos_y)
             self.update_mapa_csv('chef', pos_x, pos_y)
             self.update_diccionario_datos()
+            # Enviar aprobación a front-end para que visualice.
+            # Utilizo la misma señal que al iniciar el juego y cargarlo
+            self.signal_comenzar_juego.emit(self.diccionario)
 
-            # Enviar aprobación a front-end para que visualice
-            self.signal_update.emit(self.diccionario)
-
-        elif nombre == 'mesa' and self.dinero >= p.PRECIO_MESA:
+        elif nombre == 'mesa' and self.dinero >= p.PRECIO_MESA and self.pre_ronda:
             self.dinero -= p.PRECIO_MESA
             self.mesas[f'({pos_x},{pos_y})'] = Mesa(pos_x, pos_y)
             self.update_mapa_csv('mesa', pos_x, pos_y)
             self.update_diccionario_datos()
-
-            self.signal_update.emit(self.diccionario)
+            self.signal_comenzar_juego.emit(self.diccionario)
 
     def update_mapa_csv(self, tipo, x, y):
         with open(p.RUTA_MAPA, "a", encoding="utf-8") as archivo:
@@ -99,12 +102,5 @@ class DCCafe(QObject):
                             'reputacion': self.reputacion,
                             'rondas_terminadas': self.rondas_terminadas}
 
-
-
-
-
-
-
-
-
-
+    def comenzar_ronda(self):
+        self.pre_ronda = False

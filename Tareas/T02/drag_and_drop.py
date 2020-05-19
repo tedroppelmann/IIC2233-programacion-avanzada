@@ -30,9 +30,6 @@ class DropLabel(QLabel):
         print(nombre)
         self.signal_drag_and_drop.emit(pos.x(), pos.y(), nombre)
 
-        #Eliminar y cambiar por la condiciones en backend
-
-
 class DraggableLabel(QLabel):
     name = str()
     def mousePressEvent(self, event):
