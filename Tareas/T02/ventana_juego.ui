@@ -301,14 +301,14 @@
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_4">
        <item>
-        <widget class="QPushButton" name="pushButton_3">
+        <widget class="QPushButton" name="boton_pausar">
          <property name="text">
           <string>PAUSAR</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_2">
+        <widget class="QPushButton" name="boton_salir">
          <property name="text">
           <string>SALIR</string>
          </property>
@@ -360,9 +360,9 @@
       </widget>
      </item>
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout_8">
+      <layout class="QVBoxLayout" name="market_layout">
        <item>
-        <widget class="QLabel" name="tienda">
+        <widget class="QLabel" name="market">
          <property name="font">
           <font>
            <family>Marker Felt</family>
@@ -386,50 +386,72 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="chef">
-         <property name="text">
-          <string/>
-         </property>
-         <property name="pixmap">
-          <pixmap>../../../../../../Pontificia Universidad Católica/Semestre VII/IIC2233 Programación Avanzada/tedroppelmann-iic2233-2020-1/Tareas/T02/sprites/chef/meson_01.png</pixmap>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="precio_chef">
-         <property name="text">
-          <string>$300</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="mesa">
-         <property name="text">
-          <string/>
-         </property>
-         <property name="pixmap">
-          <pixmap>../../../../../../Pontificia Universidad Católica/Semestre VII/IIC2233 Programación Avanzada/tedroppelmann-iic2233-2020-1/Tareas/T02/sprites/mapa/accesorios/mesa_pequena.png</pixmap>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="precio_mesa">
-         <property name="text">
-          <string>$100</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="0" column="0">
+          <widget class="QLabel" name="chef">
+           <property name="minimumSize">
+            <size>
+             <width>59</width>
+             <height>69</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>59</width>
+             <height>69</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="mesa">
+           <property name="minimumSize">
+            <size>
+             <width>23</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>23</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="label_4">
+           <property name="text">
+            <string>$100</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>$300</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </item>
