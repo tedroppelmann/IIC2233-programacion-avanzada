@@ -6,6 +6,7 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QLabel
 from drag_and_drop import DraggableLabel, DropLabel
 from PyQt5.QtCore import pyqtSignal
+import parametros as p
 
 WINDOW_NAME_2, BASE_CLASS_2 = uic.loadUiType("ventana_juego.ui")
 
@@ -27,19 +28,20 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
         self.boton_salir.clicked.connect(self.salir)
         self.boton_comenzar_ronda.clicked.connect(self.comenzar_ronda)
 
-
     def init_gui(self):
-        self.espacio_posible = QLabel(self.mapa)
+        # La única forma que se me ocurrio para fijar el tamaño del label
+        self.mapa.setMaximumSize(p.ANCHO_MAPA, p.LARGO_MAPA)
+        self.mapa.setMinimumSize(p.ANCHO_MAPA, p.LARGO_MAPA)
+        self.espacio_piso = QLabel(self.mapa)
         espacio_drag_drop = DropLabel(self.mapa)
         espacio_drag_drop.signal_drag_and_drop = self.signal_drag_and_drop
-        # Sacar la parte de la pared y los bordes
-        # Son 60 px hasta el borde de arriba pero se le saca 15 px para que se alcance el borde
-        # con lo pies.
-        self.espacio_posible.setGeometry(0, 45, 430, 240)
-        espacio_drag_drop.setGeometry(0, 45, 430, 240)
+        self.espacio_piso.setGeometry(0, p.PUNTO_INICIAL_PISO, p.ANCHO_PISO, p.LARGO_PISO)
+        # El borde derecho e inferior vienen dados para que quepa el meson del chef sin salirse.
+        # Por eso es más pequeño.
+        espacio_drag_drop.setGeometry(0, p.PUNTO_INICIAL_PISO, p.ANCHO_DRAG_DROP, p.LARGO_DRAG_DROP)
 
         # Creamos los labels individuales
-        self.label_mesero = QLabel(self.espacio_posible)
+        self.label_mesero = QLabel(self.espacio_piso)
         self.label_mesas = dict()
         self.label_chefs = dict()
 
@@ -60,7 +62,6 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
         self.posicion_mesero(datos['mesero'])
         self.posicion_mesas(datos['mesas'])
         self.posicion_chefs(datos['chefs'])
-        print('Va')
         # Actualizar datos en pantalla
         self.dinero_lcd.display(datos['dinero'])
         self.reputacion_barra.setValue(datos['reputacion'])
@@ -78,7 +79,8 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
     def posicion_mesas(self, mesas):
         imagen = QPixmap(os.path.join('sprites', 'mapa', 'accesorios', 'mesa_pequena.png'))
         for mesa in mesas:
-            self.label_mesas[f'({mesas[mesa].x},{mesas[mesa].y})'] = QLabel(self.espacio_posible)
+            print(f'Posicion mesas: {mesa}')
+            self.label_mesas[f'({mesas[mesa].x},{mesas[mesa].y})'] = QLabel(self.espacio_piso)
             self.label_mesas[f'({mesas[mesa].x},{mesas[mesa].y})'].setPixmap(imagen)
             self.label_mesas[f'({mesas[mesa].x},{mesas[mesa].y})'].move(mesas[mesa].x, mesas[mesa].y)
             self.label_mesas[f'({mesas[mesa].x},{mesas[mesa].y})'].show()
@@ -87,7 +89,7 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
         imagen = QPixmap(os.path.join('sprites', 'chef', 'meson_01.png'))
         for chef in chefs:
             print(f'Posicion chefs: {chef}')
-            self.label_chefs[f'({chefs[chef].x},{chefs[chef].y})'] = QLabel(self.espacio_posible)
+            self.label_chefs[f'({chefs[chef].x},{chefs[chef].y})'] = QLabel(self.espacio_piso)
             self.label_chefs[f'({chefs[chef].x},{chefs[chef].y})'].setPixmap(imagen)
             self.label_chefs[f'({chefs[chef].x},{chefs[chef].y})'].move(chefs[chef].x, chefs[chef].y)
             self.label_chefs[f'({chefs[chef].x},{chefs[chef].y})'].show()

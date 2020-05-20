@@ -24,6 +24,7 @@ class DCCafe(QObject):
         self.rondas_terminadas = 0
 
         self.pre_ronda = True
+        self.partida_nueva = True
 
         #Ocupo este diccionario para mandar todas las actualizaciones
         self.diccionario_datos = dict()
@@ -36,6 +37,7 @@ class DCCafe(QObject):
 
     def cargar(self):
         print("Se carga juego antiguo")
+        self.partida_nueva = False
         with open(p.RUTA_MAPA, "r", encoding = "utf-8") as archivo:
             filas = archivo.readlines()
             listas = [fila.strip().split(",") for fila in filas]
@@ -71,11 +73,9 @@ class DCCafe(QObject):
 
     def drag_and_drop(self, pos_x, pos_y, nombre):
 
-        print("Llega señal al Drag and Drop de DCCafe")
-
         if nombre == 'chef' and self.dinero >= p.PRECIO_CHEF and self.pre_ronda:
             self.dinero -= p.PRECIO_CHEF
-            self.chefs[f'({pos_x},{pos_y})'] = Chef(pos_x, pos_y)
+            self.chefs[f'({int(pos_x)},{int(pos_y)})'] = Chef(int(pos_x), int(pos_y))
             self.update_mapa_csv('chef', pos_x, pos_y)
             self.update_diccionario_datos()
             # Enviar aprobación a front-end para que visualice.
@@ -84,17 +84,19 @@ class DCCafe(QObject):
 
         elif nombre == 'mesa' and self.dinero >= p.PRECIO_MESA and self.pre_ronda:
             self.dinero -= p.PRECIO_MESA
-            self.mesas[f'({pos_x},{pos_y})'] = Mesa(pos_x, pos_y)
+            self.mesas[f'({int(pos_x)},{int(pos_y)})'] = Mesa(int(pos_x), int(pos_y))
             self.update_mapa_csv('mesa', pos_x, pos_y)
             self.update_diccionario_datos()
             self.signal_comenzar_juego.emit(self.diccionario)
 
     def update_mapa_csv(self, tipo, x, y):
+
         with open(p.RUTA_MAPA, "a", encoding="utf-8") as archivo:
-            archivo.write(f'{tipo}, {x}, {y}\n')
+            archivo.write(f'{tipo},{x},{y}\n')
 
     # La ocupo para no escribir esto muchas veces... no se si es bueno
     def update_diccionario_datos(self):
+
         self.diccionario = {'mesero': self.mesero,
                             'chefs': self.chefs,
                             'mesas': self.mesas,

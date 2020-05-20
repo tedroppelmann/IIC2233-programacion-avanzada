@@ -1,7 +1,7 @@
 import sys
 from PyQt5.QtWidgets import QApplication
 
-from ventanas import VentanaInicio
+from ventanas import VentanaInicio, VentanaPostRonda
 from ventana_juego import VentanaPrincipal
 from DCCafe import DCCafe
 from drag_and_drop import DropLabel
@@ -15,9 +15,11 @@ if __name__ == '__main__':
 
     app = QApplication([])
 
+    #Instancio clases
     juego = DCCafe()
     ventana_inicio = VentanaInicio()
     ventana_principal = VentanaPrincipal()
+    ventana_post_ronda = VentanaPostRonda()
 
     # Conectar señales:
     # cargar juego
@@ -29,7 +31,6 @@ if __name__ == '__main__':
     juego.signal_drag_and_drop = ventana_principal.signal_drag_and_drop
     # comenzar ronda
     juego.signal_comenzar_ronda = ventana_principal.signal_comenzar_ronda
-
 
 
     # Iniciar señales:

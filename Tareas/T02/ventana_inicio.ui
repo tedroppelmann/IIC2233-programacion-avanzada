@@ -7,13 +7,19 @@
     <x>0</x>
     <y>0</y>
     <width>344</width>
-    <height>328</height>
+    <height>280</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>0</width>
+    <height>280</height>
+   </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>344</width>
-    <height>328</height>
+    <width>364</width>
+    <height>280</height>
    </size>
   </property>
   <property name="palette">
