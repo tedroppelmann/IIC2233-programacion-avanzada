@@ -16,6 +16,8 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
     signal_cargar_juego = None
     signal_drag_and_drop = pyqtSignal(int, int, str)
     signal_comenzar_ronda = pyqtSignal()
+    signal_eliminar = pyqtSignal(int, int)
+    signal_eliminar_label = None
 
     def __init__(self):
         super().__init__()
@@ -24,9 +26,9 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
 
     def init_signals(self):
         self.signal_cargar_juego.connect(self.comenzar_juego)
-        # Botones:
         self.boton_salir.clicked.connect(self.salir)
         self.boton_comenzar_ronda.clicked.connect(self.comenzar_ronda)
+        self.signal_eliminar_label.connect(self.eliminar_label)
 
     def init_gui(self):
         # La única forma que se me ocurrio para fijar el tamaño del label
@@ -93,6 +95,23 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
             self.label_chefs[f'({chefs[chef].x},{chefs[chef].y})'].setPixmap(imagen)
             self.label_chefs[f'({chefs[chef].x},{chefs[chef].y})'].move(chefs[chef].x, chefs[chef].y)
             self.label_chefs[f'({chefs[chef].x},{chefs[chef].y})'].show()
+
+    def mousePressEvent(self, event):
+        pos_x = event.x() - self.mapa.x()
+        pos_y = event.y() - self.mapa.y() - p.PUNTO_INICIAL_PISO
+        print(pos_x, pos_y)
+        self.signal_eliminar.emit(pos_x, pos_y)
+
+    def eliminar_label(self, tipo, x, y):
+        print("retorna señal")
+        print(tipo)
+        if tipo == 'chef':
+            self.label_chefs[f'({x},{y})'].hide()
+        elif tipo == 'mesa':
+            self.label_mesas[f'({x},{y})'].hide()
+
+        # despues de un dragdrop no me deja borrar no se por que
+
 
     def comenzar_ronda(self):
         self.signal_comenzar_ronda.emit()
