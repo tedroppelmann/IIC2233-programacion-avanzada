@@ -15,8 +15,8 @@ PUNTO_INICIAL_PISO = 45
 ANCHO_PISO = ANCHO_MAPA #16 pixeles es el ancho del mesero
 LARGO_PISO = LARGO_MAPA - PUNTO_INICIAL_PISO
 # Son las medidas del espacio posible para el drag and drop
-ANCHO_DRAG_DROP = ANCHO_MAPA - 59 #59 pixeles es el ancho del meson
-LARGO_DRAG_DROP = LARGO_MAPA - PUNTO_INICIAL_PISO - 69 #69 pixeles es el largo del meson
+ANCHO_DRAG_DROP = ANCHO_MAPA #59 pixeles es el ancho del meson
+LARGO_DRAG_DROP = LARGO_MAPA - PUNTO_INICIAL_PISO #69 pixeles es el largo del meson
 
 ANCHO_ARBOL = 30
 LARGO_ARBOL = 60
@@ -25,8 +25,8 @@ LARGO_ARBOL = 60
 
 DINERO_INICIAL = 500
 REPUTACION_INICIAL = 3
-CHEFS_INICIALES = 2
-MESAS_INICIALES = 4
+CHEFS_INICIALES = 1
+MESAS_INICIALES = 3
 CLIENTES_INICIALES = 2
 
 # PRECIOS MARKET:

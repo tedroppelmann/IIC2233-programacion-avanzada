@@ -13,11 +13,12 @@ WINDOW_NAME_2, BASE_CLASS_2 = uic.loadUiType("ventana_juego.ui")
 class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
 
     #Señales back-end:
-    signal_cargar_juego = None
+    signal_comenzar_juego = None
     signal_drag_and_drop = pyqtSignal(int, int, str)
     signal_comenzar_ronda = pyqtSignal()
     signal_eliminar = pyqtSignal(int, int)
     signal_eliminar_label = None
+    signal_crear_drag_and_drop = None
 
     def __init__(self):
         super().__init__()
@@ -25,34 +26,32 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
         self.init_gui()
 
     def init_signals(self):
-        self.signal_cargar_juego.connect(self.comenzar_juego)
+        self.signal_comenzar_juego.connect(self.comenzar_juego)
         self.boton_salir.clicked.connect(self.salir)
         self.boton_comenzar_ronda.clicked.connect(self.comenzar_ronda)
         self.signal_eliminar_label.connect(self.eliminar_label)
+        self.signal_crear_drag_and_drop.connect(self.agregar_por_drag_drop)
 
     def init_gui(self):
         # La única forma que se me ocurrio para fijar el tamaño del label
         self.mapa.setMaximumSize(p.ANCHO_MAPA, p.LARGO_MAPA)
         self.mapa.setMinimumSize(p.ANCHO_MAPA, p.LARGO_MAPA)
         self.espacio_piso = QLabel(self.mapa)
-        espacio_drag_drop = DropLabel(self.mapa)
-        espacio_drag_drop.signal_drag_and_drop = self.signal_drag_and_drop
+        self.espacio_drag_drop = DropLabel(self.mapa)
+        self.espacio_drag_drop.signal_drag_and_drop = self.signal_drag_and_drop
         self.espacio_piso.setGeometry(0, p.PUNTO_INICIAL_PISO, p.ANCHO_PISO, p.LARGO_PISO)
         # El borde derecho e inferior vienen dados para que quepa el meson del chef sin salirse.
         # Por eso es más pequeño.
-        espacio_drag_drop.setGeometry(0, p.PUNTO_INICIAL_PISO, p.ANCHO_DRAG_DROP, p.LARGO_DRAG_DROP)
-
+        self.espacio_drag_drop.setGeometry(0, p.PUNTO_INICIAL_PISO, p.ANCHO_DRAG_DROP, p.LARGO_DRAG_DROP)
         # Creamos los labels individuales
         self.label_mesero = QLabel(self.espacio_piso)
         self.label_mesas = dict()
         self.label_chefs = dict()
-
         # Hacemos arrastrables los elementos de la tienda
         chef = DraggableLabel(self.chef)
         chef.name = 'chef'
         foto = QPixmap(os.path.join('sprites', 'chef', 'meson_01.png'))
         chef.setPixmap(foto)
-
         mesa = DraggableLabel(self.mesa)
         mesa.name = 'mesa'
         foto = QPixmap(os.path.join('sprites', 'mapa', 'accesorios', 'mesa_pequena.png'))
@@ -96,11 +95,27 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
             self.label_chefs[f'({chefs[chef].x},{chefs[chef].y})'].move(chefs[chef].x, chefs[chef].y)
             self.label_chefs[f'({chefs[chef].x},{chefs[chef].y})'].show()
 
+    def agregar_por_drag_drop(self, tipo, dinero, x, y):
+        if tipo == 'chef':
+            imagen = QPixmap(os.path.join('sprites', 'chef', 'meson_01.png'))
+            self.label_chefs[f'({x},{y})'] = QLabel(self.espacio_piso)
+            self.label_chefs[f'({x},{y})'].setPixmap(imagen)
+            self.label_chefs[f'({x},{y})'].move(x, y)
+            self.label_chefs[f'({x},{y})'].show()
+        elif tipo == 'mesa':
+            imagen = QPixmap(os.path.join('sprites', 'mapa', 'accesorios', 'mesa_pequena.png'))
+            self.label_mesas[f'({x},{y})'] = QLabel(self.espacio_piso)
+            self.label_mesas[f'({x},{y})'].setPixmap(imagen)
+            self.label_mesas[f'({x},{y})'].move(x, y)
+            self.label_mesas[f'({x},{y})'].show()
+        self.dinero_lcd.display(dinero)
+
     def mousePressEvent(self, event):
         pos_x = event.x() - self.mapa.x()
         pos_y = event.y() - self.mapa.y() - p.PUNTO_INICIAL_PISO
         print(pos_x, pos_y)
-        self.signal_eliminar.emit(pos_x, pos_y)
+        if 0 <= pos_x <= p.ANCHO_PISO and 0 <= pos_y <= p.LARGO_MAPA:
+            self.signal_eliminar.emit(pos_x, pos_y)
 
     def eliminar_label(self, tipo, x, y):
         print("retorna señal")
@@ -109,9 +124,6 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
             self.label_chefs[f'({x},{y})'].hide()
         elif tipo == 'mesa':
             self.label_mesas[f'({x},{y})'].hide()
-
-        # despues de un dragdrop no me deja borrar no se por que
-
 
     def comenzar_ronda(self):
         self.signal_comenzar_ronda.emit()

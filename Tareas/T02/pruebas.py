@@ -1,13 +1,8 @@
 
 import parametros as p
-import random
 
-pixeles_mapa = dict()
-
-dicc = {'hola': 'tomas'}
-
-if dicc['holas'] == 'tomas':
-    print('work')
+with open(p.RUTA_MAPA, "a", encoding="utf-8") as archivo:
+    lineas = archivo.readlines()
 
 
 

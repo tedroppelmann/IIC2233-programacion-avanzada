@@ -24,11 +24,12 @@ if __name__ == '__main__':
     # Conectar señales:
     # cargar juego
     juego.signal_cargar_juego = ventana_inicio.signal_cargar_juego
-    ventana_principal.signal_cargar_juego = juego.signal_comenzar_juego
+    ventana_principal.signal_comenzar_juego = juego.signal_comenzar_juego
     # crear juego
     juego.signal_crear_juego = ventana_inicio.signal_crear_juego
     # drag and drop
     juego.signal_drag_and_drop = ventana_principal.signal_drag_and_drop
+    ventana_principal.signal_crear_drag_and_drop = juego.signal_crear_drag_and_drop
     # Eliminar compra
     juego.signal_eliminar = ventana_principal.signal_eliminar
     ventana_principal.signal_eliminar_label = juego.signal_eliminar_label
