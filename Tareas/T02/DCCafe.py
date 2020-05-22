@@ -3,6 +3,7 @@ import parametros as p
 from PyQt5.QtCore import QObject, pyqtSignal
 from entidades import Mesero, Chef, Mesa
 import random
+from collections import defaultdict
 
 class DCCafe(QObject):
     #Señales con front-end:
@@ -14,6 +15,9 @@ class DCCafe(QObject):
     signal_comenzar_ronda = None
     signal_eliminar = None
     signal_eliminar_label = pyqtSignal(str, int, int)
+    signal_mover_mesero = None
+    signal_mover_mesero_2 = None
+    signal_update_posicion_mesero = pyqtSignal(int, int, int, str)
 
     def __init__(self):
         super().__init__()
@@ -26,10 +30,9 @@ class DCCafe(QObject):
         self.dinero = p.DINERO_INICIAL
         self.reputacion = p.REPUTACION_INICIAL
         self.rondas_terminadas = 0
-
         self.disponibilidad = True
-
-        self.pixeles_mapa = dict()
+        # Pixeles del mapa que están libres y ocupados
+        self.pixeles_mapa = defaultdict(lambda: "Hay puntos del objeto fuera del mapa")
         for i in range(0, p.ANCHO_PISO + 1):
             for j in range(0, p.LARGO_PISO + 1):
                 # Le saco los arbustos de las esquinas
@@ -39,9 +42,10 @@ class DCCafe(QObject):
                     self.pixeles_mapa[f'({i},{j})'] = "arbol"
                 else:
                     self.pixeles_mapa[f'({i},{j})'] = "libre"
-
         #Ocupo este diccionario para mandar todas las actualizaciones
         self.diccionario_datos = dict()
+
+        self.tecla_contraria = None
 
     def init_signals(self):
         self.signal_cargar_juego.connect(self.cargar)
@@ -49,7 +53,9 @@ class DCCafe(QObject):
         self.signal_drag_and_drop.connect(self.drag_and_drop)
         self.signal_comenzar_ronda.connect(self.comenzar_ronda)
         self.signal_eliminar.connect(self.eliminar)
+        self.signal_mover_mesero.connect(self.mover_mesero)
 
+    # Carga en el mapa una partida guardada
     def cargar(self):
         print("Se carga juego antiguo")
         self.disponibilidad = False
@@ -61,7 +67,6 @@ class DCCafe(QObject):
             self.rondas_terminadas += int(fila_1[2])
             fila_2 = archivo.readline()
             fila_2 = fila_2.strip().split(",")
-
         with open(p.RUTA_MAPA, "r", encoding = "utf-8") as archivo:
             filas = archivo.readlines()
             listas = [fila.strip().split(",") for fila in filas]
@@ -82,20 +87,22 @@ class DCCafe(QObject):
         self.update_diccionario_datos()
         self.signal_comenzar_juego.emit(self.diccionario_datos)
 
+    # Cambia el estado del pixel para que se vea que ahora está ocupado
     def ocupar_pixel(self, x, y, ancho, largo, tipo):
         for i in range(x, x + ancho + 1):
             for j in range(y, y + largo + 1):
                 self.pixeles_mapa[f'({i},{j})'] = [tipo, x, y]
 
+    # Crea una nueva partida con objetos nuevos
     def crear(self):
         print("Se crea nuevo juego")
         self.agregar_figuras_aleatorias('mesero', p.ANCHO_MESERO, p.LARGO_MESERO, 1)
         self.agregar_figuras_aleatorias('chef', p.ANCHO_CHEF, p.LARGO_CHEF, p.CHEFS_INICIALES)
         self.agregar_figuras_aleatorias('mesa', p.ANCHO_MESA, p.LARGO_MESA, p.MESAS_INICIALES)
-
         self.update_diccionario_datos()
         self.signal_comenzar_juego.emit(self.diccionario_datos)
 
+    # Retorna si algún pixel que se quiere llenar ya está ocupado
     def pixel_ocupado(self, x, y, ancho, largo):
         ocupado = False
         for i in range(x, x + ancho):
@@ -106,11 +113,13 @@ class DCCafe(QObject):
                     return ocupado
         return ocupado
 
+    # Agrega figuras aleatorias a los pixeles del mapa al crear un juego nuevo
     def agregar_figuras_aleatorias(self, tipo, ancho, largo, cantidad_inicial):
         for valor in range(cantidad_inicial):
             ocupado = True
             while ocupado:
-                x, y = random.randint(0, p.ANCHO_PISO - ancho), random.randint(0, p.LARGO_PISO - largo)
+                x = random.randint(0, p.ANCHO_PISO - ancho)
+                y = random.randint(0, p.LARGO_PISO - largo)
                 ocupado = self.pixel_ocupado(x, y, ancho, largo)
                 if not ocupado:
                     for i in range(x, x + ancho + 1):
@@ -123,6 +132,7 @@ class DCCafe(QObject):
                     elif tipo == 'mesero':
                         self.mesero = Mesero(x, y)
 
+    # Permite agregar objetos por Drag and Drop
     def drag_and_drop(self, pos_x, pos_y, nombre):
         if nombre == 'chef' and self.dinero >= p.PRECIO_CHEF and not self.disponibilidad:
             ocupado = self.pixel_ocupado(pos_x, pos_y, p.ANCHO_CHEF, p.LARGO_CHEF)
@@ -131,10 +141,10 @@ class DCCafe(QObject):
                 self.chefs[f'({int(pos_x)},{int(pos_y)})'] = Chef(int(pos_x), int(pos_y))
                 self.agregar_figuras_drag_drop(pos_x, pos_y, p.ANCHO_CHEF, p.LARGO_CHEF, 'chef')
                 self.agregar_mapa_csv('chef', pos_x, pos_y)
-                self.update_diccionario_datos()
-                # Enviar aprobación a front-end para que visualice.
-                # Utilizo la misma señal que al iniciar el juego y cargarlo
+                # Enviar aprobación a front-end para que visualice
                 self.signal_crear_drag_and_drop.emit('chef', self.dinero, pos_x, pos_y)
+                self.update_datos_csv()
+                self.update_diccionario_datos()
         elif nombre == 'mesa' and self.dinero >= p.PRECIO_MESA and not self.disponibilidad:
             ocupado = self.pixel_ocupado(pos_x, pos_y, p.ANCHO_MESA, p.LARGO_MESA)
             if not ocupado:
@@ -142,16 +152,18 @@ class DCCafe(QObject):
                 self.mesas[f'({int(pos_x)},{int(pos_y)})'] = Mesa(int(pos_x), int(pos_y))
                 self.agregar_figuras_drag_drop(pos_x, pos_y, p.ANCHO_MESA, p.LARGO_MESA, 'mesa')
                 self.agregar_mapa_csv('mesa', pos_x, pos_y)
-                self.update_diccionario_datos()
                 self.signal_crear_drag_and_drop.emit('mesa', self.dinero, pos_x, pos_y)
+                self.update_datos_csv()
+                self.update_diccionario_datos()
 
+    # Agrega objeto por Drag and Drop a los pixeles ocupados
     def agregar_figuras_drag_drop(self, x, y, ancho, largo, tipo):
         for i in range(x, x + ancho + 1):
             for j in range(y, y + largo + 1):
                 self.pixeles_mapa[f'({i},{j})'] = [tipo, x, y]
 
+    # Elimina objeto del mapa
     def eliminar(self, x, y):
-        print('llega senal')
         print(self.pixeles_mapa[f'({x},{y})'][0])
         if self.pixeles_mapa[f'({x},{y})'] != 'libre' and not self.disponibilidad :
             print('entra')
@@ -162,22 +174,28 @@ class DCCafe(QObject):
                 self.chefs.pop(f'({x_origen},{y_origen})')
                 self.eliminar_mapa_csv('chef', x_origen, y_origen)
                 self.signal_eliminar_label.emit('chef', x_origen, y_origen)
+                self.update_datos_csv()
+                self.update_diccionario_datos()
             elif self.pixeles_mapa[f'({x},{y})'][0] == 'mesa' and len(self.mesas) > 1:
                 self.liberar_pixeles(x_origen, y_origen, p.ANCHO_MESA, p.LARGO_MESA)
                 self.mesas.pop(f'({x_origen},{y_origen})')
                 self.eliminar_mapa_csv('mesa', x_origen, y_origen)
                 self.signal_eliminar_label.emit('mesa', x_origen, y_origen)
-            self.update_diccionario_datos()
+                self.update_datos_csv()
+                self.update_diccionario_datos()
 
+    # Libera el espacio en pixeles al eliminar un objeto del mapa
     def liberar_pixeles(self, x, y, ancho, largo):
         for i in range(x, x + ancho + 1):
             for j in range(y, y + largo + 1):
                 self.pixeles_mapa[f'({i},{j})'] = 'libre'
 
+    # Agregar un nuevo objeto a mapa.csv
     def agregar_mapa_csv(self, tipo, x, y):
         with open(p.RUTA_MAPA, "a", encoding="utf-8") as archivo:
             archivo.write(f'{tipo},{x},{y}\n')
 
+    # Eliminar de mapa.csv algun objeto eliminado
     def eliminar_mapa_csv(self, tipo, x, y):
         with open(p.RUTA_MAPA, "r", encoding="utf-8") as archivo:
             lineas = archivo.readlines()
@@ -185,6 +203,25 @@ class DCCafe(QObject):
             for linea in lineas:
                 if linea.strip("\n") != f'{tipo},{x},{y}':
                     archivo.write(linea)
+
+    # Actualiza cualquier cambio en datos.csv
+    def update_datos_csv(self):
+        linea_1_nueva = f'{self.dinero},{self.reputacion},{self.rondas_terminadas}\n'
+        lista_2_nueva = []
+        for chef in self.chefs:
+            lista_2_nueva.append(str(self.chefs[chef].platos_terminados))
+        linea_2_nueva = ','.join(lista_2_nueva)
+        with open(p.RUTA_DATOS, "w", encoding="utf-8") as archivo:
+            archivo.write(linea_1_nueva)
+            archivo.write(linea_2_nueva)
+
+    def mover_mesero(self, tecla):
+        if tecla != 'ocupado':
+            self.liberar_pixeles(self.mesero.x, self.mesero.y, p.ANCHO_MESERO, p.LARGO_MESERO)
+            self.tecla_contraria, frame, posicion = self.mesero.mover(tecla)
+            self.signal_update_posicion_mesero.emit(self.mesero.x, self.mesero.y, frame, posicion)
+        else:
+            self.mesero.mover(self.tecla_contraria)
 
     # La ocupo para no escribir esto muchas veces... no se si es bueno
     def update_diccionario_datos(self):

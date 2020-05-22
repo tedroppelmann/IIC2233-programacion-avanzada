@@ -4,7 +4,6 @@ from PyQt5.QtWidgets import QApplication
 from ventanas import VentanaInicio, VentanaPostRonda
 from ventana_juego import VentanaPrincipal
 from DCCafe import DCCafe
-from drag_and_drop import DropLabel
 
 
 if __name__ == '__main__':
@@ -30,16 +29,21 @@ if __name__ == '__main__':
     # drag and drop
     juego.signal_drag_and_drop = ventana_principal.signal_drag_and_drop
     ventana_principal.signal_crear_drag_and_drop = juego.signal_crear_drag_and_drop
-    # Eliminar compra
+    # eliminar compra
     juego.signal_eliminar = ventana_principal.signal_eliminar
     ventana_principal.signal_eliminar_label = juego.signal_eliminar_label
     # comenzar ronda
     juego.signal_comenzar_ronda = ventana_principal.signal_comenzar_ronda
+    # mover mesero
+    juego.signal_mover_mesero = ventana_principal.signal_mover_mesero
+    ventana_principal.signal_update_posicion_mesero = juego.signal_update_posicion_mesero
+
 
 
     # Iniciar señales:
     juego.init_signals()
     ventana_principal.init_signals()
+
 
 
     ventana_inicio.show()
