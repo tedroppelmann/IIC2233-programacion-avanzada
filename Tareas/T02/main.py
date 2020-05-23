@@ -37,6 +37,12 @@ if __name__ == '__main__':
     # mover mesero
     juego.signal_mover_mesero = ventana_principal.signal_mover_mesero
     ventana_principal.signal_update_posicion_mesero = juego.signal_update_posicion_mesero
+    # crear cliente
+    ventana_principal.signal_crear_cliente = juego.signal_crear_cliente
+    # update animacion cliente
+    ventana_principal.signal_update_animacion_cliente = juego.signal_update_animacion_cliente
+    # actualizar cuando cliente se va
+    juego.signal_cliente_se_fue = ventana_principal.signal_cliente_se_fue
 
 
 

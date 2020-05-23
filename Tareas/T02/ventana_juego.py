@@ -11,7 +11,7 @@ import parametros as p
 WINDOW_NAME_2, BASE_CLASS_2 = uic.loadUiType("ventana_juego.ui")
 
 class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
-    #Señales back-end:
+
     signal_comenzar_juego = None
     signal_drag_and_drop = pyqtSignal(int, int, str)
     signal_comenzar_ronda = pyqtSignal()
@@ -20,6 +20,9 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
     signal_crear_drag_and_drop = None
     signal_mover_mesero = pyqtSignal(str)
     signal_update_posicion_mesero = None
+    signal_crear_cliente = None
+    signal_update_animacion_cliente = None
+    signal_cliente_se_fue = pyqtSignal(dict)
 
     def __init__(self):
         super().__init__()
@@ -33,6 +36,8 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
         self.signal_eliminar_label.connect(self.eliminar_label)
         self.signal_crear_drag_and_drop.connect(self.agregar_por_drag_drop)
         self.signal_update_posicion_mesero.connect(self.update_posicion_mesero)
+        self.signal_crear_cliente.connect(self.crear_cliente)
+        self.signal_update_animacion_cliente.connect(self.update_animacion_cliente)
 
     def init_gui(self):
         # La única forma que se me ocurrio para fijar el tamaño del label
@@ -49,6 +54,7 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
         self.label_mesero = QLabel(self.espacio_piso)
         self.label_mesas = dict()
         self.label_chefs = dict()
+        self.label_clientes = dict()
         self.rectangulos = dict()
         # Hacemos arrastrables los elementos de la tienda
         chef = DraggableLabel(self.chef)
@@ -69,7 +75,7 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
         # Actualizar datos en pantalla
         self.dinero_lcd.display(datos['dinero'])
         self.reputacion_barra.setValue(datos['reputacion'])
-        self.ronda.setText(f"RONDA Nº {datos['rondas_terminadas']}")
+        self.ronda.setText(f"RONDA Nº {datos['rondas_terminadas'] + 1}")
 
         self.show()
 
@@ -159,10 +165,36 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
                 i += 1
         if i == 0:
             self.label_mesero.move(x, y)
-            self.show()
 
     def comenzar_ronda(self):
         self.signal_comenzar_ronda.emit()
+
+    def crear_cliente(self, x, y):
+        imagen = QPixmap(os.path.join('sprites', 'clientes', 'hamster', 'hamster_01.png'))
+        self.label_clientes[f'({x},{y})'] = QLabel(self.espacio_piso)
+        self.label_clientes[f'({x},{y})'].setGeometry(0, 0, p.ANCHO_MESERO + 5, p.LARGO_MESERO + 5)
+        self.rectangulos[f'cliente,({x},{y})'] = QRect(x, y, p.ANCHO_MESERO + 5, p.LARGO_MESERO + 5)
+        self.label_clientes[f'({x},{y})'].setPixmap(imagen)
+        self.label_clientes[f'({x},{y})'].setScaledContents(True)
+        self.label_clientes[f'({x},{y})'].move(x, y)
+        self.label_clientes[f'({x},{y})'].show()
+
+    def update_animacion_cliente(self, cliente):
+        x = cliente['x']
+        y = cliente['y']
+        tipo = cliente['tipo']
+        atendido = cliente['atendido']
+        frame = cliente['frame']
+        if not atendido and tipo != 'se fue':
+            imagen = QPixmap(os.path.join('sprites', 'clientes', 'hamster', f'hamster_{frame}.png'))
+            self.label_clientes[f'({x},{y})'].setPixmap(imagen)
+            self.label_clientes[f'({x},{y})'].setScaledContents(True)
+        elif tipo == 'se fue':
+            self.label_clientes[f'({x},{y})'].hide()
+            self.label_clientes.pop(f'({x},{y})')
+            self.rectangulos.pop(f'cliente,({x},{y})')
+            self.signal_cliente_se_fue.emit(cliente)
+    
 
     def salir(self):
         sys.exit()

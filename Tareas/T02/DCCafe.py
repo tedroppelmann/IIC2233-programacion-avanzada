@@ -1,12 +1,13 @@
 
 import parametros as p
-from PyQt5.QtCore import QObject, pyqtSignal
-from entidades import Mesero, Chef, Mesa
+from PyQt5.QtCore import QObject, pyqtSignal, QThread, QTimer
+from entidades import Mesero, Chef, Mesa, Cliente
 import random
 from collections import defaultdict
+import time
 
-class DCCafe(QObject):
-    #Señales con front-end:
+class DCCafe(QThread):
+
     signal_cargar_juego = None
     signal_crear_juego = None
     signal_comenzar_juego = pyqtSignal(dict)
@@ -18,6 +19,9 @@ class DCCafe(QObject):
     signal_mover_mesero = None
     signal_mover_mesero_2 = None
     signal_update_posicion_mesero = pyqtSignal(int, int, int, str)
+    signal_crear_cliente = pyqtSignal(int, int)
+    signal_update_animacion_cliente = pyqtSignal(dict)
+    signal_cliente_se_fue = None
 
     def __init__(self):
         super().__init__()
@@ -44,8 +48,10 @@ class DCCafe(QObject):
                     self.pixeles_mapa[f'({i},{j})'] = "libre"
         #Ocupo este diccionario para mandar todas las actualizaciones
         self.diccionario_datos = dict()
-
+        # Truquito para eliminar revertir el cambio de posicion del mesero
         self.tecla_contraria = None
+        self.cantidad_atendidos = 0
+        self.cantidad_perdidos = 0
 
     def init_signals(self):
         self.signal_cargar_juego.connect(self.cargar)
@@ -54,6 +60,7 @@ class DCCafe(QObject):
         self.signal_comenzar_ronda.connect(self.comenzar_ronda)
         self.signal_eliminar.connect(self.eliminar)
         self.signal_mover_mesero.connect(self.mover_mesero)
+        self.signal_cliente_se_fue.connect(self.eliminar_cliente)
 
     # Carga en el mapa una partida guardada
     def cargar(self):
@@ -101,6 +108,7 @@ class DCCafe(QObject):
         self.agregar_figuras_aleatorias('mesa', p.ANCHO_MESA, p.LARGO_MESA, p.MESAS_INICIALES)
         self.update_diccionario_datos()
         self.signal_comenzar_juego.emit(self.diccionario_datos)
+        self.comenzar_ronda()
 
     # Retorna si algún pixel que se quiere llenar ya está ocupado
     def pixel_ocupado(self, x, y, ancho, largo):
@@ -118,7 +126,7 @@ class DCCafe(QObject):
         for valor in range(cantidad_inicial):
             ocupado = True
             while ocupado:
-                x = random.randint(0, p.ANCHO_PISO - ancho)
+                x = random.randint(15, p.ANCHO_PISO - ancho)
                 y = random.randint(0, p.LARGO_PISO - largo)
                 ocupado = self.pixel_ocupado(x, y, ancho, largo)
                 if not ocupado:
@@ -215,13 +223,15 @@ class DCCafe(QObject):
             archivo.write(linea_1_nueva)
             archivo.write(linea_2_nueva)
 
+    # Permite actualizar la posicion al mesero y envía la señal al frontend para mover al mesero
     def mover_mesero(self, tecla):
-        if tecla != 'ocupado':
-            self.liberar_pixeles(self.mesero.x, self.mesero.y, p.ANCHO_MESERO, p.LARGO_MESERO)
-            self.tecla_contraria, frame, posicion = self.mesero.mover(tecla)
-            self.signal_update_posicion_mesero.emit(self.mesero.x, self.mesero.y, frame, posicion)
-        else:
-            self.mesero.mover(self.tecla_contraria)
+        if self.disponibilidad:
+            if tecla != 'ocupado':
+                self.liberar_pixeles(self.mesero.x, self.mesero.y, p.ANCHO_MESERO, p.LARGO_MESERO)
+                self.tecla_contraria, frame, posicion = self.mesero.mover(tecla)
+                self.signal_update_posicion_mesero.emit(self.mesero.x, self.mesero.y, frame, posicion)
+            else:
+                self.mesero.mover(self.tecla_contraria)
 
     # La ocupo para no escribir esto muchas veces... no se si es bueno
     def update_diccionario_datos(self):
@@ -234,3 +244,46 @@ class DCCafe(QObject):
 
     def comenzar_ronda(self):
         self.disponibilidad = True
+        self.start() #Empezamos la ronda
+
+    def run(self):
+        cantidad_clientes = self.clientes_ronda()
+        print(cantidad_clientes)
+        i = 1
+        while i <= cantidad_clientes:
+            time.sleep(p.LLEGADA_CLIENTES)
+            if self.crear_cliente(i):
+                i += 1
+
+    def crear_cliente(self, i):
+        j = 0
+        mesa_disponible = None
+        for mesa in self.mesas:
+            if self.mesas[mesa].disponibilidad == 'libre':
+                self.mesas[mesa].disponibilidad = 'ocupada'
+                mesa_disponible = mesa
+                j += 1
+                break
+        if j == 1:
+            x = self.mesas[mesa_disponible].x
+            y = self.mesas[mesa_disponible].y
+            prob = random.randint(0,1)
+            if prob <= p.PROB_RELAJADO:
+                pos_x = x - p.ANCHO_MESERO
+                self.clientes[str(i)] = Cliente(pos_x, y, 'relajado')
+            else:
+                pos_x = x - p.ANCHO_MESERO
+                self.clientes[str(i)] = Cliente(pos_x, y, 'apurado')
+            self.signal_crear_cliente.emit(pos_x, y)
+            self.clientes[str(i)].signal_update_animacion_cliente = self.signal_update_animacion_cliente
+            self.clientes[str(i)].start()
+            return True
+
+    def eliminar_cliente(self, cliente):
+        x = cliente['x'] + p.ANCHO_MESERO
+        y = cliente['y']
+        self.mesas[f'({x},{y})'].disponibilidad = 'libre'
+
+    def clientes_ronda(self):
+        clientes_ronda = 5 * (1 + self.rondas_terminadas)
+        return clientes_ronda
