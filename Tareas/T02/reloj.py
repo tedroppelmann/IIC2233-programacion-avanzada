@@ -21,16 +21,25 @@ class Reloj(threading.Thread):
         '''
         this will run in its own thread via self.start()
         '''
+        self.pausa = False
         self.alive = True
         while self.alive:
-            time.sleep(self.interval)
-            # update count value
-            self.value += self.interval
+            if not self.pausa:
+                time.sleep(self.interval)
+                # update count value
+                self.value += self.interval
     def peek(self):
         '''
         return the current value
         '''
         return self.value
+
+    def pausar(self):
+        if not self.pausa:
+            self.pausa = True
+        else:
+            self.pausa = False
+
     def finish(self):
         '''
         close the thread, return final value
@@ -38,5 +47,4 @@ class Reloj(threading.Thread):
         # stop the while loop in method run
         self.alive = False
         return self.value
-
 

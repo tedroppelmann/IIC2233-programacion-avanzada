@@ -3,6 +3,7 @@ from PyQt5.QtCore import QObject, pyqtSignal, QThread
 import parametros as p
 import time
 from reloj import Reloj
+import random
 
 class Mesero(QObject):
 
@@ -12,6 +13,7 @@ class Mesero(QObject):
         self.__y = y
         self.direccion = 'down'
         self.__frame = 2
+        self.ocupado = False
 
     @property
     def x(self):
@@ -61,13 +63,63 @@ class Mesero(QObject):
             self.direccion = 'down'
             return 'W', self.frame, self.direccion
 
-class Chef:
+class Chef(QThread):
+
+    signal_update_animacion_chef = None
 
     def __init__(self, x, y):
+        super().__init__()
         self.x = x
         self.y = y
         self.platos_terminados = 0
-        self.estado = 'principiante'
+        self.nivel = 1
+        self.ocupado = False
+        self.__frame = 1
+        self.plato_listo = False
+        self.activado = False
+
+    @property
+    def frame(self):
+        return self.__frame
+
+    @frame.setter
+    def frame(self, valor):
+        if valor > 15:
+                self.__frame = 1
+        else:
+            self.__frame = valor
+
+    def run(self):
+        while True:
+            if not self.ocupado and self.activado:
+                self.ocupado = True
+                self.cocinar()
+            elif self.plato_listo and self.activado:
+                self.entregar_plato()
+
+    def cocinar(self):
+        tiempo_cocina = Reloj(1)
+        tiempo_cocina.start()
+        while tiempo_cocina.value < p.TIEMPO_COCINA:
+            time.sleep(0.5)
+            self.signal_update_animacion_chef.emit({'x': self.x, 'y': self.y, 'frame': self.frame})
+            self.frame += 1
+        prob = random.randint(0, 1)
+        if prob < 0.3/(self.nivel + 1):
+            self.signal_update_animacion_chef.emit({'x': self.x, 'y': self.y, 'frame': 17})
+            self.ocupado = False
+        else:
+            self.plato_listo = True
+            self.platos_terminados += 1
+            self.signal_update_animacion_chef.emit({'x': self.x, 'y': self.y, 'frame': 16})
+        self.activado = False
+        tiempo_cocina.finish()
+
+    def entregar_plato(self):
+        self.signal_update_animacion_chef.emit({'x': self.x, 'y': self.y, 'frame': 1})
+        self.plato_listo = False
+        self.activado = False
+        self.ocupado = False
 
 class Mesa:
 
@@ -124,30 +176,32 @@ class Cliente(QThread):
     def espera_cliente(self, tipo):
         self.tiempo_espera.start()
         while self.tiempo_espera.value < tipo:
-            if self.tiempo_espera.value >= tipo / 2:
-                if self.tiempo_espera.value >= tipo - 1.5:
-                    time.sleep(0.5)
-                    self.signal_update_animacion_cliente.emit({'x': self.x,
-                                                               'y': self.y,
-                                                               'tipo': self.tipo,
-                                                               'estado': self.estado,
-                                                               'atendido': self.atendido,
-                                                               'frame': self.frame_enojado})
-                    self.frame_enojado += 3
-                else:
-                    time.sleep(0.5)
-                    self.signal_update_animacion_cliente.emit({'x': self.x,
-                                                               'y': self.y,
-                                                               'tipo': self.tipo,
-                                                               'estado': self.estado,
-                                                               'atendido': self.atendido,
-                                                               'frame': self.frame_desatendido})
-                    self.frame_desatendido += 1
-        self.signal_update_animacion_cliente.emit({'x': self.x,
-                                                   'y': self.y,
-                                                   'tipo': 'se fue',
-                                                   'estado': self.estado,
-                                                   'atendido': self.atendido,
-                                                   'frame': self.frame_desatendido})
-        self.tiempo_espera.finish()
+            if not self.tiempo_espera.pausa:
+                if self.tiempo_espera.value >= tipo / 2:
+                    if self.tiempo_espera.value >= tipo - 1.5:
+                        time.sleep(0.5)
+                        self.signal_update_animacion_cliente.emit({'x': self.x,
+                                                                   'y': self.y,
+                                                                   'tipo': self.tipo,
+                                                                   'estado': self.estado,
+                                                                   'atendido': self.atendido,
+                                                                   'frame': self.frame_enojado})
+                        self.frame_enojado += 3
+                    else:
+                        time.sleep(0.5)
+                        self.signal_update_animacion_cliente.emit({'x': self.x,
+                                                                   'y': self.y,
+                                                                   'tipo': self.tipo,
+                                                                   'estado': self.estado,
+                                                                   'atendido': self.atendido,
+                                                                   'frame': self.frame_desatendido})
+                        self.frame_desatendido += 1
+        if not self.tiempo_espera.pausa:
+            self.signal_update_animacion_cliente.emit({'x': self.x,
+                                                       'y': self.y,
+                                                       'tipo': 'se fue',
+                                                       'estado': self.estado,
+                                                       'atendido': self.atendido,
+                                                       'frame': self.frame_desatendido})
+            self.tiempo_espera.finish()
 

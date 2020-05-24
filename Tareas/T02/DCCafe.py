@@ -18,14 +18,16 @@ class DCCafe(QThread):
     signal_eliminar_label = pyqtSignal(str, int, int)
     signal_mover_mesero = None
     signal_mover_mesero_2 = None
-    signal_update_posicion_mesero = pyqtSignal(int, int, int, str)
+    signal_update_posicion_mesero = pyqtSignal(int, int, int, str, bool)
     signal_crear_cliente = pyqtSignal(int, int)
     signal_update_animacion_cliente = pyqtSignal(dict)
     signal_cliente_se_fue = None
+    signal_pausar_ronda = None
+    signal_colision_objeto = None
+    signal_update_animacion_chef = pyqtSignal(dict)
 
     def __init__(self):
         super().__init__()
-        #Llenar
         self.mesero = None
         self.chefs = dict()
         self.bocadillos = None
@@ -34,7 +36,7 @@ class DCCafe(QThread):
         self.dinero = p.DINERO_INICIAL
         self.reputacion = p.REPUTACION_INICIAL
         self.rondas_terminadas = 0
-        self.disponibilidad = True
+        self.disponibilidad = False
         # Pixeles del mapa que están libres y ocupados
         self.pixeles_mapa = defaultdict(lambda: "Hay puntos del objeto fuera del mapa")
         for i in range(0, p.ANCHO_PISO + 1):
@@ -48,10 +50,11 @@ class DCCafe(QThread):
                     self.pixeles_mapa[f'({i},{j})'] = "libre"
         #Ocupo este diccionario para mandar todas las actualizaciones
         self.diccionario_datos = dict()
-        # Truquito para eliminar revertir el cambio de posicion del mesero
+        # Truquito para eliminar "revertir" el cambio de posicion del mesero
         self.tecla_contraria = None
         self.cantidad_atendidos = 0
         self.cantidad_perdidos = 0
+        self.pausa = False
 
     def init_signals(self):
         self.signal_cargar_juego.connect(self.cargar)
@@ -61,11 +64,12 @@ class DCCafe(QThread):
         self.signal_eliminar.connect(self.eliminar)
         self.signal_mover_mesero.connect(self.mover_mesero)
         self.signal_cliente_se_fue.connect(self.eliminar_cliente)
+        self.signal_pausar_ronda.connect(self.pausar_ronda)
+        self.signal_colision_objeto.connect(self.colisiones)
 
     # Carga en el mapa una partida guardada
     def cargar(self):
         print("Se carga juego antiguo")
-        self.disponibilidad = False
         with open(p.RUTA_DATOS, "r", encoding="utf-8") as archivo:
             fila_1 = archivo.readline()
             fila_1 = fila_1.strip().split(",")
@@ -83,6 +87,7 @@ class DCCafe(QThread):
                     self.ocupar_pixel(int(lista[1]), int(lista[2]), p.ANCHO_MESERO, p.LARGO_MESERO, 'mesero')
                 elif lista[0] == 'chef':
                     self.chefs[f'({lista[1]},{lista[2]})'] = Chef(int(lista[1]), int(lista[2]))
+                    self.chefs[f'({lista[1]},{lista[2]})'].start()
                     self.ocupar_pixel(int(lista[1]), int(lista[2]), p.ANCHO_CHEF, p.LARGO_CHEF, 'chef')
                 elif lista[0] == 'mesa':
                     self.mesas[f'({lista[1]},{lista[2]})'] = Mesa(int(lista[1]), int(lista[2]))
@@ -135,6 +140,7 @@ class DCCafe(QThread):
                             self.pixeles_mapa[f'({i},{j})'] = [tipo, x, y]
                     if tipo == 'chef':
                         self.chefs[f'({x},{y})'] = Chef(x, y)
+                        self.chefs[f'({x},{y})'].start()
                     elif tipo == 'mesa':
                         self.mesas[f'({x},{y})'] = Mesa(x, y)
                     elif tipo == 'mesero':
@@ -147,6 +153,7 @@ class DCCafe(QThread):
             if not ocupado:
                 self.dinero -= p.PRECIO_CHEF
                 self.chefs[f'({int(pos_x)},{int(pos_y)})'] = Chef(int(pos_x), int(pos_y))
+                self.chefs[f'({int(pos_x)},{int(pos_y)})'].start()
                 self.agregar_figuras_drag_drop(pos_x, pos_y, p.ANCHO_CHEF, p.LARGO_CHEF, 'chef')
                 self.agregar_mapa_csv('chef', pos_x, pos_y)
                 # Enviar aprobación a front-end para que visualice
@@ -229,8 +236,8 @@ class DCCafe(QThread):
             if tecla != 'ocupado':
                 self.liberar_pixeles(self.mesero.x, self.mesero.y, p.ANCHO_MESERO, p.LARGO_MESERO)
                 self.tecla_contraria, frame, posicion = self.mesero.mover(tecla)
-                self.signal_update_posicion_mesero.emit(self.mesero.x, self.mesero.y, frame, posicion)
-            else:
+                self.signal_update_posicion_mesero.emit(self.mesero.x, self.mesero.y, frame, posicion, self.mesero.ocupado)
+            elif tecla == 'ocupado':
                 self.mesero.mover(self.tecla_contraria)
 
     # La ocupo para no escribir esto muchas veces... no se si es bueno
@@ -242,13 +249,16 @@ class DCCafe(QThread):
                             'reputacion': self.reputacion,
                             'rondas_terminadas': self.rondas_terminadas}
 
+    # Inicia el thread de la ronda
     def comenzar_ronda(self):
-        self.disponibilidad = True
-        self.start() #Empezamos la ronda
+        if not self.disponibilidad:
+            print('Se comienza ronda')
+            self.disponibilidad = True
+            self.start() #Empezamos la ronda
 
     def run(self):
         cantidad_clientes = self.clientes_ronda()
-        print(cantidad_clientes)
+        print(f'Clientes ronda = {cantidad_clientes}')
         i = 1
         while i <= cantidad_clientes:
             time.sleep(p.LLEGADA_CLIENTES)
@@ -279,6 +289,7 @@ class DCCafe(QThread):
             self.clientes[str(i)].start()
             return True
 
+    # Llega la señal de que el cliente se fue y libera la mesa
     def eliminar_cliente(self, cliente):
         x = cliente['x'] + p.ANCHO_MESERO
         y = cliente['y']
@@ -287,3 +298,31 @@ class DCCafe(QThread):
     def clientes_ronda(self):
         clientes_ronda = 5 * (1 + self.rondas_terminadas)
         return clientes_ronda
+
+    def pausar_ronda(self):
+        if not self.pausa and self.disponibilidad:
+            print('Se pausa ronda')
+            self.disponibilidad = False
+            self.pausa = True
+            for cliente in self.clientes:
+                self.clientes[cliente].tiempo_espera.pausar()
+        elif self.pausa:
+            print('Se despausa ronda')
+            self.disponibilidad = True
+            self.pausa = False
+            for cliente in self.clientes:
+                self.clientes[cliente].tiempo_espera.pausar()
+
+    def colisiones(self, objeto):
+        tipo = objeto[0]
+        x = objeto[1]
+        y = objeto[2]
+        if tipo == 'chef':
+            self.chefs[f'({x},{y})'].signal_update_animacion_chef = self.signal_update_animacion_chef
+            if not self.chefs[f'({x},{y})'].ocupado and not self.chefs[f'({x},{y})'].plato_listo and not self.mesero.ocupado:
+                print('El chef comenzará a preparar el pedido')
+                self.chefs[f'({x},{y})'].activado = True
+            elif self.chefs[f'({x},{y})'].plato_listo:
+                print('El chef te entregó el pedido listo')
+                self.chefs[f'({x},{y})'].activado = True
+                self.mesero.ocupado = True

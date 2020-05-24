@@ -43,6 +43,12 @@ if __name__ == '__main__':
     ventana_principal.signal_update_animacion_cliente = juego.signal_update_animacion_cliente
     # actualizar cuando cliente se va
     juego.signal_cliente_se_fue = ventana_principal.signal_cliente_se_fue
+    # pausar ronda
+    juego.signal_pausar_ronda = ventana_principal.signal_pausar_ronda
+    # colsiones con objetos
+    juego.signal_colision_objeto = ventana_principal.signal_colision_objeto
+    # update aniamcion chef
+    ventana_principal.signal_update_animacion_chef = juego.signal_update_animacion_chef
 
 
 
