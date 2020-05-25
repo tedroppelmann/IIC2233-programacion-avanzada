@@ -5,6 +5,7 @@ from entidades import Mesero, Chef, Mesa, Cliente
 import random
 from collections import defaultdict
 import time
+from math import floor
 
 class DCCafe(QThread):
 
@@ -25,6 +26,9 @@ class DCCafe(QThread):
     signal_pausar_ronda = None
     signal_colision_objeto = None
     signal_update_animacion_chef = pyqtSignal(dict)
+    signal_update_display = pyqtSignal(dict)
+    signal_post_ronda = pyqtSignal(dict)
+    signal_guardar = None
 
     def __init__(self):
         super().__init__()
@@ -50,11 +54,16 @@ class DCCafe(QThread):
                     self.pixeles_mapa[f'({i},{j})'] = "libre"
         #Ocupo este diccionario para mandar todas las actualizaciones
         self.diccionario_datos = dict()
+        self.diccionario_display = dict()
         # Truquito para eliminar "revertir" el cambio de posicion del mesero
         self.tecla_contraria = None
-        self.cantidad_atendidos = 0
-        self.cantidad_perdidos = 0
         self.pausa = False
+
+        self.clientes_atendidos = 0
+        self.clientes_perdidos = 0
+        self.clientes_proximos = 0
+
+        self.start()
 
     def init_signals(self):
         self.signal_cargar_juego.connect(self.cargar)
@@ -66,6 +75,7 @@ class DCCafe(QThread):
         self.signal_cliente_se_fue.connect(self.eliminar_cliente)
         self.signal_pausar_ronda.connect(self.pausar_ronda)
         self.signal_colision_objeto.connect(self.colisiones)
+        self.signal_guardar.connect(self.guardar_partida)
 
     # Carga en el mapa una partida guardada
     def cargar(self):
@@ -94,7 +104,7 @@ class DCCafe(QThread):
                     self.ocupar_pixel(int(lista[1]), int(lista[2]), p.ANCHO_MESA, p.LARGO_MESA, 'mesa')
         i = 0
         for chef in self.chefs:
-            self.chefs[chef].platos_terminados = fila_2[i]
+            self.chefs[chef].platos_terminados = int(fila_2[i])
             i += 1
         self.update_diccionario_datos()
         self.signal_comenzar_juego.emit(self.diccionario_datos)
@@ -145,6 +155,7 @@ class DCCafe(QThread):
                         self.mesas[f'({x},{y})'] = Mesa(x, y)
                     elif tipo == 'mesero':
                         self.mesero = Mesero(x, y)
+                        self.mesero.start()
 
     # Permite agregar objetos por Drag and Drop
     def drag_and_drop(self, pos_x, pos_y, nombre):
@@ -254,18 +265,39 @@ class DCCafe(QThread):
         if not self.disponibilidad:
             print('Se comienza ronda')
             self.disponibilidad = True
-            self.start() #Empezamos la ronda
 
     def run(self):
-        cantidad_clientes = self.clientes_ronda()
-        print(f'Clientes ronda = {cantidad_clientes}')
-        i = 1
-        while i <= cantidad_clientes:
-            time.sleep(p.LLEGADA_CLIENTES)
-            if self.crear_cliente(i):
-                i += 1
+        while True:
+            while not self.disponibilidad:
+                pass
+            while self.disponibilidad:
+                cantidad_clientes = self.clientes_ronda()
+                self.clientes_proximos = cantidad_clientes
+                print(f'Clientes ronda = {cantidad_clientes}')
+                self.signal_update_display.emit(self.update_diccionario_display())
+                i = 1
+                while i <= cantidad_clientes:
+                    time.sleep(p.LLEGADA_CLIENTES)
+                    if self.crear_cliente():
+                        i += 1
+                        self.clientes_proximos -= 1
+                        self.signal_update_display.emit(self.update_diccionario_display())
+                while self.clientes_atendidos + self.clientes_perdidos < cantidad_clientes:
+                    pass
+                time.sleep(1)
+                self.dinero += self.mesero.propina
+                self.calcular_reputacion(cantidad_clientes)
+                self.signal_update_display.emit(self.update_diccionario_display())
+                print('Fin de la ronda')
+                self.signal_post_ronda.emit(self.update_diccionario_display())
+                self.disponibilidad = False
+                if self.reputacion > 0:
+                    self.rondas_terminadas += 1
+                    self.clientes_atendidos = 0
+                    self.clientes_perdidos = 0
+                    self.clientes_proximos = 0
 
-    def crear_cliente(self, i):
+    def crear_cliente(self):
         j = 0
         mesa_disponible = None
         for mesa in self.mesas:
@@ -279,21 +311,23 @@ class DCCafe(QThread):
             y = self.mesas[mesa_disponible].y
             prob = random.randint(0,1)
             if prob <= p.PROB_RELAJADO:
-                pos_x = x - p.ANCHO_MESERO
-                self.clientes[str(i)] = Cliente(pos_x, y, 'relajado')
+                self.clientes[(x, y)] = Cliente(x, y, 'relajado')
             else:
-                pos_x = x - p.ANCHO_MESERO
-                self.clientes[str(i)] = Cliente(pos_x, y, 'apurado')
-            self.signal_crear_cliente.emit(pos_x, y)
-            self.clientes[str(i)].signal_update_animacion_cliente = self.signal_update_animacion_cliente
-            self.clientes[str(i)].start()
+                self.clientes[(x, y)] = Cliente(x, y, 'apurado')
+            self.signal_crear_cliente.emit(x, y)
+            self.clientes[(x, y)].signal_update_animacion_cliente = self.signal_update_animacion_cliente
+            self.clientes[(x, y)].start()
             return True
 
     # Llega la señal de que el cliente se fue y libera la mesa
     def eliminar_cliente(self, cliente):
-        x = cliente['x'] + p.ANCHO_MESERO
+        x = cliente['x'] + p.ANCHO_CLIENTE
         y = cliente['y']
+        self.clientes.pop((x, y))
         self.mesas[f'({x},{y})'].disponibilidad = 'libre'
+        if not cliente['paga']:
+            self.clientes_perdidos += 1
+            self.signal_update_display.emit(self.update_diccionario_display())
 
     def clientes_ronda(self):
         clientes_ronda = 5 * (1 + self.rondas_terminadas)
@@ -321,8 +355,42 @@ class DCCafe(QThread):
             self.chefs[f'({x},{y})'].signal_update_animacion_chef = self.signal_update_animacion_chef
             if not self.chefs[f'({x},{y})'].ocupado and not self.chefs[f'({x},{y})'].plato_listo and not self.mesero.ocupado:
                 print('El chef comenzará a preparar el pedido')
+                self.chefs[f'({x},{y})'].reputacion_cafe = self.reputacion
                 self.chefs[f'({x},{y})'].activado = True
-            elif self.chefs[f'({x},{y})'].plato_listo:
+            elif self.chefs[f'({x},{y})'].plato_listo and not self.mesero.ocupado:
                 print('El chef te entregó el pedido listo')
                 self.chefs[f'({x},{y})'].activado = True
+                self.mesero.nivel_chef = self.chefs[f'({x},{y})'].nivel
                 self.mesero.ocupado = True
+        if self.mesero.ocupado:
+            if tipo == 'cliente':
+                print('Le entrego plato a cliente')
+                self.clientes[(x + p.ANCHO_CLIENTE, y)].atendido = True
+                self.mesero.ocupado = False
+                self.clientes_atendidos += 1
+                self.dinero += p.PRECIO_BOCADILLO
+                self.signal_update_display.emit(self.update_diccionario_display())
+            elif tipo == 'mesa' and self.mesas[f'({x},{y})'].disponibilidad == 'ocupada':
+                print('Le entrego plato a cliente')
+                self.clientes[(x, y)].atendido = True
+                self.mesero.ocupado = False
+                self.mesas[f'({x},{y})'].disponibilidad = 'libre'
+                self.clientes_atendidos += 1
+                self.dinero += p.PRECIO_BOCADILLO
+                self.signal_update_display.emit(self.update_diccionario_display())
+
+    def update_diccionario_display(self):
+        self.diccionario_display = {'reputacion': self.reputacion,
+                                    'dinero': self.dinero,
+                                    'ronda': self.rondas_terminadas,
+                                    'atendidos': self.clientes_atendidos,
+                                    'perdidos': self.clientes_perdidos,
+                                    'proximos': self.clientes_proximos}
+        return self.diccionario_display
+
+    def calcular_reputacion(self, clientes_totales):
+        nueva_reputacion = max(0, min(5, self.reputacion + floor(4 *(self.clientes_atendidos/clientes_totales) - 2)))
+        self.reputacion = nueva_reputacion
+
+    def guardar_partida(self):
+        pass

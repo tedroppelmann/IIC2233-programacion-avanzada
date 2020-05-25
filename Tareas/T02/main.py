@@ -47,16 +47,21 @@ if __name__ == '__main__':
     juego.signal_pausar_ronda = ventana_principal.signal_pausar_ronda
     # colsiones con objetos
     juego.signal_colision_objeto = ventana_principal.signal_colision_objeto
-    # update aniamcion chef
+    # update animacion chef
     ventana_principal.signal_update_animacion_chef = juego.signal_update_animacion_chef
-
+    # update datos del display
+    ventana_principal.signal_update_display = juego.signal_update_display
+    # mostrar ventana post-ronda
+    ventana_post_ronda.signal_post_ronda = juego.signal_post_ronda
+    # guardar partida
+    juego.signal_guardar = ventana_post_ronda.signal_guardar
 
 
     # Iniciar señales:
     juego.init_signals()
     ventana_principal.init_signals()
-
+    ventana_post_ronda.init_signal()
 
 
     ventana_inicio.show()
-    app.exec()
+    sys.exit(app.exec_())

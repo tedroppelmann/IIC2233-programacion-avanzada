@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>741</width>
+    <width>758</width>
     <height>457</height>
    </rect>
   </property>
@@ -64,9 +64,6 @@
        <property name="text">
         <string/>
        </property>
-       <property name="pixmap">
-        <pixmap>../../../../../../Pontificia Universidad Católica/Semestre VII/IIC2233 Programación Avanzada/tedroppelmann-iic2233-2020-1/Tareas/T02/sprites/otros/logo_negro.png</pixmap>
-       </property>
        <property name="scaledContents">
         <bool>true</bool>
        </property>
@@ -93,9 +90,6 @@
            </property>
            <property name="text">
             <string/>
-           </property>
-           <property name="pixmap">
-            <pixmap>../../../../../../Pontificia Universidad Católica/Semestre VII/IIC2233 Programación Avanzada/tedroppelmann-iic2233-2020-1/Tareas/T02/sprites/otros/estrella_amarilla.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -129,9 +123,6 @@
            </property>
            <property name="text">
             <string/>
-           </property>
-           <property name="pixmap">
-            <pixmap>../../../../../../Pontificia Universidad Católica/Semestre VII/IIC2233 Programación Avanzada/tedroppelmann-iic2233-2020-1/Tareas/T02/sprites/otros/moneda.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -185,16 +176,6 @@
         </size>
        </property>
       </spacer>
-     </item>
-     <item>
-      <widget class="QLabel" name="perro">
-       <property name="text">
-        <string/>
-       </property>
-       <property name="pixmap">
-        <pixmap>../../../../../../Pontificia Universidad Católica/Semestre VII/IIC2233 Programación Avanzada/tedroppelmann-iic2233-2020-1/Tareas/T02/sprites/clientes/perro/perro_01.png</pixmap>
-       </property>
-      </widget>
      </item>
      <item>
       <widget class="QLabel" name="hamster">
@@ -322,9 +303,6 @@
        </property>
        <property name="text">
         <string/>
-       </property>
-       <property name="pixmap">
-        <pixmap>../../../../../../Pontificia Universidad Católica/Semestre VII/IIC2233 Programación Avanzada/tedroppelmann-iic2233-2020-1/Tareas/T02/sprites/mapa/mapa_sin_borde_1.png</pixmap>
        </property>
        <property name="scaledContents">
         <bool>true</bool>

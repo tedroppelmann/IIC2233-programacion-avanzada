@@ -88,7 +88,7 @@
       </font>
      </property>
      <property name="text">
-      <string>RESUMEN RONDA Nº 1</string>
+      <string>RESUMEN RONDA</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -168,21 +168,21 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_4">
      <item>
-      <widget class="QPushButton" name="salir">
+      <widget class="QPushButton" name="boton_salir">
        <property name="text">
         <string>SALIR</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="guardar">
+      <widget class="QPushButton" name="boton_guardar">
        <property name="text">
         <string>GUARDAR</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="continuar">
+      <widget class="QPushButton" name="boton_continuar">
        <property name="text">
         <string>CONTINUAR</string>
        </property>

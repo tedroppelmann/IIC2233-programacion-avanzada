@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>344</width>
+    <width>364</width>
     <height>280</height>
    </rect>
   </property>
@@ -115,9 +115,6 @@
        </property>
        <property name="text">
         <string/>
-       </property>
-       <property name="pixmap">
-        <pixmap>sprites/otros/logo_negro.png</pixmap>
        </property>
        <property name="scaledContents">
         <bool>true</bool>

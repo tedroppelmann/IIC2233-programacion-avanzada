@@ -26,6 +26,7 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
     signal_pausar_ronda = pyqtSignal()
     signal_colision_objeto = pyqtSignal(tuple)
     signal_update_animacion_chef = None
+    signal_update_display = None
 
     def __init__(self):
         super().__init__()
@@ -43,11 +44,27 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
         self.signal_update_animacion_cliente.connect(self.update_animacion_cliente)
         self.boton_pausar.clicked.connect(self.pausar_ronda)
         self.signal_update_animacion_chef.connect(self.update_animacion_chef)
+        self.signal_update_display.connect(self.update_display)
 
     def init_gui(self):
         # La única forma que se me ocurrio para fijar el tamaño del label
+        imagen = QPixmap(os.path.join('sprites', 'mapa', 'mapa_sin_borde_1.png'))
         self.mapa.setMaximumSize(p.ANCHO_MAPA, p.LARGO_MAPA)
         self.mapa.setMinimumSize(p.ANCHO_MAPA, p.LARGO_MAPA)
+        self.mapa.setPixmap(imagen)
+        self.mapa.setScaledContents(True)
+        imagen = QPixmap(os.path.join('sprites', 'otros','logo_negro.png'))
+        self.logo.setPixmap(imagen)
+        self.logo.setScaledContents(True)
+        imagen = QPixmap(os.path.join('sprites', 'otros', 'estrella_amarilla.png'))
+        self.reputacion.setPixmap(imagen)
+        self.reputacion.setScaledContents(True)
+        imagen = QPixmap(os.path.join('sprites', 'otros', 'moneda.png'))
+        self.dinero.setPixmap(imagen)
+        self.dinero.setScaledContents(True)
+        imagen = QPixmap(os.path.join('sprites', 'clientes', 'hamster', 'hamster_01.png'))
+        self.hamster.setPixmap(imagen)
+        #################################################
         self.espacio_piso = QLabel(self.mapa)
         self.espacio_drag_drop = DropLabel(self.mapa)
         self.espacio_drag_drop.signal_drag_and_drop = self.signal_drag_and_drop
@@ -163,10 +180,10 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
                 self.signal_mover_mesero.emit('ocupado')
                 i += 1
                 if objeto[0] == 'chef':
-                    print('choque con un chef')
                     self.signal_colision_objeto.emit(objeto)
-                elif objeto[0] == 'cliente' or objeto[0] == 'mesa':
-                    print('choque con una mesa')
+                elif objeto[0] == 'cliente':
+                    self.signal_colision_objeto.emit(objeto)
+                elif objeto[0] == 'mesa':
                     self.signal_colision_objeto.emit(objeto)
         if i == 0:
             self.label_mesero.move(x, y)
@@ -176,7 +193,8 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
         self.signal_comenzar_ronda.emit()
 
     # Crea los clientes en el mapa
-    def crear_cliente(self, x, y):
+    def crear_cliente(self, pos_x, y):
+        x = pos_x -p.ANCHO_CLIENTE
         imagen = QPixmap(os.path.join('sprites', 'clientes', 'hamster', 'hamster_01.png'))
         self.label_char[('cliente', x, y)] = QLabel(self.espacio_piso)
         self.label_char[('cliente', x, y)].setGeometry(0, 0, p.ANCHO_CLIENTE, p.LARGO_CLIENTE)
@@ -192,7 +210,11 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
         tipo = cliente['tipo']
         atendido = cliente['atendido']
         frame = cliente['frame']
-        if not atendido and tipo != 'se fue':
+        if atendido:
+            imagen = QPixmap(os.path.join('sprites', 'clientes', 'hamster', f'hamster_{frame}.png'))
+            self.label_char[('cliente', x, y)].setPixmap(imagen)
+            self.label_char[('cliente', x, y)].setScaledContents(True)
+        elif not atendido and tipo != 'se fue':
             imagen = QPixmap(os.path.join('sprites', 'clientes', 'hamster', f'hamster_{frame}.png'))
             self.label_char[('cliente', x, y)].setPixmap(imagen)
             self.label_char[('cliente', x, y)].setScaledContents(True)
@@ -212,8 +234,19 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
         self.label_char[('chef', x, y)].setPixmap(imagen)
         self.label_char[('chef', x, y)].setScaledContents(True)
 
-    def update_datos_clientes_display(self, datos):
-        pass
+    def update_display(self, datos):
+        reputacion = datos['reputacion']
+        dinero = datos['dinero']
+        ronda = datos['ronda']
+        atendidos = datos['atendidos']
+        perdidos = datos['perdidos']
+        proximos = datos['proximos']
+        self.dinero_lcd.display(dinero)
+        self.reputacion_barra.setValue(reputacion)
+        self.ronda.setText(f"RONDA Nº {ronda + 1}")
+        self.atendidos_valor.setText(str(atendidos))
+        self.perdidos_valor.setText(str(perdidos))
+        self.proximos_valor.setText(str(proximos))
 
     def pausar_ronda(self):
         self.signal_pausar_ronda.emit()

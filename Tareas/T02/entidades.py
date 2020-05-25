@@ -5,7 +5,7 @@ import time
 from reloj import Reloj
 import random
 
-class Mesero(QObject):
+class Mesero(QThread):
 
     def __init__(self, x, y):
         super().__init__()
@@ -14,6 +14,8 @@ class Mesero(QObject):
         self.direccion = 'down'
         self.__frame = 2
         self.ocupado = False
+        self.propina = 0
+        self.nivel_chef = 0
 
     @property
     def x(self):
@@ -63,6 +65,23 @@ class Mesero(QObject):
             self.direccion = 'down'
             return 'W', self.frame, self.direccion
 
+    def run(self):
+        while True:
+            if self.ocupado:
+                self.llevar_pedido()
+
+    def llevar_pedido(self):
+        tiempo = Reloj(p.INTERVALO_TIEMPO)
+        tiempo.start()
+        while self.ocupado:
+            pass
+        tiempo_espera = tiempo.value
+        tiempo.finish()
+        print('Calculando propina')
+        propina = max(0, (self.nivel_chef*(1-tiempo_espera*0.05)/3))
+        print(f'Propina: {propina}')
+        self.propina += propina
+
 class Chef(QThread):
 
     signal_update_animacion_chef = None
@@ -77,6 +96,7 @@ class Chef(QThread):
         self.__frame = 1
         self.plato_listo = False
         self.activado = False
+        self.reputacion_cafe = None
 
     @property
     def frame(self):
@@ -92,13 +112,19 @@ class Chef(QThread):
     def run(self):
         while True:
             if not self.ocupado and self.activado:
+                if self.platos_terminados >= p.PLATOS_EXPERTO:
+                    self.nivel = 3
+                elif self.platos_terminados >= p.PLATOS_INTERMEDIO:
+                    self.nivel = 2
                 self.ocupado = True
                 self.cocinar()
             elif self.plato_listo and self.activado:
                 self.entregar_plato()
 
     def cocinar(self):
-        tiempo_cocina = Reloj(1)
+        tiempo_preparacion = max(0, 15 - self.reputacion_cafe - self.nivel * 2)
+        # AUN NO AGREGO EL TIEMPO DE PREPARACION
+        tiempo_cocina = Reloj(p.INTERVALO_TIEMPO)
         tiempo_cocina.start()
         while tiempo_cocina.value < p.TIEMPO_COCINA:
             time.sleep(0.5)
@@ -134,15 +160,17 @@ class Cliente(QThread):
 
     def __init__(self, x, y, tipo):
         super().__init__()
-        self.x = x
+        self.x = x - p.ANCHO_CLIENTE
         self.y = y
-        self.tipo = tipo #RELAJADO O APURADO o se va
-        self.tiempo_espera = Reloj(0.5)
-        self.estado = 'alegre'
+        self.tipo = tipo #RELAJADO O APURADO o 'se fue'
+        self.tiempo_espera = Reloj(p.INTERVALO_TIEMPO)
         self.atendido = False
         self.__frame_desatendido = 26
         self.__frame_enojado = 18
+        self.__frame_feliz = 13
         self.diccionario_datos = dict()
+        self.fin = False
+        self.paga = True
 
     @property
     def frame_desatendido(self):
@@ -166,6 +194,17 @@ class Cliente(QThread):
         else:
             self.__frame_enojado = valor
 
+    @property
+    def frame_feliz(self):
+        return self.__frame_feliz
+
+    @frame_feliz.setter
+    def frame_feliz(self, valor):
+        if valor > 14:
+            self.__frame_feliz = 13
+        else:
+            self.__frame_feliz = valor
+
     def run(self):
         if not self.atendido:
             if self.tipo == 'relajado':
@@ -173,35 +212,41 @@ class Cliente(QThread):
             elif self.tipo == 'apurado':
                 self.espera_cliente(p.TIEMPO_ESPERA_APURADO)
 
-    def espera_cliente(self, tipo):
+    def espera_cliente(self, tiempo_espera):
         self.tiempo_espera.start()
-        while self.tiempo_espera.value < tipo:
-            if not self.tiempo_espera.pausa:
-                if self.tiempo_espera.value >= tipo / 2:
-                    if self.tiempo_espera.value >= tipo - 1.5:
-                        time.sleep(0.5)
-                        self.signal_update_animacion_cliente.emit({'x': self.x,
-                                                                   'y': self.y,
-                                                                   'tipo': self.tipo,
-                                                                   'estado': self.estado,
-                                                                   'atendido': self.atendido,
-                                                                   'frame': self.frame_enojado})
-                        self.frame_enojado += 3
-                    else:
-                        time.sleep(0.5)
-                        self.signal_update_animacion_cliente.emit({'x': self.x,
-                                                                   'y': self.y,
-                                                                   'tipo': self.tipo,
-                                                                   'estado': self.estado,
-                                                                   'atendido': self.atendido,
-                                                                   'frame': self.frame_desatendido})
-                        self.frame_desatendido += 1
-        if not self.tiempo_espera.pausa:
-            self.signal_update_animacion_cliente.emit({'x': self.x,
-                                                       'y': self.y,
-                                                       'tipo': 'se fue',
-                                                       'estado': self.estado,
-                                                       'atendido': self.atendido,
-                                                       'frame': self.frame_desatendido})
+        k = 1
+        j = 1
+        while self.tiempo_espera.value < tiempo_espera and not self.atendido and j == 1:
+            if self.tiempo_espera.value >= tiempo_espera / 2:
+                if self.tiempo_espera.value >= tiempo_espera - 2 and k <= 3:
+                    time.sleep(0.5)
+                    self.signal_update_animacion_cliente.emit(self.diccionario(self.tipo, self.frame_enojado))
+                    self.frame_enojado += 3
+                    k += 1
+                    self.paga = False
+                else:
+                    time.sleep(0.5)
+                    self.signal_update_animacion_cliente.emit(self.diccionario(self.tipo, self.frame_desatendido))
+                    self.frame_desatendido += 1
+        self.tipo = 'se fue'
+        while self.atendido:
+            if j<= 5:
+                time.sleep(0.5)
+                self.signal_update_animacion_cliente.emit(self.diccionario(self.tipo, self.frame_feliz))
+                self.frame_feliz += 1
+                j += 1
+            else:
+                self.atendido = False
+        if self.tipo == 'se fue':
+            print('Se elimina cliente')
+            self.fin = True
+            self.signal_update_animacion_cliente.emit(self.diccionario('se fue', self.frame_desatendido))
             self.tiempo_espera.finish()
 
+    def diccionario(self, tipo, frame):
+        return {'x': self.x,
+                'y': self.y,
+                'tipo': tipo,
+                'atendido': self.atendido,
+                'frame': frame,
+                'paga': self.paga}
