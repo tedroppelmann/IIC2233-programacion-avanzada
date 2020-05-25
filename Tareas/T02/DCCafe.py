@@ -40,7 +40,7 @@ class DCCafe(QThread):
         self.dinero = p.DINERO_INICIAL
         self.reputacion = p.REPUTACION_INICIAL
         self.rondas_terminadas = 0
-        self.disponibilidad = False
+        self.disponibilidad = True
         # Pixeles del mapa que están libres y ocupados
         self.pixeles_mapa = defaultdict(lambda: "Hay puntos del objeto fuera del mapa")
         for i in range(0, p.ANCHO_PISO + 1):
@@ -58,12 +58,9 @@ class DCCafe(QThread):
         # Truquito para eliminar "revertir" el cambio de posicion del mesero
         self.tecla_contraria = None
         self.pausa = False
-
         self.clientes_atendidos = 0
         self.clientes_perdidos = 0
         self.clientes_proximos = 0
-
-        self.start()
 
     def init_signals(self):
         self.signal_cargar_juego.connect(self.cargar)
@@ -80,6 +77,7 @@ class DCCafe(QThread):
     # Carga en el mapa una partida guardada
     def cargar(self):
         print("Se carga juego antiguo")
+        self.disponibilidad = False
         with open(p.RUTA_DATOS, "r", encoding="utf-8") as archivo:
             fila_1 = archivo.readline()
             fila_1 = fila_1.strip().split(",")
@@ -108,6 +106,7 @@ class DCCafe(QThread):
             i += 1
         self.update_diccionario_datos()
         self.signal_comenzar_juego.emit(self.diccionario_datos)
+        self.start()
 
     # Cambia el estado del pixel para que se vea que ahora está ocupado
     def ocupar_pixel(self, x, y, ancho, largo, tipo):
@@ -123,7 +122,7 @@ class DCCafe(QThread):
         self.agregar_figuras_aleatorias('mesa', p.ANCHO_MESA, p.LARGO_MESA, p.MESAS_INICIALES)
         self.update_diccionario_datos()
         self.signal_comenzar_juego.emit(self.diccionario_datos)
-        self.comenzar_ronda()
+        self.start()
 
     # Retorna si algún pixel que se quiere llenar ya está ocupado
     def pixel_ocupado(self, x, y, ancho, largo):
@@ -166,10 +165,8 @@ class DCCafe(QThread):
                 self.chefs[f'({int(pos_x)},{int(pos_y)})'] = Chef(int(pos_x), int(pos_y))
                 self.chefs[f'({int(pos_x)},{int(pos_y)})'].start()
                 self.agregar_figuras_drag_drop(pos_x, pos_y, p.ANCHO_CHEF, p.LARGO_CHEF, 'chef')
-                self.agregar_mapa_csv('chef', pos_x, pos_y)
                 # Enviar aprobación a front-end para que visualice
                 self.signal_crear_drag_and_drop.emit('chef', self.dinero, pos_x, pos_y)
-                self.update_datos_csv()
                 self.update_diccionario_datos()
         elif nombre == 'mesa' and self.dinero >= p.PRECIO_MESA and not self.disponibilidad:
             ocupado = self.pixel_ocupado(pos_x, pos_y, p.ANCHO_MESA, p.LARGO_MESA)
@@ -177,9 +174,7 @@ class DCCafe(QThread):
                 self.dinero -= p.PRECIO_MESA
                 self.mesas[f'({int(pos_x)},{int(pos_y)})'] = Mesa(int(pos_x), int(pos_y))
                 self.agregar_figuras_drag_drop(pos_x, pos_y, p.ANCHO_MESA, p.LARGO_MESA, 'mesa')
-                self.agregar_mapa_csv('mesa', pos_x, pos_y)
                 self.signal_crear_drag_and_drop.emit('mesa', self.dinero, pos_x, pos_y)
-                self.update_datos_csv()
                 self.update_diccionario_datos()
 
     # Agrega objeto por Drag and Drop a los pixeles ocupados
@@ -198,16 +193,12 @@ class DCCafe(QThread):
             if self.pixeles_mapa[f'({x},{y})'][0] == 'chef' and len(self.chefs) > 1:
                 self.liberar_pixeles(x_origen, y_origen, p.ANCHO_CHEF, p.LARGO_CHEF)
                 self.chefs.pop(f'({x_origen},{y_origen})')
-                self.eliminar_mapa_csv('chef', x_origen, y_origen)
                 self.signal_eliminar_label.emit('chef', x_origen, y_origen)
-                self.update_datos_csv()
                 self.update_diccionario_datos()
             elif self.pixeles_mapa[f'({x},{y})'][0] == 'mesa' and len(self.mesas) > 1:
                 self.liberar_pixeles(x_origen, y_origen, p.ANCHO_MESA, p.LARGO_MESA)
                 self.mesas.pop(f'({x_origen},{y_origen})')
-                self.eliminar_mapa_csv('mesa', x_origen, y_origen)
                 self.signal_eliminar_label.emit('mesa', x_origen, y_origen)
-                self.update_datos_csv()
                 self.update_diccionario_datos()
 
     # Libera el espacio en pixeles al eliminar un objeto del mapa
@@ -215,31 +206,6 @@ class DCCafe(QThread):
         for i in range(x, x + ancho + 1):
             for j in range(y, y + largo + 1):
                 self.pixeles_mapa[f'({i},{j})'] = 'libre'
-
-    # Agregar un nuevo objeto a mapa.csv
-    def agregar_mapa_csv(self, tipo, x, y):
-        with open(p.RUTA_MAPA, "a", encoding="utf-8") as archivo:
-            archivo.write(f'{tipo},{x},{y}\n')
-
-    # Eliminar de mapa.csv algun objeto eliminado
-    def eliminar_mapa_csv(self, tipo, x, y):
-        with open(p.RUTA_MAPA, "r", encoding="utf-8") as archivo:
-            lineas = archivo.readlines()
-        with open(p.RUTA_MAPA, "w", encoding="utf-8") as archivo:
-            for linea in lineas:
-                if linea.strip("\n") != f'{tipo},{x},{y}':
-                    archivo.write(linea)
-
-    # Actualiza cualquier cambio en datos.csv
-    def update_datos_csv(self):
-        linea_1_nueva = f'{self.dinero},{self.reputacion},{self.rondas_terminadas}\n'
-        lista_2_nueva = []
-        for chef in self.chefs:
-            lista_2_nueva.append(str(self.chefs[chef].platos_terminados))
-        linea_2_nueva = ','.join(lista_2_nueva)
-        with open(p.RUTA_DATOS, "w", encoding="utf-8") as archivo:
-            archivo.write(linea_1_nueva)
-            archivo.write(linea_2_nueva)
 
     # Permite actualizar la posicion al mesero y envía la señal al frontend para mover al mesero
     def mover_mesero(self, tecla):
@@ -260,7 +226,6 @@ class DCCafe(QThread):
                             'reputacion': self.reputacion,
                             'rondas_terminadas': self.rondas_terminadas}
 
-    # Inicia el thread de la ronda
     def comenzar_ronda(self):
         if not self.disponibilidad:
             print('Se comienza ronda')
@@ -271,6 +236,7 @@ class DCCafe(QThread):
             while not self.disponibilidad:
                 pass
             while self.disponibilidad:
+                print('Empieza ronda')
                 cantidad_clientes = self.clientes_ronda()
                 self.clientes_proximos = cantidad_clientes
                 print(f'Clientes ronda = {cantidad_clientes}')
@@ -393,4 +359,21 @@ class DCCafe(QThread):
         self.reputacion = nueva_reputacion
 
     def guardar_partida(self):
-        pass
+        linea_1_nueva = f'{self.dinero},{self.reputacion},{self.rondas_terminadas}\n'
+        lista_2_nueva = []
+        for chef in self.chefs:
+            lista_2_nueva.append(str(self.chefs[chef].platos_terminados))
+        linea_2_nueva = ','.join(lista_2_nueva)
+        with open(p.RUTA_DATOS, "w", encoding="utf-8") as archivo:
+            archivo.write(linea_1_nueva)
+            archivo.write(linea_2_nueva)
+        with open(p.RUTA_MAPA, "w", encoding="utf-8") as archivo:
+            archivo.write(f'mesero,{self.mesero.x},{self.mesero.y}\n')
+            for mesa in self.mesas:
+                x = self.mesas[mesa].x
+                y = self.mesas[mesa].y
+                archivo.write(f'mesa,{x},{y}\n')
+            for chef in self.chefs:
+                x = self.chefs[chef].x
+                y = self.chefs[chef].y
+                archivo.write(f'chef,{x},{y}\n')

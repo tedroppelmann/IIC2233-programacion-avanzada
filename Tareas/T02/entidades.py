@@ -114,8 +114,10 @@ class Chef(QThread):
             if not self.ocupado and self.activado:
                 if self.platos_terminados >= p.PLATOS_EXPERTO:
                     self.nivel = 3
+                    print('¡Ahora soy chef experto!')
                 elif self.platos_terminados >= p.PLATOS_INTERMEDIO:
                     self.nivel = 2
+                    print('¡Ahora soy chef intermedio!')
                 self.ocupado = True
                 self.cocinar()
             elif self.plato_listo and self.activado:
@@ -133,6 +135,8 @@ class Chef(QThread):
         prob = random.randint(0, 1)
         if prob < 0.3/(self.nivel + 1):
             self.signal_update_animacion_chef.emit({'x': self.x, 'y': self.y, 'frame': 17})
+            time.sleep(0.5)
+            self.signal_update_animacion_chef.emit({'x': self.x, 'y': self.y, 'frame': 1})
             self.ocupado = False
         else:
             self.plato_listo = True
