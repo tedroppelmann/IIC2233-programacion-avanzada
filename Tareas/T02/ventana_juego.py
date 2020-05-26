@@ -210,7 +210,7 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
         tipo = cliente['tipo']
         atendido = cliente['atendido']
         frame = cliente['frame']
-        if atendido:
+        if atendido and tipo != 'se fue':
             imagen = QPixmap(os.path.join('sprites', 'clientes', 'hamster', f'hamster_{frame}.png'))
             self.label_char[('cliente', x, y)].setPixmap(imagen)
             self.label_char[('cliente', x, y)].setScaledContents(True)
@@ -219,9 +219,9 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
             self.label_char[('cliente', x, y)].setPixmap(imagen)
             self.label_char[('cliente', x, y)].setScaledContents(True)
         elif tipo == 'se fue':
+            self.signal_cliente_se_fue.emit(cliente)
             self.label_char[('cliente', x , y)].hide()
             self.label_char.pop(('cliente', x , y))
-            self.signal_cliente_se_fue.emit(cliente)
 
     def update_animacion_chef(self, chef):
         x = chef['x']

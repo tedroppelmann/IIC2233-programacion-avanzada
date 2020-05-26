@@ -81,7 +81,7 @@ class DCCafe(QThread):
         with open(p.RUTA_DATOS, "r", encoding="utf-8") as archivo:
             fila_1 = archivo.readline()
             fila_1 = fila_1.strip().split(",")
-            self.dinero = int(fila_1[0])
+            self.dinero = float(fila_1[0])
             self.reputacion = int(fila_1[1])
             self.rondas_terminadas += int(fila_1[2])
             fila_2 = archivo.readline()
@@ -93,6 +93,7 @@ class DCCafe(QThread):
                 if lista[0] == 'mesero':
                     self.mesero = Mesero(int(lista[1]), int(lista[2]))
                     self.ocupar_pixel(int(lista[1]), int(lista[2]), p.ANCHO_MESERO, p.LARGO_MESERO, 'mesero')
+                    self.mesero.start()
                 elif lista[0] == 'chef':
                     self.chefs[f'({lista[1]},{lista[2]})'] = Chef(int(lista[1]), int(lista[2]))
                     self.chefs[f'({lista[1]},{lista[2]})'].start()
@@ -233,6 +234,7 @@ class DCCafe(QThread):
 
     def run(self):
         while True:
+            self.signal_update_display.emit(self.update_diccionario_display())
             while not self.disponibilidad:
                 pass
             while self.disponibilidad:
@@ -250,8 +252,9 @@ class DCCafe(QThread):
                         self.signal_update_display.emit(self.update_diccionario_display())
                 while self.clientes_atendidos + self.clientes_perdidos < cantidad_clientes:
                     pass
-                time.sleep(1)
-                self.dinero += self.mesero.propina
+                print(f'Clientes perdidos: {self.clientes_perdidos}')
+                print(f'Clientes perdidos: {self.clientes_atendidos}')
+                time.sleep(3)
                 self.calcular_reputacion(cantidad_clientes)
                 self.signal_update_display.emit(self.update_diccionario_display())
                 print('Fin de la ronda')
@@ -330,20 +333,21 @@ class DCCafe(QThread):
                 self.mesero.ocupado = True
         if self.mesero.ocupado:
             if tipo == 'cliente':
-                print('Le entrego plato a cliente')
-                self.clientes[(x + p.ANCHO_CLIENTE, y)].atendido = True
-                self.mesero.ocupado = False
-                self.clientes_atendidos += 1
-                self.dinero += p.PRECIO_BOCADILLO
-                self.signal_update_display.emit(self.update_diccionario_display())
+                print('Le entrego plato a cliente tocando a cliente')
+                self.entregar_plato(x + p.ANCHO_CLIENTE, y)
             elif tipo == 'mesa' and self.mesas[f'({x},{y})'].disponibilidad == 'ocupada':
-                print('Le entrego plato a cliente')
-                self.clientes[(x, y)].atendido = True
-                self.mesero.ocupado = False
-                self.mesas[f'({x},{y})'].disponibilidad = 'libre'
-                self.clientes_atendidos += 1
-                self.dinero += p.PRECIO_BOCADILLO
-                self.signal_update_display.emit(self.update_diccionario_display())
+                print('Le entrego plato a cliente tocando la mesa')
+                self.entregar_plato(x, y)
+
+    def entregar_plato(self, x, y):
+        self.clientes[(x, y)].atendido = True
+        self.mesero.ocupado = False
+        self.clientes_atendidos += 1
+        self.dinero += p.PRECIO_BOCADILLO
+        self.mesero.wait(40)
+        print(self.mesero.propina)
+        self.dinero += self.mesero.propina
+        self.signal_update_display.emit(self.update_diccionario_display())
 
     def update_diccionario_display(self):
         self.diccionario_display = {'reputacion': self.reputacion,

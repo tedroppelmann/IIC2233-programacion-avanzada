@@ -80,7 +80,7 @@ class Mesero(QThread):
         print('Calculando propina')
         propina = max(0, (self.nivel_chef*(1-tiempo_espera*0.05)/3))
         print(f'Propina: {propina}')
-        self.propina += propina
+        self.propina = propina
 
 class Chef(QThread):
 
@@ -124,11 +124,12 @@ class Chef(QThread):
                 self.entregar_plato()
 
     def cocinar(self):
-        tiempo_preparacion = max(0, 15 - self.reputacion_cafe - self.nivel * 2)
+        bocadillo = Bocadillo()
+        tiempo_preparacion = bocadillo.tiempo_preparacion(self.reputacion_cafe, self.nivel)
         # AUN NO AGREGO EL TIEMPO DE PREPARACION
         tiempo_cocina = Reloj(p.INTERVALO_TIEMPO)
         tiempo_cocina.start()
-        while tiempo_cocina.value < p.TIEMPO_COCINA:
+        while tiempo_cocina.value < 2:
             time.sleep(0.5)
             self.signal_update_animacion_chef.emit({'x': self.x, 'y': self.y, 'frame': self.frame})
             self.frame += 1
@@ -217,35 +218,40 @@ class Cliente(QThread):
                 self.espera_cliente(p.TIEMPO_ESPERA_APURADO)
 
     def espera_cliente(self, tiempo_espera):
-        self.tiempo_espera.start()
         k = 1
         j = 1
-        while self.tiempo_espera.value < tiempo_espera and not self.atendido and j == 1:
-            if self.tiempo_espera.value >= tiempo_espera / 2:
-                if self.tiempo_espera.value >= tiempo_espera - 2 and k <= 3:
-                    time.sleep(0.5)
-                    self.signal_update_animacion_cliente.emit(self.diccionario(self.tipo, self.frame_enojado))
-                    self.frame_enojado += 3
-                    k += 1
-                    self.paga = False
+        self.tiempo_espera.start()
+        while True:
+            if not self.atendido:
+                if self.tiempo_espera.value < tiempo_espera:
+                    if self.tiempo_espera.value >= tiempo_espera / 2:
+                        if self.tiempo_espera.value >= tiempo_espera - 2 and k <= 3:
+                            time.sleep(0.5)
+                            self.signal_update_animacion_cliente.emit(self.diccionario(self.tipo, self.frame_enojado))
+                            self.frame_enojado += 3
+                            k += 1
+                            self.paga = False
+                        else:
+                            time.sleep(0.5)
+                            self.signal_update_animacion_cliente.emit(self.diccionario(self.tipo, self.frame_desatendido))
+                            self.frame_desatendido += 1
                 else:
-                    time.sleep(0.5)
-                    self.signal_update_animacion_cliente.emit(self.diccionario(self.tipo, self.frame_desatendido))
-                    self.frame_desatendido += 1
-        self.tipo = 'se fue'
-        while self.atendido:
-            if j<= 5:
-                time.sleep(0.5)
-                self.signal_update_animacion_cliente.emit(self.diccionario(self.tipo, self.frame_feliz))
-                self.frame_feliz += 1
-                j += 1
+                    print('Se elimina cliente porque no lo atendieron')
+                    self.fin = True
+                    self.signal_update_animacion_cliente.emit(self.diccionario('se fue', self.frame_desatendido))
+                    self.tiempo_espera.finish()
+                    break
             else:
-                self.atendido = False
-        if self.tipo == 'se fue':
-            print('Se elimina cliente')
-            self.fin = True
-            self.signal_update_animacion_cliente.emit(self.diccionario('se fue', self.frame_desatendido))
-            self.tiempo_espera.finish()
+                while j <= 5:
+                    time.sleep(0.5)
+                    self.signal_update_animacion_cliente.emit(
+                        self.diccionario(self.tipo, self.frame_feliz))
+                    self.frame_feliz += 1
+                    j += 1
+                print('Se elimina cliente porque ya fue atendido')
+                self.fin = True
+                self.signal_update_animacion_cliente.emit(self.diccionario('se fue', self.frame_feliz))
+                break
 
     def diccionario(self, tipo, frame):
         return {'x': self.x,
@@ -254,3 +260,17 @@ class Cliente(QThread):
                 'atendido': self.atendido,
                 'frame': frame,
                 'paga': self.paga}
+
+class Bocadillo:
+
+    def __init__(self):
+        self.precio = p.PRECIO_BOCADILLO
+
+    def tiempo_preparacion(self, reputacion, nivel):
+        tiempo_preparacion = max(0, 15 - reputacion - nivel * 2)
+        return tiempo_preparacion
+
+    def calidad_pedido(self, nivel, tiempo_espera):
+        propina = max(0, (nivel * (1 - tiempo_espera * 0.05) / 3))
+        return propina
+
