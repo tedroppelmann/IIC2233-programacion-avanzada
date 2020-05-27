@@ -27,6 +27,7 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
     signal_colision_objeto = pyqtSignal(tuple)
     signal_update_animacion_chef = None
     signal_update_display = None
+    signal_trampas = pyqtSignal(str)
 
     def __init__(self):
         super().__init__()
@@ -64,6 +65,8 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
         self.dinero.setScaledContents(True)
         imagen = QPixmap(os.path.join('sprites', 'clientes', 'hamster', 'hamster_01.png'))
         self.hamster.setPixmap(imagen)
+        self.precio_chef.setText(f'${p.PRECIO_CHEF}')
+        self.precio_mesa.setText(f'${p.PRECIO_MESA}')
         # Creamos el espacio del piso y el espacio para el drag and drop
         self.espacio_piso = QLabel(self.mapa)
         self.espacio_drag_drop = DropLabel(self.mapa)
@@ -90,6 +93,8 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
         mesa.name = 'mesa'
         foto = QPixmap(os.path.join('sprites', 'mapa', 'accesorios', 'mesa_pequena.png'))
         mesa.setPixmap(foto)
+        # Creo un conjunto de teclas para las teclas trampa
+        self.teclas = set()
 
     def comenzar_juego(self, datos):
         # Recibo los datos del diccionario que contiene los datos de mapa.csv
@@ -170,6 +175,16 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
             self.signal_mover_mesero.emit('W')
         elif event.key() == Qt.Key_S:
             self.signal_mover_mesero.emit('S')
+        self.teclas.add(event.key())
+        if {Qt.Key_M, Qt.Key_O, Qt.Key_N}.issubset(self.teclas):
+            self.signal_trampas.emit('dinero')
+        elif {Qt.Key_F, Qt.Key_I, Qt.Key_N}.issubset(self.teclas):
+            self.signal_trampas.emit('finalizar')
+        elif {Qt.Key_R, Qt.Key_T, Qt.Key_G}.issubset(self.teclas):
+            self.signal_trampas.emit('reputacion')
+
+    def keyReleaseEvent(self, event):
+        self.teclas.remove(event.key())
 
     # Actualiza la posicion del mesero en el front-end
     def update_posicion_mesero(self, x, y, frame, posicion, ocupado):

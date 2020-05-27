@@ -186,6 +186,7 @@ class Cliente(QThread):
         self.__frame_feliz = 13
         self.diccionario_datos = dict()
         self.paga = True
+        self.stop = False
 
     @property
     def frame_desatendido(self):
@@ -232,7 +233,10 @@ class Cliente(QThread):
         j = 1
         self.tiempo_espera.start()
         while True:
-            if not self.atendido:
+            if self.stop:
+                self.signal_update_animacion_cliente.emit(self.diccionario('se fue', self.frame_feliz))
+                break
+            elif not self.atendido:
                 if self.tiempo_espera.value < tiempo_espera:
                     if self.tiempo_espera.value >= tiempo_espera / 2:
                         if self.tiempo_espera.value >= tiempo_espera - 2 and k <= 3:

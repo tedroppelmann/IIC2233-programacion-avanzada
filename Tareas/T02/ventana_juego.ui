@@ -389,7 +389,7 @@
           </widget>
          </item>
          <item row="3" column="0">
-          <widget class="QLabel" name="label_4">
+          <widget class="QLabel" name="precio_mesa">
            <property name="text">
             <string>$100</string>
            </property>
@@ -399,7 +399,7 @@
           </widget>
          </item>
          <item row="1" column="0">
-          <widget class="QLabel" name="label_3">
+          <widget class="QLabel" name="precio_chef">
            <property name="text">
             <string>$300</string>
            </property>

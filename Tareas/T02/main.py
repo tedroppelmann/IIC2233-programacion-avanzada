@@ -58,6 +58,8 @@ if __name__ == '__main__':
     juego.signal_guardar = ventana_post_ronda.signal_guardar
     # fin del juego
     ventana_final.signal_fin_juego = juego.signal_fin_juego
+    # teclas trampa
+    juego.signal_trampas = ventana_principal.signal_trampas
 
 
     # Iniciar señales:

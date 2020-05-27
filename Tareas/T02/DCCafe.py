@@ -30,6 +30,7 @@ class DCCafe(QThread):
     signal_post_ronda = pyqtSignal(dict)
     signal_guardar = None
     signal_fin_juego = pyqtSignal()
+    signal_trampas = None
 
     def __init__(self):
         super().__init__()
@@ -74,6 +75,7 @@ class DCCafe(QThread):
         self.signal_pausar_ronda.connect(self.pausar_ronda)
         self.signal_colision_objeto.connect(self.colisiones)
         self.signal_guardar.connect(self.guardar_partida)
+        self.signal_trampas.connect(self.trampas)
 
     # Carga en el mapa una partida guardada
     def cargar(self):
@@ -196,7 +198,6 @@ class DCCafe(QThread):
     def eliminar(self, x, y):
         print(self.pixeles_mapa[f'({x},{y})'][0])
         if self.pixeles_mapa[f'({x},{y})'] != 'libre' and not self.disponibilidad :
-            print('entra')
             x_origen = self.pixeles_mapa[f'({x},{y})'][1]
             y_origen = self.pixeles_mapa[f'({x},{y})'][2]
             if self.pixeles_mapa[f'({x},{y})'][0] == 'chef' and len(self.chefs) > 1:
@@ -254,32 +255,34 @@ class DCCafe(QThread):
                 self.clientes_proximos = cantidad_clientes
                 print(f'Clientes ronda: {cantidad_clientes}')
                 self.signal_update_display.emit(self.update_diccionario_display())
-                i = 1
-                while i <= cantidad_clientes:
+                while self.clientes_proximos > 0:
                     time.sleep(p.LLEGADA_CLIENTES)
                     if self.crear_cliente():
-                        i += 1
                         self.clientes_proximos -= 1
                         self.signal_update_display.emit(self.update_diccionario_display())
                 while self.clientes_atendidos + self.clientes_perdidos < cantidad_clientes:
                     pass
-                print(f'Clientes perdidos: {self.clientes_perdidos}')
-                print(f'Clientes atendidos: {self.clientes_atendidos}')
                 time.sleep(3)
-                self.calcular_reputacion(cantidad_clientes)
-                self.signal_update_display.emit(self.update_diccionario_display())
-                print('Fin de la ronda')
-                for chef in self.chefs:
-                    self.chefs[chef].restart = True
-                self.disponibilidad = False
-                if self.reputacion > 0:
-                    self.rondas_terminadas += 1
-                    self.clientes_atendidos = 0
-                    self.clientes_perdidos = 0
-                    self.clientes_proximos = 0
-                    self.signal_post_ronda.emit(self.update_diccionario_display())
-                elif self.reputacion == 0:
-                    self.signal_fin_juego.emit()
+                self.finalizar_ronda()
+
+    def finalizar_ronda(self):
+        print(f'Clientes perdidos: {self.clientes_perdidos}')
+        print(f'Clientes atendidos: {self.clientes_atendidos}')
+        self.calcular_reputacion(self.clientes_ronda())
+        self.signal_update_display.emit(self.update_diccionario_display())
+        print('Fin de la ronda')
+        for chef in self.chefs:
+            self.chefs[chef].signal_update_animacion_chef = self.signal_update_animacion_chef
+            self.chefs[chef].restart = True
+        self.disponibilidad = False
+        if self.reputacion > 0:
+            self.rondas_terminadas += 1
+            self.clientes_atendidos = 0
+            self.clientes_perdidos = 0
+            self.clientes_proximos = 0
+            self.signal_post_ronda.emit(self.update_diccionario_display())
+        elif self.reputacion == 0:
+            self.signal_fin_juego.emit()
 
     # Crea un cliente si es que hay una mesa disponible
     def crear_cliente(self):
@@ -398,3 +401,18 @@ class DCCafe(QThread):
                 x = self.chefs[chef].x
                 y = self.chefs[chef].y
                 archivo.write(f'chef,{x},{y}\n')
+
+    def trampas(self, tipo):
+        if tipo == 'dinero':
+            self.dinero += p.DINERO_TRAMPA
+            self.signal_update_display.emit(self.update_diccionario_display())
+        elif tipo == 'finalizar':
+            self.clientes_proximos = 0
+            time.sleep(3)
+            for cliente in self.clientes:
+                self.clientes[cliente].wait(100)
+                self.clientes[cliente].stop = True
+            self.clientes_perdidos = self.clientes_ronda() #Lo ocupo para finalizar la ronda
+        elif tipo == 'reputacion':
+            self.reputacion = p.REPUTACION_TRAMPA
+            self.signal_update_display.emit(self.update_diccionario_display())
