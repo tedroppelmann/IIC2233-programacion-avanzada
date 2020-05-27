@@ -261,6 +261,7 @@ class Cliente(QThread):
                     j += 1
                 print('Se elimina cliente porque ya fue atendido')
                 self.signal_update_animacion_cliente.emit(self.diccionario('se fue', self.frame_feliz))
+                self.signal_update_animacion_cliente.emit(self.diccionario('bocadillo se fue', self.frame_feliz))
                 break
 
     def diccionario(self, tipo, frame):

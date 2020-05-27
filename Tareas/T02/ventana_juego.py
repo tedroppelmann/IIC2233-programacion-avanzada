@@ -75,7 +75,6 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
         # Creamos los labels principales
         self.label_mesero = QLabel(self.espacio_piso)
         self.label_char = dict()
-        self.bocadillo = None
         # Agrego los arbustos para colisionar con ellos
         self.label_char[('arbusto', 0, 0)] = QLabel(self.espacio_piso)
         self.label_char[('arbusto', 0, 0)].setGeometry(0, 0, p.ANCHO_ARBOL, p.LARGO_ARBOL)
@@ -219,11 +218,14 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
         frame = cliente['frame']
         if tipo == 'bocadillo':
             imagen = QPixmap(os.path.join('sprites', 'bocadillos', 'bocadillo_00.png'))
-            self.bocadillo = QLabel(self.label_char[('mesa', x + p.ANCHO_CLIENTE, y)])
-            self.bocadillo.setPixmap(imagen)
-            self.bocadillo.setScaledContents(True)
-            self.bocadillo.move(4, 4)
-            self.bocadillo.show()
+            self.label_char[('bocadillo', x, y)] = QLabel(self.label_char[('mesa', x + p.ANCHO_CLIENTE, y)])
+            self.label_char[('bocadillo', x, y)].setPixmap(imagen)
+            self.label_char[('bocadillo', x, y)].setScaledContents(True)
+            self.label_char[('bocadillo', x, y)].move(p.BOCADILLO_X, p.BOCADILLO_Y)
+            self.label_char[('bocadillo', x, y)].show()
+        elif tipo == 'bocadillo se fue':
+            self.label_char[('bocadillo', x, y)].hide()
+            self.label_char.pop(('bocadillo', x, y))
         elif atendido and tipo != 'se fue':
             imagen = QPixmap(os.path.join('sprites', 'clientes', 'hamster', f'hamster_{frame}.png'))
             self.label_char[('cliente', x, y)].setPixmap(imagen)
