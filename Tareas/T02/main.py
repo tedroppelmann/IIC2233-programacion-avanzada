@@ -1,7 +1,7 @@
 import sys
 from PyQt5.QtWidgets import QApplication
 
-from ventanas import VentanaInicio, VentanaPostRonda
+from ventanas import VentanaInicio, VentanaPostRonda, Final
 from ventana_juego import VentanaPrincipal
 from DCCafe import DCCafe
 
@@ -19,6 +19,7 @@ if __name__ == '__main__':
     ventana_inicio = VentanaInicio()
     ventana_principal = VentanaPrincipal()
     ventana_post_ronda = VentanaPostRonda()
+    ventana_final = Final()
 
     # Conectar señales:
     # cargar juego
@@ -55,12 +56,15 @@ if __name__ == '__main__':
     ventana_post_ronda.signal_post_ronda = juego.signal_post_ronda
     # guardar partida
     juego.signal_guardar = ventana_post_ronda.signal_guardar
+    # fin del juego
+    ventana_final.signal_fin_juego = juego.signal_fin_juego
 
 
     # Iniciar señales:
     juego.init_signals()
     ventana_principal.init_signals()
     ventana_post_ronda.init_signal()
+    ventana_final.init_signals()
 
 
     ventana_inicio.show()

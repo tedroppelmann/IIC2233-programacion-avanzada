@@ -29,6 +29,7 @@ class DCCafe(QThread):
     signal_update_display = pyqtSignal(dict)
     signal_post_ronda = pyqtSignal(dict)
     signal_guardar = None
+    signal_fin_juego = pyqtSignal()
 
     def __init__(self):
         super().__init__()
@@ -126,8 +127,13 @@ class DCCafe(QThread):
         self.start()
 
     # Retorna si algún pixel que se quiere llenar ya está ocupado
-    def pixel_ocupado(self, x, y, ancho, largo):
+    def pixel_ocupado(self, pos_x, y, ancho, largo, tipo):
         ocupado = False
+        # Para la mesa le agrego el ancho del cliente para que no se peguen
+        if tipo == 'mesa':
+            x = pos_x - p.ANCHO_CLIENTE
+        else:
+            x = pos_x
         for i in range(x, x + ancho):
             for j in range(y, y + largo):
                 if self.pixeles_mapa[f'({i},{j})'] != 'libre':
@@ -143,9 +149,10 @@ class DCCafe(QThread):
             while ocupado:
                 x = random.randint(15, p.ANCHO_PISO - ancho)
                 y = random.randint(0, p.LARGO_PISO - largo)
-                ocupado = self.pixel_ocupado(x, y, ancho, largo)
+                ocupado = self.pixel_ocupado(x, y, ancho, largo, tipo)
                 if not ocupado:
-                    for i in range(x, x + ancho + 1):
+                    # Le resto el ancho del cliente para que no queden mesas tan pegadas
+                    for i in range(x - p.ANCHO_CLIENTE, x + ancho + 1):
                         for j in range(y, y + largo + 1):
                             self.pixeles_mapa[f'({i},{j})'] = [tipo, x, y]
                     if tipo == 'chef':
@@ -160,7 +167,7 @@ class DCCafe(QThread):
     # Permite agregar objetos por Drag and Drop
     def drag_and_drop(self, pos_x, pos_y, nombre):
         if nombre == 'chef' and self.dinero >= p.PRECIO_CHEF and not self.disponibilidad:
-            ocupado = self.pixel_ocupado(pos_x, pos_y, p.ANCHO_CHEF, p.LARGO_CHEF)
+            ocupado = self.pixel_ocupado(pos_x, pos_y, p.ANCHO_CHEF, p.LARGO_CHEF, nombre)
             if not ocupado:
                 self.dinero -= p.PRECIO_CHEF
                 self.chefs[f'({int(pos_x)},{int(pos_y)})'] = Chef(int(pos_x), int(pos_y))
@@ -170,7 +177,8 @@ class DCCafe(QThread):
                 self.signal_crear_drag_and_drop.emit('chef', self.dinero, pos_x, pos_y)
                 self.update_diccionario_datos()
         elif nombre == 'mesa' and self.dinero >= p.PRECIO_MESA and not self.disponibilidad:
-            ocupado = self.pixel_ocupado(pos_x, pos_y, p.ANCHO_MESA, p.LARGO_MESA)
+            # Le agrego el ancho del cliente para que las mesas no puedan ponerse pegadas
+            ocupado = self.pixel_ocupado(pos_x - p.ANCHO_CLIENTE, pos_y, p.ANCHO_MESA, p.LARGO_MESA, nombre)
             if not ocupado:
                 self.dinero -= p.PRECIO_MESA
                 self.mesas[f'({int(pos_x)},{int(pos_y)})'] = Mesa(int(pos_x), int(pos_y))
@@ -227,6 +235,7 @@ class DCCafe(QThread):
                             'reputacion': self.reputacion,
                             'rondas_terminadas': self.rondas_terminadas}
 
+    # Cambia la disponibilidad para que el thread cambie y comience el loop de la ronda
     def comenzar_ronda(self):
         if not self.disponibilidad:
             print('Se comienza ronda')
@@ -238,10 +247,12 @@ class DCCafe(QThread):
             while not self.disponibilidad:
                 pass
             while self.disponibilidad:
+                for chef in self.chefs:
+                    self.chefs[chef].restart = False
                 print('Empieza ronda')
                 cantidad_clientes = self.clientes_ronda()
                 self.clientes_proximos = cantidad_clientes
-                print(f'Clientes ronda = {cantidad_clientes}')
+                print(f'Clientes ronda: {cantidad_clientes}')
                 self.signal_update_display.emit(self.update_diccionario_display())
                 i = 1
                 while i <= cantidad_clientes:
@@ -253,19 +264,24 @@ class DCCafe(QThread):
                 while self.clientes_atendidos + self.clientes_perdidos < cantidad_clientes:
                     pass
                 print(f'Clientes perdidos: {self.clientes_perdidos}')
-                print(f'Clientes perdidos: {self.clientes_atendidos}')
+                print(f'Clientes atendidos: {self.clientes_atendidos}')
                 time.sleep(3)
                 self.calcular_reputacion(cantidad_clientes)
                 self.signal_update_display.emit(self.update_diccionario_display())
                 print('Fin de la ronda')
-                self.signal_post_ronda.emit(self.update_diccionario_display())
+                for chef in self.chefs:
+                    self.chefs[chef].restart = True
                 self.disponibilidad = False
                 if self.reputacion > 0:
                     self.rondas_terminadas += 1
                     self.clientes_atendidos = 0
                     self.clientes_perdidos = 0
                     self.clientes_proximos = 0
+                    self.signal_post_ronda.emit(self.update_diccionario_display())
+                elif self.reputacion == 0:
+                    self.signal_fin_juego.emit()
 
+    # Crea un cliente si es que hay una mesa disponible
     def crear_cliente(self):
         j = 0
         mesa_disponible = None
@@ -281,8 +297,10 @@ class DCCafe(QThread):
             prob = random.randint(0,1)
             if prob <= p.PROB_RELAJADO:
                 self.clientes[(x, y)] = Cliente(x, y, 'relajado')
+                print('Aparece un cliente relajado')
             else:
                 self.clientes[(x, y)] = Cliente(x, y, 'apurado')
+                print('Aparece un cliente apurado')
             self.signal_crear_cliente.emit(x, y)
             self.clientes[(x, y)].signal_update_animacion_cliente = self.signal_update_animacion_cliente
             self.clientes[(x, y)].start()
@@ -298,23 +316,21 @@ class DCCafe(QThread):
             self.clientes_perdidos += 1
             self.signal_update_display.emit(self.update_diccionario_display())
 
+    # Calcula la cantidad de clientes que van a aparecer en la ronda
     def clientes_ronda(self):
         clientes_ronda = 5 * (1 + self.rondas_terminadas)
         return clientes_ronda
 
     def pausar_ronda(self):
-        if not self.pausa and self.disponibilidad:
+        if not self.pausa:
             print('Se pausa ronda')
-            self.disponibilidad = False
-            self.pausa = True
-            for cliente in self.clientes:
-                self.clientes[cliente].tiempo_espera.pausar()
         elif self.pausa:
             print('Se despausa ronda')
-            self.disponibilidad = True
             self.pausa = False
+            for chef in self.chefs:
+                self.chefs[chef].pausa = False
             for cliente in self.clientes:
-                self.clientes[cliente].tiempo_espera.pausar()
+                self.clientes[cliente].pausa = False
 
     def colisiones(self, objeto):
         tipo = objeto[0]
@@ -344,7 +360,7 @@ class DCCafe(QThread):
         self.mesero.ocupado = False
         self.clientes_atendidos += 1
         self.dinero += p.PRECIO_BOCADILLO
-        self.mesero.wait(40)
+        self.mesero.wait(80) # Espero un poco para que se calcule la propina
         print(self.mesero.propina)
         self.dinero += self.mesero.propina
         self.signal_update_display.emit(self.update_diccionario_display())
@@ -359,7 +375,8 @@ class DCCafe(QThread):
         return self.diccionario_display
 
     def calcular_reputacion(self, clientes_totales):
-        nueva_reputacion = max(0, min(5, self.reputacion + floor(4 *(self.clientes_atendidos/clientes_totales) - 2)))
+        nueva_reputacion = max(0, min(5, self.reputacion
+                                      + floor(4 *(self.clientes_atendidos/clientes_totales) - 2)))
         self.reputacion = nueva_reputacion
 
     def guardar_partida(self):

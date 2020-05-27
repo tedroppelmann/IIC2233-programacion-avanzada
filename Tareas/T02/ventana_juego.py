@@ -47,7 +47,7 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
         self.signal_update_display.connect(self.update_display)
 
     def init_gui(self):
-        # La única forma que se me ocurrio para fijar el tamaño del label
+        # Agregamos las imagenes a la ventana de juego
         imagen = QPixmap(os.path.join('sprites', 'mapa', 'mapa_sin_borde_1.png'))
         self.mapa.setMaximumSize(p.ANCHO_MAPA, p.LARGO_MAPA)
         self.mapa.setMinimumSize(p.ANCHO_MAPA, p.LARGO_MAPA)
@@ -64,7 +64,7 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
         self.dinero.setScaledContents(True)
         imagen = QPixmap(os.path.join('sprites', 'clientes', 'hamster', 'hamster_01.png'))
         self.hamster.setPixmap(imagen)
-        #################################################
+        # Creamos el espacio del piso y el espacio para el drag and drop
         self.espacio_piso = QLabel(self.mapa)
         self.espacio_drag_drop = DropLabel(self.mapa)
         self.espacio_drag_drop.signal_drag_and_drop = self.signal_drag_and_drop
@@ -72,9 +72,16 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
         # El borde derecho e inferior vienen dados para que quepa el meson del chef sin salirse.
         # Por eso es más pequeño.
         self.espacio_drag_drop.setGeometry(0, p.PUNTO_INICIAL_PISO, p.ANCHO_DRAG_DROP, p.LARGO_DRAG_DROP)
-        # Creamos los labels
+        # Creamos los labels principales
         self.label_mesero = QLabel(self.espacio_piso)
         self.label_char = dict()
+        self.bocadillo = None
+        # Agrego los arbustos para colisionar con ellos
+        self.label_char[('arbusto', 0, 0)] = QLabel(self.espacio_piso)
+        self.label_char[('arbusto', 0, 0)].setGeometry(0, 0, p.ANCHO_ARBOL, p.LARGO_ARBOL)
+        self.label_char[('arbusto', 0, p.LARGO_PISO - p.LARGO_ARBOL)] = QLabel(self.espacio_piso)
+        self.label_char[('arbusto', 0, p.LARGO_PISO - p.LARGO_ARBOL)].\
+            setGeometry(0, p.LARGO_PISO - p.LARGO_ARBOL, p.ANCHO_ARBOL, p.LARGO_ARBOL)
         # Hacemos arrastrables los elementos de la tienda
         chef = DraggableLabel(self.chef)
         chef.name = 'chef'
@@ -87,7 +94,7 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
 
     def comenzar_juego(self, datos):
         # Recibo los datos del diccionario que contiene los datos de mapa.csv
-        # Actualizar posiciones personajes
+        # Agrego posiciones personajes
         self.posicion_mesero(datos['mesero'])
         self.posicion_mesas(datos['mesas'])
         self.posicion_chefs(datos['chefs'])
@@ -210,7 +217,14 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
         tipo = cliente['tipo']
         atendido = cliente['atendido']
         frame = cliente['frame']
-        if atendido and tipo != 'se fue':
+        if tipo == 'bocadillo':
+            imagen = QPixmap(os.path.join('sprites', 'bocadillos', 'bocadillo_00.png'))
+            self.bocadillo = QLabel(self.label_char[('mesa', x + p.ANCHO_CLIENTE, y)])
+            self.bocadillo.setPixmap(imagen)
+            self.bocadillo.setScaledContents(True)
+            self.bocadillo.move(4, 4)
+            self.bocadillo.show()
+        elif atendido and tipo != 'se fue':
             imagen = QPixmap(os.path.join('sprites', 'clientes', 'hamster', f'hamster_{frame}.png'))
             self.label_char[('cliente', x, y)].setPixmap(imagen)
             self.label_char[('cliente', x, y)].setScaledContents(True)
@@ -222,6 +236,14 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
             self.signal_cliente_se_fue.emit(cliente)
             self.label_char[('cliente', x , y)].hide()
             self.label_char.pop(('cliente', x , y))
+
+    def poner_bocadillo(self, datos):
+        x = datos['x'] + p.ANCHO_CLIENTE
+        y = datos['y']
+        imagen = QPixmap(os.path.join('sprites', 'bocadillos', 'bocadillo_00.png'))
+        bocadillo = QLabel(self.label_char['mesa', x + p.ANCHO_CLIENTE, y])
+        bocadillo.setPixmap(imagen)
+        bocadillo.setScaledContents(True)
 
     def update_animacion_chef(self, chef):
         x = chef['x']

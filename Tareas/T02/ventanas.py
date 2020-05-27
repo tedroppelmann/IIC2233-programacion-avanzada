@@ -3,11 +3,11 @@ from PyQt5 import uic
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QPixmap
 import sys
-import time
 import os
 
 WINDOW_NAME_1, BASE_CLASS_1 = uic.loadUiType("ventana_inicio.ui")
 WINDOW_NAME_3, BASE_CLASS_3 = uic.loadUiType("ventana_post_ronda.ui")
+WINDOW_NAME_4, BASE_CLASS_4 = uic.loadUiType("final.ui")
 
 class VentanaInicio(WINDOW_NAME_1, BASE_CLASS_1):
 
@@ -56,14 +56,30 @@ class VentanaPostRonda(WINDOW_NAME_3, BASE_CLASS_3):
         self.reputacion_valor.setText(f'{datos["reputacion"]}/5')
         self.dinero_lcd.display(datos['dinero'])
         self.show()
-        if datos["reputacion"] == 0:
-            print('Perdiste')
 
     def guardar(self):
         self.signal_guardar.emit()
 
     def continuar(self):
         self.hide()
+
+    def salir(self):
+        sys.exit()
+
+class Final(WINDOW_NAME_4, BASE_CLASS_4):
+
+    signal_fin_juego = None
+
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+
+    def init_signals(self):
+        self.boton_salir.clicked.connect(self.salir)
+        self.signal_fin_juego.connect(self.mostrar)
+
+    def mostrar(self):
+        self.show()
 
     def salir(self):
         sys.exit()

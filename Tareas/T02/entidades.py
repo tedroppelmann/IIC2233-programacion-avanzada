@@ -79,8 +79,12 @@ class Mesero(QThread):
         tiempo.finish()
         print('Calculando propina')
         propina = max(0, (self.nivel_chef*(1-tiempo_espera*0.05)/3))
-        print(f'Propina: {propina}')
-        self.propina = propina
+        prob = random.randint(0, 1)
+        if prob <= propina:
+            print(f'El cliente dejó propina')
+            self.propina = p.PROPINA
+        else:
+            print('El cliente no dejó propina')
 
 class Chef(QThread):
 
@@ -98,6 +102,8 @@ class Chef(QThread):
         self.activado = False
         self.reputacion_cafe = None
 
+        self.restart = False
+
     @property
     def frame(self):
         return self.__frame
@@ -111,17 +117,22 @@ class Chef(QThread):
 
     def run(self):
         while True:
-            if not self.ocupado and self.activado:
-                if self.platos_terminados >= p.PLATOS_EXPERTO:
-                    self.nivel = 3
-                    print('¡Ahora soy chef experto!')
-                elif self.platos_terminados >= p.PLATOS_INTERMEDIO:
-                    self.nivel = 2
-                    print('¡Ahora soy chef intermedio!')
-                self.ocupado = True
-                self.cocinar()
-            elif self.plato_listo and self.activado:
-                self.entregar_plato()
+            while not self.restart:
+                if not self.ocupado and self.activado:
+                    if self.platos_terminados >= p.PLATOS_EXPERTO:
+                        self.nivel = 3
+                        print('¡Ahora soy chef experto!')
+                    elif self.platos_terminados >= p.PLATOS_INTERMEDIO:
+                        self.nivel = 2
+                        print('¡Ahora soy chef intermedio!')
+                    self.ocupado = True
+                    self.cocinar()
+                elif self.plato_listo and self.activado:
+                    self.entregar_plato()
+            self.signal_update_animacion_chef.emit({'x': self.x, 'y': self.y, 'frame': 1})
+            self.plato_listo = False
+            self.ocupado = False
+            self.activado = False
 
     def cocinar(self):
         bocadillo = Bocadillo()
@@ -167,14 +178,13 @@ class Cliente(QThread):
         super().__init__()
         self.x = x - p.ANCHO_CLIENTE
         self.y = y
-        self.tipo = tipo #RELAJADO O APURADO o 'se fue'
+        self.tipo = tipo #RELAJADO O APURADO o 'se fue' o 'bocadillo'
         self.tiempo_espera = Reloj(p.INTERVALO_TIEMPO)
         self.atendido = False
         self.__frame_desatendido = 26
         self.__frame_enojado = 18
         self.__frame_feliz = 13
         self.diccionario_datos = dict()
-        self.fin = False
         self.paga = True
 
     @property
@@ -242,6 +252,7 @@ class Cliente(QThread):
                     self.tiempo_espera.finish()
                     break
             else:
+                self.signal_update_animacion_cliente.emit(self.diccionario('bocadillo', self.frame_feliz))
                 while j <= 5:
                     time.sleep(0.5)
                     self.signal_update_animacion_cliente.emit(
@@ -249,7 +260,6 @@ class Cliente(QThread):
                     self.frame_feliz += 1
                     j += 1
                 print('Se elimina cliente porque ya fue atendido')
-                self.fin = True
                 self.signal_update_animacion_cliente.emit(self.diccionario('se fue', self.frame_feliz))
                 break
 
