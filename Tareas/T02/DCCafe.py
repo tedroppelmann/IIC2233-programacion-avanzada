@@ -59,10 +59,10 @@ class DCCafe(QThread):
         self.diccionario_display = dict()
         # Truquito para eliminar "revertir" el cambio de posicion del mesero
         self.tecla_contraria = None
-        self.pausa = False
         self.clientes_atendidos = 0
         self.clientes_perdidos = 0
         self.clientes_proximos = 0
+        self.clientes_eliminados = 0
 
     def init_signals(self):
         self.signal_cargar_juego.connect(self.cargar)
@@ -72,7 +72,6 @@ class DCCafe(QThread):
         self.signal_eliminar.connect(self.eliminar)
         self.signal_mover_mesero.connect(self.mover_mesero)
         self.signal_cliente_se_fue.connect(self.eliminar_cliente)
-        self.signal_pausar_ronda.connect(self.pausar_ronda)
         self.signal_colision_objeto.connect(self.colisiones)
         self.signal_guardar.connect(self.guardar_partida)
         self.signal_trampas.connect(self.trampas)
@@ -260,9 +259,9 @@ class DCCafe(QThread):
                     if self.crear_cliente():
                         self.clientes_proximos -= 1
                         self.signal_update_display.emit(self.update_diccionario_display())
-                while self.clientes_atendidos + self.clientes_perdidos < cantidad_clientes:
+                while self.clientes_eliminados < cantidad_clientes:
                     pass
-                time.sleep(3)
+                time.sleep(1)
                 self.finalizar_ronda()
 
     def finalizar_ronda(self):
@@ -280,6 +279,7 @@ class DCCafe(QThread):
             self.clientes_atendidos = 0
             self.clientes_perdidos = 0
             self.clientes_proximos = 0
+            self.clientes_eliminados = 0
             self.signal_post_ronda.emit(self.update_diccionario_display())
         elif self.reputacion == 0:
             self.signal_fin_juego.emit()
@@ -315,6 +315,7 @@ class DCCafe(QThread):
         y = cliente['y']
         self.clientes.pop((x, y))
         self.mesas[f'({x},{y})'].disponibilidad = 'libre'
+        self.clientes_eliminados += 1
         if not cliente['paga']:
             self.clientes_perdidos += 1
             self.signal_update_display.emit(self.update_diccionario_display())
@@ -323,17 +324,6 @@ class DCCafe(QThread):
     def clientes_ronda(self):
         clientes_ronda = 5 * (1 + self.rondas_terminadas)
         return clientes_ronda
-
-    def pausar_ronda(self):
-        if not self.pausa:
-            print('Se pausa ronda')
-        elif self.pausa:
-            print('Se despausa ronda')
-            self.pausa = False
-            for chef in self.chefs:
-                self.chefs[chef].pausa = False
-            for cliente in self.clientes:
-                self.clientes[cliente].pausa = False
 
     def colisiones(self, objeto):
         tipo = objeto[0]
@@ -407,12 +397,13 @@ class DCCafe(QThread):
             self.dinero += p.DINERO_TRAMPA
             self.signal_update_display.emit(self.update_diccionario_display())
         elif tipo == 'finalizar':
+            self.clientes_proximos = 0 # Termino la creacion de nuevos clientes
+            time.sleep(3) # Espero por si ya habia uno en proceso de creacion
             self.clientes_proximos = 0
-            time.sleep(3)
             for cliente in self.clientes:
                 self.clientes[cliente].wait(100)
-                self.clientes[cliente].stop = True
-            self.clientes_perdidos = self.clientes_ronda() #Lo ocupo para finalizar la ronda
+                self.clientes[cliente].stop = True # Borro a los clientes del mapa
+            self.clientes_eliminados = self.clientes_ronda() #Lo ocupo para finalizar la ronda
         elif tipo == 'reputacion':
             self.reputacion = p.REPUTACION_TRAMPA
             self.signal_update_display.emit(self.update_diccionario_display())
