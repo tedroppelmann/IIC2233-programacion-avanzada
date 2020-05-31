@@ -32,7 +32,7 @@ Creo haber implementado la mayoría de lo que se pedía de la tarea en mi progra
       * **Si la reputación llega a 0, el juego se termina.** ✅ 
 * **Entidades**:
     * **Jugador**: 
-      * **El movimiento del jugador es fluido, continuo y animado. ** ✅ 
+      * **El movimiento del jugador es fluido, continuo y animado.** ✅ 
       * **Movimiento respeta colisiones no especiales.** ✅ A veces visualmente pareciera que el jugador esta bastante lejos de los objetos que colisiona, pero los label si se tocan.
       * **Movimiento respeta colisión especial con chef y clientes.** ✅ 
       * **El jugador cambia de sprite al cambiar de estado.** ✅ 
