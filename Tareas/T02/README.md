@@ -1,91 +1,100 @@
-# Tarea X: Nombre de la tarea :school_satchel:
+# Tarea 2: DCCafé ☕️
 
+Estimado ayudante:
 
-Un buen ```README.md``` puede marcar una gran diferencia en la facilidad con la que corregimos una tarea, y consecuentemente cómo funciona su programa, por lo en general, entre más ordenado y limpio sea éste, mejor será 
-
-Para nuestra suerte, GitHub soporta el formato [MarkDown](https://es.wikipedia.org/wiki/Markdown), el cual permite utilizar una amplia variedad de estilos de texto, tanto para resaltar cosas importantes como para separar ideas o poner código de manera ordenada ([pueden ver casi todas las funcionalidades que incluye aquí](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet))
-
-Un buen ```README.md``` no tiene por que ser muy extenso tampoco, hay que ser **concisos** (a menos que lo consideren necesario) pero **tampoco pueden** faltar cosas. Lo importante es que sea claro y limpio 
-
-**Dejar claro lo que NO pudieron implementar y lo que no funciona a la perfección. Esto puede sonar innecesario pero permite que el ayudante se enfoque en lo que sí podría subir su puntaje.**
-
-## Consideraciones generales :octocat:
-
-<Descripción de lo que hace y que **_no_** hace la tarea que entregaron junto
-con detalles de último minuto y consideraciones como por ejemplo cambiar algo
-en cierta línea del código o comentar una función>
+Creo haber implementado todo lo que se pedía de la tarea en mi programa 😃. Intenté que cada función dentro del programa esté explicada dentro de esta con la descripción de lo que hace. 
 
 ### Cosas implementadas y no implementadas :white_check_mark: :x:
 
-* <Nombre item pauta<sub>1</sub>>: Hecha completa
-* <Nombre item pauta<sub>2</sub>>: Me faltó hacer <insertar qué cosa faltó>
-    * <Nombre subitem pauta<sub>2.1</sub>>: Hecha completa 
-    * <Nombre subitem pauta<sub>2.2</sub>>: Me faltó hacer <insertar qué cosa faltó>
-    * ...
-* <Nombre item pauta<sub>3</sub>>: Me faltó hacer <insertar qué cosa faltó>
-* ...
-* <Nombre item pauta<sub>n</sub>>: Me faltó hacer <insertar qué cosa faltó>
+NOTA: La explicación de los atributos y métodos de cada clase están en el archivo ```explicacion_diagrama.md```
+
+* **Ventana de Inicio**: 
+    * **La ventana de inicio se visualiza correctamente. Los elementos no se superponen entre sí."** ✅ 
+    * **Se puede crear una partida nueva o cargar una existente.** ✅ 
+    * **Se cargan correctamente los datos de una partida guardada.** ✅ 
+    * **Se reinician correctamente los datos de una partida.** ✅ 
+    
+* **Ventana de Juego**:
+   * **Generales**:
+      * **Se visualizan correctamente las tres áreas del juego. Los elementos no se superponen entre sí.**: ✅ 
+      * **Se visualizan correctamente las estadísticas del juego. Los elementos no se superponen entre sí.**: ✅ 
+      * **Se carga el mapa correctamente respetando las dimensiones.**: ✅ 
+      * **Información de la ronda, clientes y dinero se actualizan a lo largo del juego.**: ✅ 
+   * **Ventana de pre-ronda**:
+      * **Se pueden comprar objetos de forma correcta.**: ✅ 
+      * **Se muestran todos los elementos que se pueden comprar en la tienda junto a sus precios. Los elementos no se superponen entre sí.**: ✅ 
+      * **"Las mesas y el chef se pueden eliminar haciendo click. Se impide que el jugador se quede sin elementos en el mapa."**: ✅ 
+   * **Ventana de ronda**:
+      * **Los clientes aparecen sentados en las mesas.**: ✅ Siempre aparecen en el lado izquierdo de la mesa
+      * **La ronda termina cuando ya no quedan clientes.**: ✅ 
+   * **Ventana de post-ronda**:
+      * **"Se visualiza una ventana con los resultados y botones.Los elementos no se superponen entre sí."**: ✅ 
+      * **Se puede continuar, guardar y salir.**: ✅ 
+      * **Las estadisticas post-ronda son correctas y reflejan el resultado de la ronda.**: ✅ 
+      * **Si la reputación llega a 0, el juego se termina.**: ✅ 
+* **Entidades**:
+    * **Jugador**: 
+      * **El movimiento del jugador es fluido, continuo y animado. **: ✅ 
+      * **Movimiento respeta colisiones no especiales.**: ✅ A veces visualmente pareciera que el jugador esta bastante lejos de los objetos que colisiona, pero los label si se tocan.
+      * **Movimiento respeta colisión especial con chef y clientes.**: ✅ 
+      * **El jugador cambia de sprite al cambiar de estado.**: ✅ 
+   * **Chef**:
+      * **El chef cambia de estado cuando corresponde.**: ✅ 
+      * **Sube de nivel según la cantidad de bocadillos que haya preparado.**: ✅ 
+      * **Implementa la probabilidad de equivocarse correctamente. Al equivocarse se reinicia su estado.**: ✅ 
+      * **El chef cambia de sprite según su estado: esperando, cocinando, terminado.**: ✅ 
+   * **Bocadillos**: No implementé un entidad Bocadillo como tal, pero sus métodos están integrados en el programa. 
+      * **El tiempo de preparación cambia según la fórmula establecida.**: ✅  Está en la clase Chef
+      * **La calidad del bocadillo cambia según la fórmula establecida.**: ✅  Está en la clase Mesero
+   * **Clientes**: 
+      * **Los clientes cambian de estado cuando corresponde.**: ✅
+      * **Los clientes desaparecen después de recibir su bocadillo o una vez que se acabe el tiempo de espera.**: ✅  
+      * **Los clientes cambian de sprite dependiendo de su estado de ánimo.**: ✅  
+   * **DCCafé**: 
+      * **Calcula correctamente los clientes por ronda.**: ✅
+      * **Calcula correctamente la reputación.**: ✅  
+* **Tiempo**: ✅ 
+   * **Los procesos internos del DCCafé respetan el reloj del juego.**: ✅ 
+   * **Esta implementado el botón Pausa y la letra P, al seleccionarlo no aumenta el tiempo de juego, y se detienen todas las animaciones.**: ❌
+
+* **Funcionalidades Extra**:
+   * **M + O + N**: ✅ 
+   * **F + I + N**: ✅ 
+   * **R + T + G**: ✅ 
+
+* **Bonus**: ❌ No alcancé a hacer ningún bonus 😞
 
 ## Ejecución :computer:
-El módulo principal de la tarea a ejecutar es  ```archivo.py```. Además se debe crear los siguientes archivos y directorios adicionales:
-1. ```archivo.ext``` en ```ubicación```
-2. ```directorio``` en ```ubicación```
-3. ...
-
+El módulo principal de la tarea a ejecutar es  ```main.py```. 
 
 ## Librerías :books:
 ### Librerías externas utilizadas
 La lista de librerías externas que utilicé fue la siguiente:
 
-1. ```librería_1```: ```función() / módulo```
-2. ```librería_2```: ```función() / módulo``` (debe instalarse)
-3. ...
+1. ```sys```: ```exit()```
+2. ```os```: ```path.join()```
+3. ```collections```: ```defauldict()```
+4. ```abc```: ```ABC```, ```abstractmethod```
+5. ```random```: ```randint```, ```choice```
 
 ### Librerías propias
 Por otro lado, los módulos que fueron creados fueron los siguientes:
 
-1. ```librería_1```: Contiene a ```ClaseA```, ```ClaseB```, (ser general, tampoco es necesario especificar cada una)...
-2. ```librería_2```: Hecha para <insertar descripción **breve** de lo que hace o qué contiene>
-3. ...
+1. ```actualizaciones.py```: Contiene las funciones que permiten actualizar los archivos .csv.
+2. ```alimentos.py```: Contiene la clase ```Alimento```y sus subclases ```TartaDeMelaza```, ```HigadoDeDragon```y ```BunueloDeGusarajo```.
+3. ```cargas.py```: Contiene las funciones que permiten cargar y poblar las clases desde los archivos .csv. 
+4. ```criaturas.py```: Contiene la clase ```Criatura```y sus subclases ```Augurey```, ```Niffler```y ```Erkling```.
+5. ```DCC.py```: Contiene a la clase ```Dcc```.
+6. ```magizoologos.py```: Contiene a la clase ```Magizoologo```y sus subclases ```Docencio```, ```Tareo```y ```Híbrido```. Además posee la función ```sickles_suficientes(sickles, precio)```.
+7. ```menus.py```: Contiene todas las funciones que representan menús dentro del programa.
+8. ```parametros.py```: Contiene todos los parámetros que se utilizan en el programa. 
 
 ## Supuestos y consideraciones adicionales :thinking:
 Los supuestos que realicé durante la tarea son los siguientes:
 
-1. <Descripción/consideración 1 y justificación del por qué es válido/a> 
-2. <Descripción/consideración 2 y justificación del por qué es válido/a>
-3. ...
+1. No se si es un supuesto o un requisito de la tarea pero al mostrar los datos al pasar de día solo se notifican los nuevas criaturas que enfermaron, escaparon y que hambrientas desde hoy.
+2. Los menús del tipo numeración (donde tú eliges un número entre opciones) no doy la opción de volver atrás porque se da esa opción en otras instancias. Por ejemplo, al alimentar una criatura se da la opción de volver atrás cuando te equivocas al poner en el nombre. En todo caso, en todas las opciones del programa es imposible quedar "atrapado" dentro de un menú. 
 
-PD: <una última consideración (de ser necesaria) o comentario hecho anteriormente que se quiera **recalcar**>
-
-
--------
-
-
-
-**EXTRA:** si van a explicar qué hace específicamente un método, no lo coloquen en el README mismo. Pueden hacerlo directamente comentando el método en su archivo. Por ejemplo:
-
-```python
-class Corrector:
-
-    def __init__(self):
-          pass
-
-    # Este método coloca un 6 en las tareas que recibe
-    def corregir(self, tarea):
-        tarea.nota  = 6
-        return tarea
-```
-
-Si quieren ser más formales, pueden usar alguna convención de documentación. Google tiene la suya, Python tiene otra y hay muchas más. La de Python es la [PEP287, conocida como reST](https://www.python.org/dev/peps/pep-0287/). Lo más básico es documentar así:
-
-```python
-def funcion(argumento):
-    """
-    Mi función hace X con el argumento
-    """
-    return argumento_modificado
-```
-Lo importante es que expliquen qué hace la función y que si saben que alguna parte puede quedar complicada de entender o tienen alguna función mágica usen los comentarios/documentación para que el ayudante entienda sus intenciones.
 
 ## Referencias de código externo :book:
 
