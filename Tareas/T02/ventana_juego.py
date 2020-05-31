@@ -108,11 +108,13 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
         self.ronda.setText(f"RONDA Nº {datos['rondas_terminadas'] + 1}")
         self.show()
 
+    # Inicio al mesero
     def posicion_mesero(self, mesero):
         imagen = QPixmap(os.path.join('sprites', 'mesero', 'down_02.png'))
         self.label_mesero.setPixmap(imagen)
         self.label_mesero.move(mesero.x, mesero.y)
 
+    # Inicio a las mesas
     def posicion_mesas(self, mesas):
         imagen = QPixmap(os.path.join('sprites', 'mapa', 'accesorios', 'mesa_pequena.png'))
         for mesa in mesas:
@@ -123,6 +125,7 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
             self.label_char[('mesa', x, y)].move(x, y)
             self.label_char[('mesa', x, y)].show()
 
+    # Inicio a los chefs
     def posicion_chefs(self, chefs):
         imagen = QPixmap(os.path.join('sprites', 'chef', 'meson_01.png'))
         for chef in chefs:
@@ -133,6 +136,7 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
             self.label_char[('chef', x , y)].move(x, y)
             self.label_char[('chef', x , y)].show()
 
+    # Permite visualizar los arrastres válidos en el mapa
     def agregar_por_drag_drop(self, tipo, dinero, x, y):
         if tipo == 'chef':
             imagen = QPixmap(os.path.join('sprites', 'chef', 'meson_01.png'))
@@ -148,8 +152,8 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
             self.label_char[('mesa', x, y)].show()
         self.dinero_lcd.display(dinero)
 
+    # Envío al back-end posiciones válidas dentro del mapa
     def mousePressEvent(self, event):
-        # Envío al back-end posiciones válidas dentro del mapa
         pos_x = event.x() - self.mapa.x()
         pos_y = event.y() - self.mapa.y() - p.PUNTO_INICIAL_PISO
         print(pos_x, pos_y)
@@ -166,6 +170,7 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
             self.label_char[('mesa', x, y)].hide()
             self.label_char.pop(('mesa', x, y))
 
+    # Envía las señales al back-end al presionar teclas
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_A:
             self.signal_mover_mesero.emit('A')
@@ -183,6 +188,7 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
         elif {Qt.Key_R, Qt.Key_T, Qt.Key_G}.issubset(self.teclas):
             self.signal_trampas.emit('reputacion')
 
+    # Elimina del conjutno las teclas que se dejaron de presionar
     def keyReleaseEvent(self, event):
         self.teclas.remove(event.key())
 
@@ -209,7 +215,7 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
         if i == 0:
             self.label_mesero.move(x, y)
 
-    # Envía la señal para comenzar la ronda
+    # Envía la señal para comenzar la ronda al presionar el botón
     def comenzar_ronda(self):
         self.signal_comenzar_ronda.emit()
 
@@ -254,6 +260,7 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
             self.label_char[('cliente', x , y)].hide()
             self.label_char.pop(('cliente', x , y))
 
+    # Agrega el bocadillo a la mesa al llegar con el pedido
     def poner_bocadillo(self, datos):
         x = datos['x'] + p.ANCHO_CLIENTE
         y = datos['y']
@@ -262,6 +269,7 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
         bocadillo.setPixmap(imagen)
         bocadillo.setScaledContents(True)
 
+    # Cambia la visualización del chef según su estado
     def update_animacion_chef(self, chef):
         x = chef['x']
         y = chef['y']
@@ -273,6 +281,7 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
         self.label_char[('chef', x, y)].setPixmap(imagen)
         self.label_char[('chef', x, y)].setScaledContents(True)
 
+    # Actauliza todos los datos en pantalla
     def update_display(self, datos):
         reputacion = datos['reputacion']
         dinero = datos['dinero']
@@ -287,8 +296,10 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
         self.perdidos_valor.setText(str(perdidos))
         self.proximos_valor.setText(str(proximos))
 
+    # Emite la señal para pausar la ronda
     def pausar_ronda(self):
         self.signal_pausar_ronda.emit()
 
+    # Termina el juego sin guardar
     def salir(self):
         sys.exit()

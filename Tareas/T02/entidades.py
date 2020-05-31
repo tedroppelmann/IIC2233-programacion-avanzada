@@ -1,5 +1,5 @@
 
-from PyQt5.QtCore import QObject, pyqtSignal, QThread
+from PyQt5.QtCore import QThread
 import parametros as p
 import time
 from reloj import Reloj
@@ -70,6 +70,7 @@ class Mesero(QThread):
             if self.ocupado:
                 self.llevar_pedido()
 
+    # Calcula la propina que da el cliente al mesero
     def llevar_pedido(self):
         tiempo = Reloj(p.INTERVALO_TIEMPO)
         tiempo.start()
@@ -119,10 +120,10 @@ class Chef(QThread):
         while True:
             while not self.restart:
                 if not self.ocupado and self.activado:
-                    if self.platos_terminados >= p.PLATOS_EXPERTO:
+                    if self.platos_terminados >= p.PLATOS_EXPERTO and self.nivel < 3:
                         self.nivel = 3
                         print('¡Ahora soy chef experto!')
-                    elif self.platos_terminados >= p.PLATOS_INTERMEDIO:
+                    elif self.platos_terminados >= p.PLATOS_INTERMEDIO and self.nivel < 2:
                         self.nivel = 2
                         print('¡Ahora soy chef intermedio!')
                     self.ocupado = True
@@ -134,6 +135,7 @@ class Chef(QThread):
             self.ocupado = False
             self.activado = False
 
+    # Emite las señales para cambiar de imagen en el front-end
     def cocinar(self):
         bocadillo = Bocadillo()
         tiempo_preparacion = bocadillo.tiempo_preparacion(self.reputacion_cafe, self.nivel)
@@ -157,6 +159,7 @@ class Chef(QThread):
         self.activado = False
         tiempo_cocina.finish()
 
+    # Reinicia al chef
     def entregar_plato(self):
         self.signal_update_animacion_chef.emit({'x': self.x, 'y': self.y, 'frame': 1})
         self.plato_listo = False
@@ -228,6 +231,7 @@ class Cliente(QThread):
             elif self.tipo == 'apurado':
                 self.espera_cliente(p.TIEMPO_ESPERA_APURADO)
 
+    # Emite las eñales para cambiar las visualizaciones de los clientes según sus estados.
     def espera_cliente(self, tiempo_espera):
         k = 1
         j = 1
@@ -250,7 +254,7 @@ class Cliente(QThread):
                             self.signal_update_animacion_cliente.emit(self.diccionario(self.tipo, self.frame_desatendido))
                             self.frame_desatendido += 1
                 else:
-                    print('Se elimina cliente porque no lo atendieron')
+                    print('Cliente se va enojado porque no lo atendieron')
                     self.fin = True
                     self.signal_update_animacion_cliente.emit(self.diccionario('se fue', self.frame_desatendido))
                     self.tiempo_espera.finish()
@@ -263,7 +267,7 @@ class Cliente(QThread):
                         self.diccionario(self.tipo, self.frame_feliz))
                     self.frame_feliz += 1
                     j += 1
-                print('Se elimina cliente porque ya fue atendido')
+                print('Cliente se va contento porque fue atendido')
                 self.signal_update_animacion_cliente.emit(self.diccionario('se fue', self.frame_feliz))
                 self.signal_update_animacion_cliente.emit(self.diccionario('bocadillo se fue', self.frame_feliz))
                 break
