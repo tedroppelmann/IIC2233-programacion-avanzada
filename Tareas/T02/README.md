@@ -95,9 +95,7 @@ Los supuestos que realicé durante la tarea son los siguientes:
 ## Referencias de código externo :book:
 
 Para realizar mi tarea saqué código de:
-1. \<https://recursospython.com/guias-y-manuales/drag-and-drop-con-pyqt-4/>: este hace \<lo que hace> y está implementado en el archivo <nombre.py> en las líneas <número de líneas> y hace <explicación breve de que hace>
+1. https://recursospython.com/guias-y-manuales/drag-and-drop-con-pyqt-4/: modela el Drag and Drop (con algunas modificaciones propias) y está implementado en el archivo ```drag_and_drop.py``` en las líneas 12 y 55. La clase ```DropLabel``` crea el "lugar" en donde caerán los arrastrables. La clase ```DraggableLabel```permite hacer los objetos arrastrables.
+2. https://stackoverflow.com/questions/50232639/drag-and-drop-qlabels-with-pyqt5: al igual que el anterior, modela el Drag and Drop (con algunas modificaciones propias) y está implementado en el archivo ```drag_and_drop.py``` en las líneas 12 y 55. La clase ```DropLabel``` crea el "lugar" en donde caerán los arrastrables. La clase ```DraggableLabel```permite hacer los objetos arrastrables.
+3. https://www.daniweb.com/programming/software-development/code/485072/count-seconds-in-the-background-python: modela la creación del reloj del juego y está implementado en el archivo ```reloj.py``` en las líneas 8 y 37. Crea la clase ```Reloj```que genera un thread que va contando el tiempo que pasa según una velocidad dada por el intervalo que se le da a cada instancia.
 
-
-
-## Descuentos
-La guía de descuentos se encuentra [link](https://github.com/IIC2233/syllabus/blob/master/Tareas/Descuentos.md).
