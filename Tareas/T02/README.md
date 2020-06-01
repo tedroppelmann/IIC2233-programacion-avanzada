@@ -2,7 +2,7 @@
 
 Estimado ayudante:
 
-Creo haber implementado la mayoría de lo que se pedía de la tarea en mi programa 😃. Para una mayor facilidad en la correción, dentro del código voy explicando varias cosas que utilicé y su funcionamiento. 
+Creo haber implementado la mayoría de lo que se pedía de la tarea en mi programa 😃. Para una mayor facilidad en la correción, dentro del código voy explicando varias cosas que utilicé y su funcionamiento. También agregue prints explicativos a medida que se va desarrollando el juego. 
 
 ### Cosas implementadas y no implementadas :white_check_mark: :x:
 
