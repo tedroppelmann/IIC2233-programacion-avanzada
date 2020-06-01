@@ -3,7 +3,7 @@ from PyQt5 import uic
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QPixmap
 import sys
-import os
+import parametros as p
 
 WINDOW_NAME_1, BASE_CLASS_1 = uic.loadUiType("ventana_inicio.ui")
 WINDOW_NAME_3, BASE_CLASS_3 = uic.loadUiType("ventana_post_ronda.ui")
@@ -19,7 +19,7 @@ class VentanaInicio(WINDOW_NAME_1, BASE_CLASS_1):
         super().__init__()
         self.setupUi(self)
         self.init_gui()
-        imagen = QPixmap(os.path.join('sprites', 'otros', 'logo_negro.png'))
+        imagen = QPixmap(p.LOGO)
         self.imagen.setPixmap(imagen)
         self.imagen.setScaledContents(True)
 

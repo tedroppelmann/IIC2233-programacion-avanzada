@@ -1,6 +1,6 @@
 
 import parametros as p
-from PyQt5.QtCore import QObject, pyqtSignal, QThread, QTimer
+from PyQt5.QtCore import pyqtSignal, QThread
 from entidades import Mesero, Chef, Mesa, Cliente
 import random
 from collections import defaultdict
@@ -94,15 +94,18 @@ class DCCafe(QThread):
             for lista in listas:
                 if lista[0] == 'mesero':
                     self.mesero = Mesero(int(lista[1]), int(lista[2]))
-                    self.ocupar_pixel(int(lista[1]), int(lista[2]), p.ANCHO_MESERO, p.LARGO_MESERO, 'mesero')
+                    self.ocupar_pixel(
+                        int(lista[1]), int(lista[2]), p.ANCHO_MESERO, p.LARGO_MESERO, 'mesero')
                     self.mesero.start()
                 elif lista[0] == 'chef':
                     self.chefs[f'({lista[1]},{lista[2]})'] = Chef(int(lista[1]), int(lista[2]))
                     self.chefs[f'({lista[1]},{lista[2]})'].start()
-                    self.ocupar_pixel(int(lista[1]), int(lista[2]), p.ANCHO_CHEF, p.LARGO_CHEF, 'chef')
+                    self.ocupar_pixel(
+                        int(lista[1]), int(lista[2]), p.ANCHO_CHEF, p.LARGO_CHEF, 'chef')
                 elif lista[0] == 'mesa':
                     self.mesas[f'({lista[1]},{lista[2]})'] = Mesa(int(lista[1]), int(lista[2]))
-                    self.ocupar_pixel(int(lista[1]), int(lista[2]), p.ANCHO_MESA, p.LARGO_MESA, 'mesa')
+                    self.ocupar_pixel(
+                        int(lista[1]), int(lista[2]), p.ANCHO_MESA, p.LARGO_MESA, 'mesa')
         i = 0
         for chef in self.chefs:
             self.chefs[chef].platos_terminados = int(fila_2[i])
@@ -179,7 +182,8 @@ class DCCafe(QThread):
                 self.update_diccionario_datos()
         elif nombre == 'mesa' and self.dinero >= p.PRECIO_MESA and not self.disponibilidad:
             # Le agrego el ancho del cliente para que las mesas no puedan ponerse pegadas
-            ocupado = self.pixel_ocupado(pos_x - p.ANCHO_CLIENTE, pos_y, p.ANCHO_MESA + p.ANCHO_CLIENTE, p.LARGO_MESA, nombre)
+            ocupado = self.pixel_ocupado(pos_x - p.ANCHO_CLIENTE, pos_y,
+                                         p.ANCHO_MESA + p.ANCHO_CLIENTE, p.LARGO_MESA, nombre)
             if not ocupado:
                 self.dinero -= p.PRECIO_MESA
                 self.mesas[f'({int(pos_x)},{int(pos_y)})'] = Mesa(int(pos_x), int(pos_y))
@@ -224,7 +228,8 @@ class DCCafe(QThread):
             if tecla != 'ocupado':
                 self.liberar_pixeles(self.mesero.x, self.mesero.y, p.ANCHO_MESERO, p.LARGO_MESERO)
                 self.tecla_contraria, frame, posicion = self.mesero.mover(tecla)
-                self.signal_update_posicion_mesero.emit(self.mesero.x, self.mesero.y, frame, posicion, self.mesero.ocupado)
+                self.signal_update_posicion_mesero.emit(
+                    self.mesero.x, self.mesero.y, frame, posicion, self.mesero.ocupado)
             elif tecla == 'ocupado':
                 self.mesero.mover(self.tecla_contraria)
 
@@ -276,11 +281,11 @@ class DCCafe(QThread):
         self.disponibilidad = False
         if self.reputacion > 0:
             self.rondas_terminadas += 1
+            self.signal_post_ronda.emit(self.update_diccionario_display())
             self.clientes_atendidos = 0
             self.clientes_perdidos = 0
             self.clientes_proximos = 0
             self.clientes_eliminados = 0
-            self.signal_post_ronda.emit(self.update_diccionario_display())
         elif self.reputacion == 0:
             self.signal_fin_juego.emit()
 
@@ -305,7 +310,8 @@ class DCCafe(QThread):
                 self.clientes[(x, y)] = Cliente(x, y, 'apurado')
                 print('Aparece un cliente apurado')
             self.signal_crear_cliente.emit(x, y)
-            self.clientes[(x, y)].signal_update_animacion_cliente = self.signal_update_animacion_cliente
+            self.clientes[(x, y)].signal_update_animacion_cliente = \
+                self.signal_update_animacion_cliente
             self.clientes[(x, y)].start()
             return True
 
@@ -331,8 +337,10 @@ class DCCafe(QThread):
         x = objeto[1]
         y = objeto[2]
         if tipo == 'chef':
-            self.chefs[f'({x},{y})'].signal_update_animacion_chef = self.signal_update_animacion_chef
-            if not self.chefs[f'({x},{y})'].ocupado and not self.chefs[f'({x},{y})'].plato_listo and not self.mesero.ocupado:
+            self.chefs[f'({x},{y})'].signal_update_animacion_chef = \
+                self.signal_update_animacion_chef
+            if not self.chefs[f'({x},{y})'].ocupado and not self.chefs[f'({x},{y})'].plato_listo \
+                    and not self.mesero.ocupado:
                 print('El chef comenzará a preparar el pedido')
                 self.chefs[f'({x},{y})'].reputacion_cafe = self.reputacion
                 self.chefs[f'({x},{y})'].activado = True
@@ -401,14 +409,15 @@ class DCCafe(QThread):
             self.dinero += p.DINERO_TRAMPA
             self.signal_update_display.emit(self.update_diccionario_display())
         elif tipo == 'finalizar':
-            print('FINALIZAR TRAMPA')
-            self.clientes_proximos = 0 # Termino la creacion de nuevos clientes
-            time.sleep(3) # Espero por si ya habia uno en proceso de creacion
-            self.clientes_proximos = 0
-            for cliente in self.clientes:
-                self.clientes[cliente].wait(100)
-                self.clientes[cliente].stop = True # Borro a los clientes del mapa
-            self.clientes_eliminados = self.clientes_ronda() #Lo ocupo para finalizar la ronda
+            if self.disponibilidad:
+                print('FINALIZAR TRAMPA')
+                self.clientes_proximos = 0 # Termino la creacion de nuevos clientes
+                time.sleep(3) # Espero por si ya habia uno en proceso de creacion
+                self.clientes_proximos = 0
+                for cliente in self.clientes:
+                    self.clientes[cliente].wait(100)
+                    self.clientes[cliente].stop = True # Borro a los clientes del mapa
+                self.clientes_eliminados = self.clientes_ronda() #Lo ocupo para finalizar la ronda
         elif tipo == 'reputacion':
             print('REPUTACIÓN TRAMPA')
             self.reputacion = p.REPUTACION_TRAMPA

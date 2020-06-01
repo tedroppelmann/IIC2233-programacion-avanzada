@@ -6,7 +6,7 @@
 # Se les hizo algunas modificaciones para la tarea.
 
 from PyQt5.QtCore import Qt, QMimeData
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel
+from PyQt5.QtWidgets import QApplication, QLabel
 from PyQt5.QtGui import QDrag, QPainter, QPixmap
 
 class DropLabel(QLabel):

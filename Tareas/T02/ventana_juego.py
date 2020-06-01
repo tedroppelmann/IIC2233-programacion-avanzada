@@ -49,21 +49,21 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
 
     def init_gui(self):
         # Agregamos las imagenes a la ventana de juego
-        imagen = QPixmap(os.path.join('sprites', 'mapa', 'mapa_sin_borde_1.png'))
+        imagen = QPixmap(p.MAPA)
         self.mapa.setMaximumSize(p.ANCHO_MAPA, p.LARGO_MAPA)
         self.mapa.setMinimumSize(p.ANCHO_MAPA, p.LARGO_MAPA)
         self.mapa.setPixmap(imagen)
         self.mapa.setScaledContents(True)
-        imagen = QPixmap(os.path.join('sprites', 'otros','logo_negro.png'))
+        imagen = QPixmap(p.LOGO)
         self.logo.setPixmap(imagen)
         self.logo.setScaledContents(True)
-        imagen = QPixmap(os.path.join('sprites', 'otros', 'estrella_amarilla.png'))
+        imagen = QPixmap(p.ESTRELLA)
         self.reputacion.setPixmap(imagen)
         self.reputacion.setScaledContents(True)
-        imagen = QPixmap(os.path.join('sprites', 'otros', 'moneda.png'))
+        imagen = QPixmap(p.MONEDA)
         self.dinero.setPixmap(imagen)
         self.dinero.setScaledContents(True)
-        imagen = QPixmap(os.path.join('sprites', 'clientes', 'hamster', 'hamster_01.png'))
+        imagen = QPixmap(p.HAMSTER_INICIAL)
         self.hamster.setPixmap(imagen)
         self.precio_chef.setText(f'${p.PRECIO_CHEF}')
         self.precio_mesa.setText(f'${p.PRECIO_MESA}')
@@ -74,7 +74,8 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
         self.espacio_piso.setGeometry(0, p.PUNTO_INICIAL_PISO, p.ANCHO_PISO, p.LARGO_PISO)
         # El borde derecho e inferior vienen dados para que quepa el meson del chef sin salirse.
         # Por eso es más pequeño.
-        self.espacio_drag_drop.setGeometry(0, p.PUNTO_INICIAL_PISO, p.ANCHO_DRAG_DROP, p.LARGO_DRAG_DROP)
+        self.espacio_drag_drop.setGeometry(
+            0, p.PUNTO_INICIAL_PISO, p.ANCHO_DRAG_DROP, p.LARGO_DRAG_DROP)
         # Creamos los labels principales
         self.label_mesero = QLabel(self.espacio_piso)
         self.label_char = dict()
@@ -87,11 +88,11 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
         # Hacemos arrastrables los elementos de la tienda
         chef = DraggableLabel(self.chef)
         chef.name = 'chef'
-        foto = QPixmap(os.path.join('sprites', 'chef', 'meson_01.png'))
+        foto = QPixmap(p.CHEF_INICIAL)
         chef.setPixmap(foto)
         mesa = DraggableLabel(self.mesa)
         mesa.name = 'mesa'
-        foto = QPixmap(os.path.join('sprites', 'mapa', 'accesorios', 'mesa_pequena.png'))
+        foto = QPixmap(p.MESA)
         mesa.setPixmap(foto)
         # Creo un conjunto de teclas para las teclas trampa
         self.teclas = set()
@@ -110,13 +111,13 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
 
     # Inicio al mesero
     def posicion_mesero(self, mesero):
-        imagen = QPixmap(os.path.join('sprites', 'mesero', 'down_02.png'))
+        imagen = QPixmap(p.MESERO)
         self.label_mesero.setPixmap(imagen)
         self.label_mesero.move(mesero.x, mesero.y)
 
     # Inicio a las mesas
     def posicion_mesas(self, mesas):
-        imagen = QPixmap(os.path.join('sprites', 'mapa', 'accesorios', 'mesa_pequena.png'))
+        imagen = QPixmap(p.MESA)
         for mesa in mesas:
             x = mesas[mesa].x
             y = mesas[mesa].y
@@ -127,7 +128,7 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
 
     # Inicio a los chefs
     def posicion_chefs(self, chefs):
-        imagen = QPixmap(os.path.join('sprites', 'chef', 'meson_01.png'))
+        imagen = QPixmap(p.CHEF_INICIAL)
         for chef in chefs:
             x = chefs[chef].x
             y = chefs[chef].y
@@ -139,13 +140,13 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
     # Permite visualizar los arrastres válidos en el mapa
     def agregar_por_drag_drop(self, tipo, dinero, x, y):
         if tipo == 'chef':
-            imagen = QPixmap(os.path.join('sprites', 'chef', 'meson_01.png'))
+            imagen = QPixmap(p.CHEF_INICIAL)
             self.label_char[('chef', x, y)] = QLabel(self.espacio_piso)
             self.label_char[('chef', x, y)].setPixmap(imagen)
             self.label_char[('chef', x, y)].move(x, y)
             self.label_char[('chef', x, y)].show()
         elif tipo == 'mesa':
-            imagen = QPixmap(os.path.join('sprites', 'mapa', 'accesorios', 'mesa_pequena.png'))
+            imagen = QPixmap(p.MESA)
             self.label_char[('mesa', x, y)] = QLabel(self.espacio_piso)
             self.label_char[('mesa', x, y)].setPixmap(imagen)
             self.label_char[('mesa', x, y)].move(x, y)
@@ -156,7 +157,7 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
     def mousePressEvent(self, event):
         pos_x = event.x() - self.mapa.x()
         pos_y = event.y() - self.mapa.y() - p.PUNTO_INICIAL_PISO
-        print(pos_x, pos_y)
+        print(f'Posición:{pos_x},{pos_y}')
         if 0 <= pos_x <= p.ANCHO_PISO and 0 <= pos_y <= p.LARGO_PISO:
             self.signal_eliminar.emit(pos_x, pos_y)
 
@@ -222,7 +223,7 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
     # Crea los clientes en el mapa
     def crear_cliente(self, pos_x, y):
         x = pos_x -p.ANCHO_CLIENTE
-        imagen = QPixmap(os.path.join('sprites', 'clientes', 'hamster', 'hamster_01.png'))
+        imagen = QPixmap(p.HAMSTER_INICIAL)
         self.label_char[('cliente', x, y)] = QLabel(self.espacio_piso)
         self.label_char[('cliente', x, y)].setGeometry(0, 0, p.ANCHO_CLIENTE, p.LARGO_CLIENTE)
         self.label_char[('cliente', x, y)].setPixmap(imagen)
@@ -237,14 +238,15 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
         tipo = cliente['tipo']
         atendido = cliente['atendido']
         frame = cliente['frame']
-        if tipo == 'bocadillo':
-            imagen = QPixmap(os.path.join('sprites', 'bocadillos', 'bocadillo_00.png'))
-            self.label_char[('bocadillo', x, y)] = QLabel(self.label_char[('mesa', x + p.ANCHO_CLIENTE, y)])
+        if tipo == 'bocadillo': # llega solo si el cliente fue atendido
+            imagen = QPixmap(p.BOCADILLO)
+            self.label_char[('bocadillo', x, y)] = QLabel(self.label_char[
+                                                              ('mesa', x + p.ANCHO_CLIENTE, y)])
             self.label_char[('bocadillo', x, y)].setPixmap(imagen)
             self.label_char[('bocadillo', x, y)].setScaledContents(True)
             self.label_char[('bocadillo', x, y)].move(p.BOCADILLO_X, p.BOCADILLO_Y)
             self.label_char[('bocadillo', x, y)].show()
-        elif tipo == 'bocadillo se fue':
+        elif tipo == 'bocadillo se fue': # llega solo si el cliente se acaba de ir
             self.label_char[('bocadillo', x, y)].hide()
             self.label_char.pop(('bocadillo', x, y))
         elif atendido and tipo != 'se fue':
@@ -259,15 +261,6 @@ class VentanaPrincipal(WINDOW_NAME_2, BASE_CLASS_2):
             self.signal_cliente_se_fue.emit(cliente)
             self.label_char[('cliente', x , y)].hide()
             self.label_char.pop(('cliente', x , y))
-
-    # Agrega el bocadillo a la mesa al llegar con el pedido
-    def poner_bocadillo(self, datos):
-        x = datos['x'] + p.ANCHO_CLIENTE
-        y = datos['y']
-        imagen = QPixmap(os.path.join('sprites', 'bocadillos', 'bocadillo_00.png'))
-        bocadillo = QLabel(self.label_char['mesa', x + p.ANCHO_CLIENTE, y])
-        bocadillo.setPixmap(imagen)
-        bocadillo.setScaledContents(True)
 
     # Cambia la visualización del chef según su estado
     def update_animacion_chef(self, chef):

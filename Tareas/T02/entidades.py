@@ -238,29 +238,33 @@ class Cliente(QThread):
         self.tiempo_espera.start()
         while True:
             if self.stop:
-                self.signal_update_animacion_cliente.emit(self.diccionario('se fue', self.frame_feliz))
+                self.signal_update_animacion_cliente.emit(
+                    self.diccionario('se fue', self.frame_feliz))
                 break
             elif not self.atendido:
                 if self.tiempo_espera.value < tiempo_espera:
                     if self.tiempo_espera.value >= tiempo_espera / 2:
                         if self.tiempo_espera.value >= tiempo_espera - 2 and k <= 3:
                             time.sleep(0.5)
-                            self.signal_update_animacion_cliente.emit(self.diccionario(self.tipo, self.frame_enojado))
+                            self.signal_update_animacion_cliente.emit(
+                                self.diccionario(self.tipo, self.frame_enojado))
                             self.frame_enojado += 3
                             k += 1
                             self.paga = False
                         else:
                             time.sleep(0.5)
-                            self.signal_update_animacion_cliente.emit(self.diccionario(self.tipo, self.frame_desatendido))
+                            self.signal_update_animacion_cliente.emit(
+                                self.diccionario(self.tipo, self.frame_desatendido))
                             self.frame_desatendido += 1
                 else:
                     print('Cliente se va enojado porque no lo atendieron')
-                    self.fin = True
-                    self.signal_update_animacion_cliente.emit(self.diccionario('se fue', self.frame_desatendido))
+                    self.signal_update_animacion_cliente.emit(
+                        self.diccionario('se fue', self.frame_desatendido))
                     self.tiempo_espera.finish()
                     break
             else:
-                self.signal_update_animacion_cliente.emit(self.diccionario('bocadillo', self.frame_feliz))
+                self.signal_update_animacion_cliente.emit(
+                    self.diccionario('bocadillo', self.frame_feliz))
                 while j <= 5:
                     time.sleep(0.5)
                     self.signal_update_animacion_cliente.emit(
@@ -268,8 +272,10 @@ class Cliente(QThread):
                     self.frame_feliz += 1
                     j += 1
                 print('Cliente se va contento porque fue atendido')
-                self.signal_update_animacion_cliente.emit(self.diccionario('se fue', self.frame_feliz))
-                self.signal_update_animacion_cliente.emit(self.diccionario('bocadillo se fue', self.frame_feliz))
+                self.signal_update_animacion_cliente.emit(
+                    self.diccionario('se fue', self.frame_feliz))
+                self.signal_update_animacion_cliente.emit(
+                    self.diccionario('bocadillo se fue', self.frame_feliz))
                 break
 
     def diccionario(self, tipo, frame):
@@ -292,4 +298,3 @@ class Bocadillo:
     def calidad_pedido(self, nivel, tiempo_espera):
         propina = max(0, (nivel * (1 - tiempo_espera * 0.05) / 3))
         return propina
-

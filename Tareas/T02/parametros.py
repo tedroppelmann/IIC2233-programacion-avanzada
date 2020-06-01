@@ -80,4 +80,18 @@ BOCADILLO_Y = 3
 DINERO_TRAMPA = 1000
 REPUTACION_TRAMPA = 5
 
+#TIEMPO:
+
 INTERVALO_TIEMPO = 1
+
+#PATHS SPRITES:
+
+MAPA = os.path.join('sprites', 'mapa', 'mapa_sin_borde_1.png')
+LOGO = os.path.join('sprites', 'otros','logo_negro.png')
+ESTRELLA = os.path.join('sprites', 'otros', 'estrella_amarilla.png')
+MONEDA = os.path.join('sprites', 'otros', 'moneda.png')
+HAMSTER_INICIAL = os.path.join('sprites', 'clientes', 'hamster', 'hamster_01.png')
+CHEF_INICIAL = os.path.join('sprites', 'chef', 'meson_01.png')
+MESA = os.path.join('sprites', 'mapa', 'accesorios', 'mesa_pequena.png')
+MESERO = os.path.join('sprites', 'mesero', 'down_02.png')
+BOCADILLO = os.path.join('sprites', 'bocadillos', 'bocadillo_00.png')
