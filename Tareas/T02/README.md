@@ -7,7 +7,7 @@ Creo haber implementado la mayoría de lo que se pedía de la tarea en mi progra
 ### Cosas implementadas y no implementadas :white_check_mark: :x:
 
 * **Ventana de Inicio**: 
-    * **La ventana de inicio se visualiza correctamente. Los elementos no se superponen entre sí."** ✅ 
+    * **La ventana de inicio se visualiza correctamente. Los elementos no se superponen entre sí.** ✅ 
     * **Se puede crear una partida nueva o cargar una existente.** ✅ 
     * **Se cargan correctamente los datos de una partida guardada.** ✅ 
     * **Se reinician correctamente los datos de una partida.** ✅ 
