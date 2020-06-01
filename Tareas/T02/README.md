@@ -41,9 +41,9 @@ Creo haber implementado la mayoría de lo que se pedía de la tarea en mi progra
       * **Sube de nivel según la cantidad de bocadillos que haya preparado.** ✅ 
       * **Implementa la probabilidad de equivocarse correctamente. Al equivocarse se reinicia su estado.** ✅ 
       * **El chef cambia de sprite según su estado: esperando, cocinando, terminado.** ✅ 
-   * **Bocadillos**: No implementé una clase Bocadillo como tal, pero sus métodos si están integrados en el programa. 
-      * **El tiempo de preparación cambia según la fórmula establecida.** ✅  Está en la clase Chef
-      * **La calidad del bocadillo cambia según la fórmula establecida.** ✅  Está en la clase Mesero
+   * **Bocadillos**:
+      * **El tiempo de preparación cambia según la fórmula establecida.** ✅  
+      * **La calidad del bocadillo cambia según la fórmula establecida.** ✅  Está implementado en la clase Mesero
    * **Clientes**: 
       * **Los clientes cambian de estado cuando corresponde.** ✅
       * **Los clientes desaparecen después de recibir su bocadillo o una vez que se acabe el tiempo de espera.** ✅  
@@ -72,8 +72,13 @@ La lista de librerías externas que utilicé fue la siguiente:
 1. ```sys```: ```exit()```
 2. ```os```: ```path.join()```
 3. ```collections```: ```defauldict()```
-4. 
+4. ```time```: ```sleep()``
 5. ```random```: ```randint```, ```choice```
+6. ```math```: ```floor()```
+7. ```PyQt5```: ```uic```
+8. ```PyQt5.QtGui```: ```QPixmap```
+9. ```PyQt5.QtWidgets```: ```QLabel```, ```QApplication```
+10. ```PyQt5.QtCore```: ```pyqtSignal```, ```Qt```, ```QRect```, ```QThread```, ```QObject```, ```QMimeData
 
 ### Librerías propias
 Por otro lado, los módulos que fueron creados fueron los siguientes:
