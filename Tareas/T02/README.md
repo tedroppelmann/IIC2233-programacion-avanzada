@@ -55,7 +55,7 @@ Creo haber implementado la mayoría de lo que se pedía de la tarea en mi progra
    * **Los procesos internos del DCCafé respetan el reloj del juego.** ✅ 
    * **Esta implementado el botón Pausa y la letra P, al seleccionarlo no aumenta el tiempo de juego, y se detienen todas las animaciones.** ❌
 
-* **Funcionalidades Extra**:
+* **Funcionalidades Extra**: Se activan al presionar las teclas al mismo tiempo.
    * **M + O + N** ✅ 
    * **F + I + N** ✅ 
    * **R + T + G** ✅ 
