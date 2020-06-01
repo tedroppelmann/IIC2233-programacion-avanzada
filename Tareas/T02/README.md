@@ -72,7 +72,7 @@ La lista de librerías externas que utilicé fue la siguiente:
 1. ```sys```: ```exit()```
 2. ```os```: ```path.join()```
 3. ```collections```: ```defauldict()```
-4. ```time```: ```sleep()``
+4. ```time```: ```sleep()```
 5. ```random```: ```randint```, ```choice```
 6. ```math```: ```floor()```
 7. ```PyQt5```: ```uic```
