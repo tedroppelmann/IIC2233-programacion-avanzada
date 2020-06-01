@@ -78,7 +78,7 @@ La lista de librerías externas que utilicé fue la siguiente:
 7. ```PyQt5```: ```uic```
 8. ```PyQt5.QtGui```: ```QPixmap```
 9. ```PyQt5.QtWidgets```: ```QLabel```, ```QApplication```
-10. ```PyQt5.QtCore```: ```pyqtSignal```, ```Qt```, ```QRect```, ```QThread```, ```QObject```, ```QMimeData
+10. ```PyQt5.QtCore```: ```pyqtSignal```, ```Qt```, ```QRect```, ```QThread```, ```QObject```, ```QMimeData```
 
 ### Librerías propias
 Por otro lado, los módulos que fueron creados fueron los siguientes:
