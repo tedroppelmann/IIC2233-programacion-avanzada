@@ -51,7 +51,7 @@ Creo haber implementado la mayoría de lo que se pedía de la tarea en mi progra
    * **DCCafé**: 
       * **Calcula correctamente los clientes por ronda.** ✅
       * **Calcula correctamente la reputación.** ✅  
-* **Tiempo**: ✅ 
+* **Tiempo**: 
    * **Los procesos internos del DCCafé respetan el reloj del juego.** ✅ 
    * **Esta implementado el botón Pausa y la letra P, al seleccionarlo no aumenta el tiempo de juego, y se detienen todas las animaciones.** ❌
 
