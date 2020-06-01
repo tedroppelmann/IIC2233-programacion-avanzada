@@ -84,19 +84,18 @@ Por otro lado, los módulos que fueron creados fueron los siguientes:
 4. ```parametros.py```: Contiene todos los parámetros que se utilizan en el programa. 
 5. ```reloj.py```: Contiene a la clase ```Reloj``` que permite manejar los tiempos de las funcionalidades del juego.
 6. ```ventana_juego.py```: Es el front-end de la página principal del juego.
-7. ```ventanas.py```: Contiene las otras ventanas del juego, como como la ventana de inicio, la de post ronda y la ventana final. 
+7. ```ventanas.py```: Contiene el front-end de las otras ventanas del juego, como la ventana de inicio, la de post ronda y la ventana final. 
 
 ## Supuestos y consideraciones adicionales :thinking:
 Los supuestos que realicé durante la tarea son los siguientes:
 
-1. No se si es un supuesto o un requisito de la tarea pero al mostrar los datos al pasar de día solo se notifican los nuevas criaturas que enfermaron, escaparon y que hambrientas desde hoy.
-2. Los menús del tipo numeración (donde tú eliges un número entre opciones) no doy la opción de volver atrás porque se da esa opción en otras instancias. Por ejemplo, al alimentar una criatura se da la opción de volver atrás cuando te equivocas al poner en el nombre. En todo caso, en todas las opciones del programa es imposible quedar "atrapado" dentro de un menú. 
-
+1. El mapa que se carga es el mapa que no contiene bordes y tiene la pared en la parte superior. Para que se vea mejor, el mesero se puede mover dentro del piso en un espacio un poco más pequeño que el tamaño del mapa
+2. Los objetos arrastrables tienen limitaciones al poder ubicarse. Además de no poder sobreponerse, agregué que las mesas no puedan quedar tan pegadas y los chefs no pueden ponerse tan a la orilla del mapa para que no quedara un pedazo de la imagen afuera. 
 
 ## Referencias de código externo :book:
 
 Para realizar mi tarea saqué código de:
-1. \<link de código>: este hace \<lo que hace> y está implementado en el archivo <nombre.py> en las líneas <número de líneas> y hace <explicación breve de que hace>
+1. \<https://recursospython.com/guias-y-manuales/drag-and-drop-con-pyqt-4/>: este hace \<lo que hace> y está implementado en el archivo <nombre.py> en las líneas <número de líneas> y hace <explicación breve de que hace>
 
 
 
