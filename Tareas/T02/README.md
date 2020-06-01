@@ -78,14 +78,13 @@ La lista de librerías externas que utilicé fue la siguiente:
 ### Librerías propias
 Por otro lado, los módulos que fueron creados fueron los siguientes:
 
-1. ```actualizaciones.py```: Contiene las funciones que permiten actualizar los archivos .csv.
-2. ```alimentos.py```: Contiene la clase ```Alimento```y sus subclases ```TartaDeMelaza```, ```HigadoDeDragon```y ```BunueloDeGusarajo```.
-3. ```cargas.py```: Contiene las funciones que permiten cargar y poblar las clases desde los archivos .csv. 
-4. ```criaturas.py```: Contiene la clase ```Criatura```y sus subclases ```Augurey```, ```Niffler```y ```Erkling```.
-5. ```DCC.py```: Contiene a la clase ```Dcc```.
-6. ```magizoologos.py```: Contiene a la clase ```Magizoologo```y sus subclases ```Docencio```, ```Tareo```y ```Híbrido```. Además posee la función ```sickles_suficientes(sickles, precio)```.
-7. ```menus.py```: Contiene todas las funciones que representan menús dentro del programa.
-8. ```parametros.py```: Contiene todos los parámetros que se utilizan en el programa. 
+1. ```DCCafe.py```: Es el módulo principal del back-end del programa. Contiene la mayoría del funcionamiento del juego.
+2. ```drag_and_drop.py```: Contiene las clases ```DropLabel```y ```DraggableLabel```que permiten el funcionamineto básico del Drag and Drop. 
+3. ```entidades.py```: Contiene las clases ```Mesero```, ```Chef```y ```Cliente```con sus respectivos métodos. 
+4. ```parametros.py```: Contiene todos los parámetros que se utilizan en el programa. 
+5. ```reloj.py```: Contiene a la clase ```Reloj``` que permite manejar los tiempos de las funcionalidades del juego.
+6. ```ventana_juego.py```: Es el front-end de la página principal del juego.
+7. ```ventanas.py```: Contiene las otras ventanas del juego, como como la ventana de inicio, la de post ronda y la ventana final. 
 
 ## Supuestos y consideraciones adicionales :thinking:
 Los supuestos que realicé durante la tarea son los siguientes:
