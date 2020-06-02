@@ -139,17 +139,17 @@ class Chef(QThread):
     def cocinar(self):
         bocadillo = Bocadillo()
         tiempo_preparacion = bocadillo.tiempo_preparacion(self.reputacion_cafe, self.nivel)
-        # AUN NO AGREGO EL TIEMPO DE PREPARACION
         tiempo_cocina = Reloj(p.INTERVALO_TIEMPO)
         tiempo_cocina.start()
-        while tiempo_cocina.value < 2:
-            time.sleep(0.5)
+        while tiempo_cocina.value < tiempo_preparacion and not self.restart:
+            time.sleep(p.VELOCIDAD_CAMBIO_SPRITE)
             self.signal_update_animacion_chef.emit({'x': self.x, 'y': self.y, 'frame': self.frame})
             self.frame += 1
         prob = random.randint(0, 1)
         if prob < 0.3/(self.nivel + 1):
+            print('Chef se equivocó en el plato')
             self.signal_update_animacion_chef.emit({'x': self.x, 'y': self.y, 'frame': 17})
-            time.sleep(0.5)
+            time.sleep(p.VELOCIDAD_CAMBIO_SPRITE)
             self.signal_update_animacion_chef.emit({'x': self.x, 'y': self.y, 'frame': 1})
             self.ocupado = False
         else:
@@ -244,15 +244,14 @@ class Cliente(QThread):
             elif not self.atendido:
                 if self.tiempo_espera.value < tiempo_espera:
                     if self.tiempo_espera.value >= tiempo_espera / 2:
-                        if self.tiempo_espera.value >= tiempo_espera - 2 and k <= 3:
-                            time.sleep(0.5)
+                        if self.tiempo_espera.value >= tiempo_espera - 2:
+                            time.sleep(p.VELOCIDAD_CAMBIO_SPRITE)
                             self.signal_update_animacion_cliente.emit(
                                 self.diccionario(self.tipo, self.frame_enojado))
                             self.frame_enojado += 3
-                            k += 1
                             self.paga = False
                         else:
-                            time.sleep(0.5)
+                            time.sleep(p.VELOCIDAD_CAMBIO_SPRITE)
                             self.signal_update_animacion_cliente.emit(
                                 self.diccionario(self.tipo, self.frame_desatendido))
                             self.frame_desatendido += 1
@@ -266,7 +265,7 @@ class Cliente(QThread):
                 self.signal_update_animacion_cliente.emit(
                     self.diccionario('bocadillo', self.frame_feliz))
                 while j <= 5:
-                    time.sleep(0.5)
+                    time.sleep(p.VELOCIDAD_CAMBIO_SPRITE)
                     self.signal_update_animacion_cliente.emit(
                         self.diccionario(self.tipo, self.frame_feliz))
                     self.frame_feliz += 1

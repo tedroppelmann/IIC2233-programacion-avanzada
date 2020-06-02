@@ -1,4 +1,5 @@
 
+import threading
 import parametros as p
 from PyQt5.QtCore import pyqtSignal, QThread
 from entidades import Mesero, Chef, Mesa, Cliente
@@ -63,6 +64,7 @@ class DCCafe(QThread):
         self.clientes_perdidos = 0
         self.clientes_proximos = 0
         self.clientes_eliminados = 0
+        self.pausa = False
 
     def init_signals(self):
         self.signal_cargar_juego.connect(self.cargar)
@@ -268,7 +270,6 @@ class DCCafe(QThread):
                         self.signal_update_display.emit(self.update_diccionario_display())
                 while self.clientes_eliminados < cantidad_clientes:
                     pass
-                time.sleep(1)
                 self.finalizar_ronda()
 
     def finalizar_ronda(self):
@@ -277,8 +278,10 @@ class DCCafe(QThread):
         print('Fin de la ronda')
         for chef in self.chefs:
             self.chefs[chef].signal_update_animacion_chef = self.signal_update_animacion_chef
-            self.chefs[chef].restart = True
+            self.chefs[chef].restart = True #Reinicio cada chef que estaba cocinando
+        self.mesero.ocupado = False
         self.disponibilidad = False
+        time.sleep(1)
         if self.reputacion > 0:
             self.rondas_terminadas += 1
             self.signal_post_ronda.emit(self.update_diccionario_display())
@@ -369,8 +372,7 @@ class DCCafe(QThread):
         self.signal_update_display.emit(self.update_diccionario_display())
 
     def update_diccionario_display(self):
-        self.diccionario_display = {'reputacion': self.reputacion,
-                                    'dinero': self.dinero,
+        self.diccionario_display = {'reputacion': self.reputacion, 'dinero': self.dinero,
                                     'ronda': self.rondas_terminadas,
                                     'atendidos': self.clientes_atendidos,
                                     'perdidos': self.clientes_perdidos,
