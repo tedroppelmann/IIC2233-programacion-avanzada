@@ -96,6 +96,7 @@ Los supuestos que realicé durante la tarea son los siguientes:
 
 1. El mapa que se carga es el mapa que no contiene bordes y tiene la pared en la parte superior. Para que se vea mejor, el mesero se puede mover dentro del piso en un espacio un poco más pequeño que el tamaño del mapa
 2. Los objetos arrastrables tienen limitaciones al poder ubicarse. Además de no poder sobreponerse, agregué que las mesas no puedan quedar tan pegadas y los chefs no pueden ponerse tan a la orilla del mapa para que no quedara un pedazo de la imagen afuera. 
+3. Como los clientes siempre salen a la izquierda de la mesa, en algunos casos se impide que las mesas puedan quedar tan juntas, como al crear un nuevo juego con mesas aleatorias o en Drag and Drop.
 
 ## Referencias de código externo :book:
 
