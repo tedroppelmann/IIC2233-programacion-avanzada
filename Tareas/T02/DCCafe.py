@@ -1,5 +1,3 @@
-
-import threading
 import parametros as p
 from PyQt5.QtCore import pyqtSignal, QThread
 from entidades import Mesero, Chef, Mesa, Cliente
@@ -138,6 +136,7 @@ class DCCafe(QThread):
         # Para la mesa le agrego el ancho del cliente para que no se peguen
         if tipo == 'mesa':
             x = pos_x - p.ANCHO_CLIENTE
+            ancho = ancho + p.ANCHO_CLIENTE
         else:
             x = pos_x
         for i in range(x, x + ancho):
@@ -157,8 +156,7 @@ class DCCafe(QThread):
                 y = random.randint(0, p.LARGO_PISO - largo)
                 ocupado = self.pixel_ocupado(x, y, ancho, largo, tipo)
                 if not ocupado:
-                    # Le resto el ancho del cliente para que no queden mesas tan pegadas
-                    for i in range(x - p.ANCHO_CLIENTE, x + ancho + 1):
+                    for i in range(x, x + ancho + 1):
                         for j in range(y, y + largo + 1):
                             self.pixeles_mapa[f'({i},{j})'] = [tipo, x, y]
                     if tipo == 'chef':
@@ -183,9 +181,7 @@ class DCCafe(QThread):
                 self.signal_crear_drag_and_drop.emit('chef', self.dinero, pos_x, pos_y)
                 self.update_diccionario_datos()
         elif nombre == 'mesa' and self.dinero >= p.PRECIO_MESA and not self.disponibilidad:
-            # Le agrego el ancho del cliente para que las mesas no puedan ponerse pegadas
-            ocupado = self.pixel_ocupado(pos_x - p.ANCHO_CLIENTE, pos_y,
-                                         p.ANCHO_MESA + p.ANCHO_CLIENTE, p.LARGO_MESA, nombre)
+            ocupado = self.pixel_ocupado(pos_x, pos_y, p.ANCHO_MESA, p.LARGO_MESA, nombre)
             if not ocupado:
                 self.dinero -= p.PRECIO_MESA
                 self.mesas[f'({int(pos_x)},{int(pos_y)})'] = Mesa(int(pos_x), int(pos_y))
