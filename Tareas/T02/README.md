@@ -98,6 +98,7 @@ Los supuestos que realicé durante la tarea son los siguientes:
 2. Los objetos arrastrables tienen limitaciones al poder ubicarse. Además de no poder sobreponerse, agregué que las mesas no puedan quedar tan pegadas y los chefs no pueden ponerse tan a la orilla del mapa para que no quedara un pedazo de la imagen afuera. 
 3. Como los clientes siempre salen a la izquierda de la mesa, en algunos casos se impide que las mesas puedan quedar tan juntas, como al crear un nuevo juego con mesas aleatorias o en Drag and Drop.
 4. Encontré un bug que no sé cómo solucionarlo 😞. Si es que aparece un cliente justo cuando el mesero está en esa posición, este queda "atrapado" hasta que desaparezca el cliente. 
+5. Cuando la reputación llega a 0 al final del juego, se muestra una ventana nueva que solo deja salir y te informa que el juego finalizó. Creo que es lo más coherente. 
 
 ## Referencias de código externo :book:
 
