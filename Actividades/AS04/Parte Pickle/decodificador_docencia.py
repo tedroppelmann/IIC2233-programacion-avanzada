@@ -10,15 +10,17 @@ class EquipoDocencia:
     # Aquí se filtra la lista del objeto al deserializarlo
     def __setstate__(self, estado):
         # Completar
-
-        pass
-
+        for ayudante in estado['ayudantes_normales']:
+            if ayudante.cargo == 'Jefe':
+                estado['ayudantes_normales'].remove(ayudante)
+                estado['ayudante_jefe'] = ayudante
 
 # Aquí se carga la instancia de EquipoDocencia
 def cargar_instancia(ruta):
     # Completar
-
-    pass
+    with open(ruta, 'rb') as file:
+        deserializado = pickle.load(file)
+    return deserializado
 
 
 # ETAPA DE GUARDADO #
@@ -44,11 +46,15 @@ class AyudanteJefe(Ayudante):
     # Aquí se definen cambios que sólo se afectan a AyudanteJefe
     def __getstate__(self):
         # Completar
-
-        pass
+        nueva = self.__dict__.copy()
+        nueva.pizza_favorita = None
+        nueva.trabajo_restante = 'Nada'
+        nueva.experto = 'TortugaNinja'
 
 # Aquí se guarda instancia de EquipoDocencia
 def guardar_instancia(ruta, instancia_equipo_docencia): 
     # Completar
-
-    pass
+    serializado = pickle.dump(instancia_equipo_docencia)
+    with open(ruta, 'wb') as file:
+        file.write(serializado)
+    return True

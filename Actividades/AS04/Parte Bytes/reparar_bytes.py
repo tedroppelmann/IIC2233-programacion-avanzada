@@ -1,6 +1,23 @@
 def reparar_imagen(ruta):
     # Completa esta función
-    pass
+    with open('user_info.bmp', 'wb') as file:
+        pass
+    with open(ruta, "rb") as file:
+        texto = bytearray(file.read())
+        TAMANO_CHUNK = 32
+        TAMANO_ORIGINAL = 16
+        for i in range(0, len(texto), TAMANO_CHUNK):
+            chunk = bytearray(texto[i:i + TAMANO_CHUNK])
+            if chunk[0] == 0:
+                with open('user_info.bmp', 'ab') as file_2:
+                    file_2.write(chunk[1:1 + TAMANO_ORIGINAL])
+            elif chunk[0] == 1:
+                with open('user_info.bmp', 'ab') as file_2:
+                    reverso = bytearray(reversed(list(chunk[1:1 + TAMANO_ORIGINAL])))
+                    file_2.write(reverso)
+    with open('user_info.bmp', 'rb') as file:
+        print(file.read())
+
 
 
 

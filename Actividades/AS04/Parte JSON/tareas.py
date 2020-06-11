@@ -31,7 +31,20 @@ class AyudanteTareo:
 
 def cargar_ayudantes(ruta):
     # Completa esta función
-    pass
+    with open(ruta, "r") as file:
+        diccionario = json.load(file)
+    diccionario_limpio = dict()
+    for key in diccionario:
+        llave_limpia = desencriptar(key)
+        atributos_limpios = []
+        for i in diccionario[key]:
+            atributos_limpios.append(desencriptar(i))
+        diccionario_limpio[llave_limpia] = atributos_limpios
+    ayudantes = []
+    for key in diccionario_limpio:
+        a = diccionario_limpio[key]
+        ayudantes.append(AyudanteTareo(key, a[0], a[1], a[2], a[3]))
+    return ayudantes
 
 
 if __name__ == '__main__':
