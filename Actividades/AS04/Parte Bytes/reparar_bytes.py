@@ -19,9 +19,6 @@ def reparar_imagen(ruta):
         print(file.read())
 
 
-
-
-
 if __name__ == '__main__':
     try:
         reparar_imagen('imagen_danada.xyz')
