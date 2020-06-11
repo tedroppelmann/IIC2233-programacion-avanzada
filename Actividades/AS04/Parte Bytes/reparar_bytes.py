@@ -15,8 +15,6 @@ def reparar_imagen(ruta):
                 with open('user_info.bmp', 'ab') as file_2:
                     reverso = bytearray(reversed(list(chunk[1:1 + TAMANO_ORIGINAL])))
                     file_2.write(reverso)
-    with open('user_info.bmp', 'rb') as file:
-        print(file.read())
 
 
 if __name__ == '__main__':
