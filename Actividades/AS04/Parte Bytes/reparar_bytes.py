@@ -16,7 +16,6 @@ def reparar_imagen(ruta):
                     reverso = bytearray(reversed(list(chunk[1:1 + TAMANO_ORIGINAL])))
                     file_2.write(reverso)
 
-
 if __name__ == '__main__':
     try:
         reparar_imagen('imagen_danada.xyz')
