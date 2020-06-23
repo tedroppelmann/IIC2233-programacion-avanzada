@@ -1,0 +1,5 @@
+{
+  "host" : "localhost",
+  "port" : 8081,
+  "cantidad_jugadores" : 3
+}
