@@ -49,7 +49,6 @@ class VentanaEspera(WINDOW_NAME, BASE_CLASS):
                     jugador.setText(valor)
         self.show()
 
-
 if __name__ == '__main__':
     def hook(type, value, traceback):
         print(type)

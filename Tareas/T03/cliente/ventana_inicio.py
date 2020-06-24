@@ -33,10 +33,10 @@ class VentanaInicio(WINDOW_NAME, BASE_CLASS):
 
     def ingresar(self):
         user = self.nombre_usuario.text()
-        self.signal_usuario.emit({'evento': 'conectarse','mensaje': user})
+        self.signal_usuario.emit({'cliente': user,'evento': 'conectarse','detalles': '-'})
 
     def validar_usuario(self, data):
-        if data['status'] == 'rechazado':
+        if data['detalles'] == 'rechazado':
             self.nombre_usuario.setText('Nombre inválido')
         else:
             self.signal_sala_espera.emit(data)

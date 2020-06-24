@@ -68,6 +68,7 @@ class Cliente(QObject):
             self.analizar_mensaje(decoded)
 
     def analizar_mensaje(self, data):
+
         if data['evento'] == 'conectarse':
             self.signal_validar_usuario.emit(data)
 
