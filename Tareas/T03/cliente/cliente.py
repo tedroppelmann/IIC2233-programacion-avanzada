@@ -10,6 +10,8 @@ with open('parametros.json') as file:
 host = data['host']
 port = data['port']
 
+# Código sacado principalmente de una de las hojas de jupyter de la semana de Networking. 
+
 class Cliente(QObject):
 
     signal_usuario = None

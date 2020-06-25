@@ -4,6 +4,8 @@ import threading
 from juego import Juego
 import json
 
+# Código sacado principalmente de una de las hojas de jupyter de la semana de Networking.
+
 class Servidor:
 
     def __init__(self, host, port):
