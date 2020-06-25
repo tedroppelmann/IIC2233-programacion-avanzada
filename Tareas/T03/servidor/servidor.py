@@ -60,25 +60,31 @@ class Servidor:
                 decoded = json.loads(received)
 
                 if received is not None:
-                    self.handle_command(decoded, client_socket)
+                    self.analizar_mensaje(decoded, client_socket)
 
             except json.decoder.JSONDecodeError:
                 break
 
-    def handle_command(self, data, client_socket):
+    def analizar_mensaje(self, data, client_socket):
         print("Comando recibido:", data)
         response = dict()
+        response['cliente'] = data['cliente']
+        response['cantidad_jugadores'] = self.juego.cantidad_jugadores
         if data['evento'] == 'conectarse':
             response['evento'] = 'conectarse'
-            response['cliente'] = data['cliente']
             if self.juego.usuario_valido(data['cliente'], client_socket):
                 response['detalles'] = 'aceptado'
                 response['usuarios_conectados'] = self.juego.lista_usuarios
-                response['cantidad_jugadores'] = self.juego.cantidad_jugadores
                 self.update_sala_espera(response)
             else:
                 response['detalles'] = 'rechazado'
                 self.send(response, client_socket)
+        elif data['evento'] == 'cerrar':
+            response['evento'] = 'cerrar'
+            del self.juego.usuarios[data['cliente']]
+            self.juego.lista_usuarios.remove(data['cliente'])
+            response['usuarios_conectados'] = self.juego.lista_usuarios
+            self.update_sala_espera(response)
 
     def update_sala_espera(self, response):
         for usuario in self.juego.lista_usuarios:

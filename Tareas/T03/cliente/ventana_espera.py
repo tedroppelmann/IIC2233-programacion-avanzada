@@ -16,6 +16,8 @@ WINDOW_NAME, BASE_CLASS = uic.loadUiType("ventana_espera.ui")
 class VentanaEspera(WINDOW_NAME, BASE_CLASS):
 
     signal_sala_espera = None
+    signal_usuario_espera = pyqtSignal(dict)
+    signal_sala_espera_servidor = None
 
     def __init__(self):
         super().__init__()
@@ -25,6 +27,7 @@ class VentanaEspera(WINDOW_NAME, BASE_CLASS):
 
     def init_signals(self):
         self.signal_sala_espera.connect(self.mostrar)
+        self.signal_sala_espera_servidor.connect(self.mostrar)
 
     def init_gui(self):
         imagen = QPixmap((data['logo_path']))
@@ -48,6 +51,11 @@ class VentanaEspera(WINDOW_NAME, BASE_CLASS):
                 if jugador.text() != valor:
                     jugador.setText(valor)
         self.show()
+
+    def closeEvent(self, event):
+        if event:
+            self.signal_usuario_espera.emit({'evento': 'cerrar', 'detalles': '-'})
+        self.deleteLater()
 
 if __name__ == '__main__':
     def hook(type, value, traceback):

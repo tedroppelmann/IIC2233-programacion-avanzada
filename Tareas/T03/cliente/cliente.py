@@ -16,6 +16,8 @@ class Cliente(QObject):
 
     signal_usuario = None
     signal_validar_usuario = pyqtSignal(dict)
+    signal_usuario_espera = None
+    signal_sala_espera_servidor = pyqtSignal(dict)
 
     def __init__(self):
         super().__init__()
@@ -25,6 +27,7 @@ class Cliente(QObject):
         self.socket_client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         try:
+            self.usuario = None
             self.connect_to_server()
             self.listen()
 
@@ -34,7 +37,8 @@ class Cliente(QObject):
             exit()
 
     def init_signals(self):
-        self.signal_usuario.connect(self.send)
+        self.signal_usuario.connect(self.enviar_mensaje_servidor)
+        self.signal_usuario_espera.connect(self.enviar_mensaje_servidor)
 
     def connect_to_server(self):
         self.socket_client.connect((self.host, self.port))
@@ -67,11 +71,21 @@ class Cliente(QObject):
 
             print(f"{decoded}\n>>> ", end='')
 
-            self.analizar_mensaje(decoded)
+            self.recibir_mensaje_servidor(decoded)
 
-    def analizar_mensaje(self, data):
-
+    def recibir_mensaje_servidor(self, data):
         if data['evento'] == 'conectarse':
+            if self.usuario is None and data['detalles'] == 'aceptado':
+                self.usuario = data['cliente']
             self.signal_validar_usuario.emit(data)
+        elif data['evento'] == 'cerrar':
+            self.signal_sala_espera_servidor.emit(data)
+
+    def enviar_mensaje_servidor(self, data):
+        if data['evento'] == 'conectarse':
+            self.send(data)
+        elif data['evento'] == 'cerrar':
+            data['cliente'] = self.usuario
+            self.send(data)
 
 

@@ -26,6 +26,8 @@ if __name__ == '__main__':
     ventana_inicio.signal_validar_usuario = cliente.signal_validar_usuario
     # sala espera:
     ventana_espera.signal_sala_espera = ventana_inicio.signal_sala_espera
+    cliente.signal_usuario_espera = ventana_espera.signal_usuario_espera
+    ventana_espera.signal_sala_espera_servidor = cliente.signal_sala_espera_servidor
 
     # Iniciar señales
     ventana_inicio.init_signals()
