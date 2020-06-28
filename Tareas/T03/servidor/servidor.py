@@ -102,18 +102,21 @@ class Servidor:
             self.juego.poblar_cartas(data['cliente'])
             for carta in self.juego.usuarios[data['cliente']]['cartas']:
                 self.enviar_carta(carta, client_socket)
-            time.sleep(1)
+            time.sleep(0.5)
             self.update_cartas_contrincantes(data['cliente'])
             if self.empezar == self.juego.cantidad_jugadores:
                 if self.juego.carta_jugada is None:
                     print('Juego listo para empezar')
-                    carta = sacar_cartas(1)
+                    self.juego.turno = self.juego.lista_usuarios[0]
+                    carta = sacar_cartas(1)[0]
                     self.juego.carta_jugada = carta
-                    print(self.juego.carta_jugada)
-                    '''
+                    # envío la primera carta a todos los usuarios
                     for usuario in self.juego.usuarios:
-                        self.enviar_carta(self.juego.carta_jugada, self.juego.usuarios[usuario]['socket'])'''
-
+                        self.send({'evento': 'actualizar carta central'},
+                                  self.juego.usuarios[usuario]['socket'])
+                        self.enviar_carta(self.juego.carta_jugada,
+                                          self.juego.usuarios[usuario]['socket'])
+                    self.update_datos_pantalla()
 
 
     def update_sala_espera(self, response):
@@ -160,6 +163,15 @@ class Servidor:
             mensaje['detalles'] = cartas
             if usuario != user:
                 self.send(mensaje, self.juego.usuarios[user]['socket'])
+
+    def update_datos_pantalla(self):
+        mensaje = dict()
+        mensaje['evento'] = 'actualizar datos pantalla'
+        for usuario in self.juego.lista_usuarios:
+            mensaje['cliente'] = usuario
+            mensaje['turno'] = self.juego.turno
+            mensaje['accion'] = self.juego.accion
+            self.send(mensaje, self.juego.usuarios[usuario]['socket'])
 
 
 

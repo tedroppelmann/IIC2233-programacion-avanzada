@@ -12,6 +12,8 @@ class Juego:
         self.lista_usuarios = list()
         self.cantidad_jugadores = data['cantidad_jugadores']
         self.carta_jugada = None
+        self.turno = None
+        self.accion = None
 
     def usuario_valido(self, user, socket):
         if user.isalnum() and user not in self.usuarios and len(self.lista_usuarios) < self.cantidad_jugadores:
@@ -28,5 +30,7 @@ class Juego:
 
     def cantidad_cartas(self, usuario):
         return len(self.usuarios[usuario]['cartas'])
+
+
 
 

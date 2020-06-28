@@ -140,6 +140,8 @@ class Cliente(QObject):
             self.signal_cartas.emit(data)
         elif data['evento'] == 'actualizar carta central':
             self.recibir_carta = False
+        elif data['evento'] == 'actualizar datos pantalla':
+            self.signal_cartas.emit(data)
 
     def enviar_mensaje_servidor(self, data):
         if data['evento'] == 'conectarse':

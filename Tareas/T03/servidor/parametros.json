@@ -1,6 +1,6 @@
 {
   "host" : "localhost",
-  "port" : 8081,
+  "port" : 8080,
   "cantidad_jugadores" : 2,
   "cartas_iniciales": 4
 }
