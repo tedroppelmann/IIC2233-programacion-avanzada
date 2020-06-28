@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import QApplication
 from ventana_inicio import VentanaInicio
 from cliente import Cliente
 from ventana_espera import VentanaEspera
+from ventana_juego import VentanaJuego
 
 
 if __name__ == '__main__':
@@ -18,6 +19,7 @@ if __name__ == '__main__':
     # Instancio clases
     ventana_inicio = VentanaInicio()
     ventana_espera = VentanaEspera()
+    ventana_juego = VentanaJuego()
     cliente = Cliente()
 
     # Conexión señales
@@ -28,10 +30,13 @@ if __name__ == '__main__':
     ventana_espera.signal_sala_espera = ventana_inicio.signal_sala_espera
     cliente.signal_usuario_espera = ventana_espera.signal_usuario_espera
     ventana_espera.signal_sala_espera_servidor = cliente.signal_sala_espera_servidor
+    # cartas:
+    ventana_juego.signal_cartas = cliente.signal_cartas
 
     # Iniciar señales
     ventana_inicio.init_signals()
     ventana_espera.init_signals()
+    ventana_juego.init_signals()
     cliente.init_signals()
 
     ventana_inicio.show()

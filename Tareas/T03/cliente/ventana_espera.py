@@ -34,7 +34,7 @@ class VentanaEspera(WINDOW_NAME, BASE_CLASS):
         self.logo.setPixmap(imagen)
 
     def mostrar(self, data):
-        posiciones = [(i, j) for i in range(2) for j in range(2)]
+        conectados = data['usuarios_conectados']
         valores = data['usuarios_conectados']
         cantidad_jugadores = data['cantidad_jugadores']
         for i in range(0, cantidad_jugadores - len(data['usuarios_conectados'])):
@@ -51,6 +51,14 @@ class VentanaEspera(WINDOW_NAME, BASE_CLASS):
                 if jugador.text() != valor:
                     jugador.setText(valor)
         self.show()
+
+        if 'ESPERANDO...' not in valores:
+            print('Todos los usuarios conectados')
+            self.signal_usuario_espera.emit({'evento': 'empezar',
+                                             'detalles': '-'})
+            self.hide()
+
+
 
     def closeEvent(self, event):
         if event:
