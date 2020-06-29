@@ -20,6 +20,7 @@ class Cliente(QObject):
     signal_usuario_espera = None
     signal_sala_espera_servidor = pyqtSignal(dict)
     signal_cartas = pyqtSignal(dict)
+    signal_enviar_mensaje = None
 
     def __init__(self):
         super().__init__()
@@ -30,7 +31,6 @@ class Cliente(QObject):
 
         try:
             self.usuario = None
-
             self.otros_jugadores = None
             self.cartas_usuario = list()
             self.recibir_carta = True
@@ -46,6 +46,7 @@ class Cliente(QObject):
     def init_signals(self):
         self.signal_usuario.connect(self.enviar_mensaje_servidor)
         self.signal_usuario_espera.connect(self.enviar_mensaje_servidor)
+        self.signal_enviar_mensaje.connect(self.enviar_mensaje_servidor)
 
     def connect_to_server(self):
         self.socket_client.connect((self.host, self.port))
@@ -114,6 +115,7 @@ class Cliente(QObject):
                 if numero_decode == 'reverso':
                     self.reverso = imagen_decode
                     self.signal_cartas.emit({'evento': 'carta reverso', 'detalles': self.reverso})
+
                 else:
                     if self.recibir_carta:
                         carta = {'evento':'carta jugador',
@@ -142,6 +144,9 @@ class Cliente(QObject):
             self.recibir_carta = False
         elif data['evento'] == 'actualizar datos pantalla':
             self.signal_cartas.emit(data)
+        elif data['evento'] == 'eliminar carta':
+            print('llega a eliminar carta')
+            self.signal_cartas.emit(data)
 
     def enviar_mensaje_servidor(self, data):
         if data['evento'] == 'conectarse':
@@ -154,14 +159,8 @@ class Cliente(QObject):
             data['cliente'] = self.usuario
             self.signal_cartas.emit(data)
             self.send(data)
-
-    def analizar_cartas(self):
-        pass
-
-
-
-
-
-
-
-
+        elif data['evento'] == 'jugar carta':
+            self.send(data)
+        elif data['evento'] == 'sacar carta mazo':
+            self.recibir_carta = True
+            self.send(data)

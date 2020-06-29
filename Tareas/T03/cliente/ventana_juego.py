@@ -16,6 +16,7 @@ WINDOW_NAME, BASE_CLASS = uic.loadUiType("ventana_juego.ui")
 class VentanaJuego(WINDOW_NAME, BASE_CLASS):
 
     signal_cartas = None
+    signal_enviar_mensajes = pyqtSignal(dict)
 
     def __init__(self):
         super().__init__()
@@ -25,6 +26,7 @@ class VentanaJuego(WINDOW_NAME, BASE_CLASS):
         self.usuarios_conectados = list()
         self.cartas_jugadores = dict()
         self.reverso = None
+        self.nuevo = True
 
     def init_signals(self):
         self.signal_cartas.connect(self.init_gui)
@@ -33,7 +35,7 @@ class VentanaJuego(WINDOW_NAME, BASE_CLASS):
 
         if data['evento'] == 'carta jugador':
             imagen = data['imagen']
-            carta = QLabel()
+            carta = QLabelClick(data['color'], data['numero'])
             carta.setMaximumSize(78,108)
             pixmap = QPixmap()
             pixmap.loadFromData(imagen, 'png')
@@ -41,6 +43,7 @@ class VentanaJuego(WINDOW_NAME, BASE_CLASS):
             carta.setScaledContents(True)
             self.cartas_usuario.addWidget(carta)
             self.cartas_jugador[(data['numero'], data['color'])] = carta
+            carta.clicked.connect(self.label_click)
             self.show()
 
         elif data['evento'] == 'carta central':
@@ -61,16 +64,18 @@ class VentanaJuego(WINDOW_NAME, BASE_CLASS):
         elif data['evento'] == 'update cartas contrincantes':
             # agrego los otros jugadores
             self.usuarios_conectados = data['usuarios_conectados']
-            print(self.usuario)
-            print(self.usuarios_conectados)
             self.nombre_jugador_abajo.setText(self.usuario)
             self.nombre_jugador_abajo.setStyleSheet("color: white")
             indice_user = self.usuarios_conectados.index(self.usuario)
             indice_otro = self.usuarios_conectados.index(data['cliente'])
             diferencia = indice_otro - indice_user
-            self.cartas_jugadores[data['cliente']] = list()
-            for carta in self.cartas_jugadores[data['cliente']]:
-                carta.hide()
+            if self.nuevo:
+                for usuario in data['usuarios_conectados']:
+                    self.cartas_jugadores[usuario] = list()
+            else:
+                print(self.cartas_jugadores[data['cliente']])
+                for carta in self.cartas_jugadores[data['cliente']]:
+                    carta.hide()
             if diferencia == 1 or diferencia == -3:
                 print('Se pone en la derecha')
                 t = QTransform()
@@ -110,6 +115,7 @@ class VentanaJuego(WINDOW_NAME, BASE_CLASS):
                     carta.setScaledContents(True)
                     self.cartas_jugadores[data['cliente']].append(carta)
                     self.cartas_jugador_arriba.addWidget(carta)
+            self.nuevo = False
             self.show()
 
         elif data['evento'] == 'carta reverso':
@@ -118,16 +124,53 @@ class VentanaJuego(WINDOW_NAME, BASE_CLASS):
             pixmap.loadFromData(data['detalles'], 'png')
             self.reverso = pixmap
             # la agrego al mazo
-            self.mazo.setMaximumSize(78, 108)
-            self.mazo.setPixmap(self.reverso)
-            self.mazo.setScaledContents(True)
+            mazo = QLabelClick('mazo', 'mazo')
+            mazo.setMaximumSize(78, 108)
+            mazo.setPixmap(self.reverso)
+            mazo.setScaledContents(True)
+            self.mazo_layout.addWidget(mazo)
+            mazo.clicked.connect(self.label_click)
 
         elif data['evento'] == 'actualizar datos pantalla':
+            print('LLEGA CAMBIO DE PANTALLA')
             self.turno.setText(data['turno'])
             self.turno.setStyleSheet("color: white")
             self.accion.setText(data['accion'])
             self.accion.setStyleSheet("color: white")
             self.show()
+
+        elif data['evento'] == 'eliminar carta':
+            for carta in self.cartas_jugador:
+                if carta[0] == data['detalles'][0] and carta[1] == data['detalles'][1]:
+                    self.cartas_jugador[carta].hide()
+
+    def label_click(self, data):
+        print('CLICK')
+        print(data['color'])
+        print(data['numero'])
+        if data['color'] == 'mazo':
+            self.signal_enviar_mensajes.emit({'cliente': self.usuario,
+                                              'evento': 'sacar carta mazo',
+                                              'detalles': [data['numero'], data['color']]})
+        else:
+            self.signal_enviar_mensajes.emit({'cliente': self.usuario,
+                                              'evento': 'jugar carta',
+                                              'detalles': [data['numero'], data['color']]})
+
+
+# http://www.3engine.net/wp/2015/11/pyqt-como-hacer-que-qlabel-sea-clicable/
+
+class QLabelClick(QLabel):
+
+    clicked = pyqtSignal(dict)
+
+    def __init__(self, color, numero):
+        QLabel.__init__(self)
+        self.color = color
+        self.numero = numero
+
+    def mouseReleaseEvent(self, event):
+        self.clicked.emit({'color': self.color, 'numero': self.numero})
 
 if __name__ == '__main__':
     def hook(type, value, traceback):

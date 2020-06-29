@@ -58,8 +58,6 @@ class VentanaEspera(WINDOW_NAME, BASE_CLASS):
                                              'detalles': '-'})
             self.hide()
 
-
-
     def closeEvent(self, event):
         if event:
             self.signal_usuario_espera.emit({'evento': 'cerrar', 'detalles': '-'})

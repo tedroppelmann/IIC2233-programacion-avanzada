@@ -32,6 +32,8 @@ if __name__ == '__main__':
     ventana_espera.signal_sala_espera_servidor = cliente.signal_sala_espera_servidor
     # cartas:
     ventana_juego.signal_cartas = cliente.signal_cartas
+    # enviar mensajes desde la ventana de juego al servidor
+    cliente.signal_enviar_mensaje = ventana_juego.signal_enviar_mensajes
 
     # Iniciar señales
     ventana_inicio.init_signals()
