@@ -17,6 +17,7 @@ class VentanaInicio(WINDOW_NAME, BASE_CLASS):
     signal_usuario = pyqtSignal(dict)
     signal_validar_usuario = None
     signal_sala_espera = pyqtSignal(dict)
+    signal_volver = None
 
     def __init__(self):
         super().__init__()
@@ -26,10 +27,13 @@ class VentanaInicio(WINDOW_NAME, BASE_CLASS):
     def init_signals(self):
         self.boton_entrar.clicked.connect(self.ingresar)
         self.signal_validar_usuario.connect(self.validar_usuario)
+        self.signal_volver.connect(self.init_gui)
 
     def init_gui(self):
         imagen = QPixmap((data['logo_path']))
         self.logo.setPixmap(imagen)
+        self.nombre_usuario.setText('')
+        self.show()
 
     def ingresar(self):
         user = self.nombre_usuario.text()

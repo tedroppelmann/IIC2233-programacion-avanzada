@@ -43,7 +43,6 @@ class VentanaJuego(WINDOW_NAME, BASE_CLASS):
             self.cartas_usuario.addWidget(carta)
             self.cartas_jugador.append([data['numero'], data['color'], carta])
             carta.clicked.connect(self.label_click)
-            self.show()
 
         elif data['evento'] == 'carta central':
             imagen = data['imagen']
@@ -54,18 +53,17 @@ class VentanaJuego(WINDOW_NAME, BASE_CLASS):
             self.carta_jugada.setScaledContents(True)
             self.color.setText(data['color'])
             self.color.setStyleSheet("color: white")
-            self.show()
 
         elif data['evento'] == 'empezar':
             # guardo el nombre de usuario
             self.usuario = data['cliente']
+            self.nombre_jugador_abajo.setText(self.usuario)
+            self.nombre_jugador_abajo.setStyleSheet("color: white")
 
         elif data['evento'] == 'update cartas contrincantes':
             # agrego los otros jugadores
             self.usuarios_conectados = data['usuarios_conectados']
             print(self.usuarios_conectados)
-            self.nombre_jugador_abajo.setText(self.usuario)
-            self.nombre_jugador_abajo.setStyleSheet("color: white")
             indice_user = self.usuarios_conectados.index(self.usuario)
             indice_otro = self.usuarios_conectados.index(data['cliente'])
             diferencia = indice_otro - indice_user
@@ -121,7 +119,6 @@ class VentanaJuego(WINDOW_NAME, BASE_CLASS):
                     self.cartas_jugadores[data['cliente']].append(carta)
                     self.cartas_jugador_arriba.addWidget(carta)
             self.nuevo = False
-            self.show()
 
         elif data['evento'] == 'carta reverso':
             print('Se guarda el reverso')
@@ -145,7 +142,6 @@ class VentanaJuego(WINDOW_NAME, BASE_CLASS):
             if data['color'] is not None:
                 self.color.setText(data['color'])
                 self.color.setStyleSheet("color: white")
-            self.show()
 
         elif data['evento'] == 'eliminar carta':
             i = 0
@@ -155,10 +151,36 @@ class VentanaJuego(WINDOW_NAME, BASE_CLASS):
                     self.cartas_jugador.remove(carta)
                     i += 1
 
+        elif data['evento'] == 'perdedor':
+            print('CAMBIAR PERDEDOR')
+            clearLayout(self.cartas_usuario)
+            self.nombre_jugador_abajo.setText('¡PERDISTE! Ahora estás en MODO ESPECTADOR')
+            self.nombre_jugador_abajo.setStyleSheet("color: white")
+
+        if data['evento'] == 'fin del juego':
+            print('llega a la ventana')
+            self.hide()
+            self.usuario = None
+            self.cartas_jugador = list()
+            self.usuarios_conectados = list()
+            self.cartas_jugadores = dict()
+            self.reverso = None
+            self.nuevo = True
+
+            clearLayout(self.cartas_jugador_derecha)
+            clearLayout(self.cartas_jugador_arriba)
+            clearLayout(self.cartas_jugador_izquierda)
+            clearLayout(self.cartas_usuario)
+            clearLayout(self.mazo_layout)
+            self.nombre_jugador_derecha.setText('')
+            self.nombre_jugador_arriba.setText('')
+            self.nombre_jugador_izquierda.setText('')
+            self.nombre_jugador_abajo.setText('')
+
+        else:
+            self.show()
+
     def label_click(self, data):
-        print('CLICK')
-        print(data['color'])
-        print(data['numero'])
         if data['color'] == 'mazo':
             self.signal_enviar_mensajes.emit({'cliente': self.usuario,
                                               'evento': 'sacar carta mazo',
@@ -168,6 +190,15 @@ class VentanaJuego(WINDOW_NAME, BASE_CLASS):
                                               'evento': 'jugar carta',
                                               'detalles': [data['numero'], data['color']]})
 
+# http://josbalcaen.com/maya-python-pyqt-delete-all-widgets-in-a-layout/
+
+def clearLayout(layout):
+    while layout.count():
+        child = layout.takeAt(0)
+        if child.widget() is not None:
+            child.widget().deleteLater()
+        elif child.layout() is not None:
+            clearLayout(child.layout())
 
 # http://www.3engine.net/wp/2015/11/pyqt-como-hacer-que-qlabel-sea-clicable/
 

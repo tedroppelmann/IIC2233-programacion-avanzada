@@ -23,6 +23,7 @@ class Cliente(QObject):
     signal_enviar_mensaje = None
     signal_elegir_color = pyqtSignal()
     signal_color_elegido = None
+    signal_final = pyqtSignal(dict)
 
     def __init__(self):
         super().__init__()
@@ -151,6 +152,15 @@ class Cliente(QObject):
             self.signal_cartas.emit(data)
         elif data['evento'] == 'activar carta color':
             self.signal_elegir_color.emit()
+        elif data['evento'] == 'perdedor':
+            self.signal_cartas.emit(data)
+        elif data['evento'] == 'fin del juego':
+            self.signal_cartas.emit(data)
+            self.signal_final.emit(data)
+            self.enviar_mensaje_servidor({'cliente': data['cliente'],
+                                          'evento': 'reiniciar',
+                                          'detalles': '-'})
+            self.reiniciar()
 
     def enviar_mensaje_servidor(self, data):
         if data['evento'] == 'conectarse':
@@ -171,3 +181,12 @@ class Cliente(QObject):
         elif data['evento'] == 'color seleccionado':
             data['cliente'] = self.usuario
             self.send(data)
+        elif data['evento'] == 'reiniciar':
+            self.send(data)
+
+    def reiniciar(self):
+        self.usuario = None
+        self.otros_jugadores = None
+        self.cartas_usuario = list()
+        self.recibir_carta = True
+        self.reverso = None
