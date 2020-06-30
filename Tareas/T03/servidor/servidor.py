@@ -306,7 +306,7 @@ class Servidor:
                         self.update_cartas_contrincantes(usuario)
                     self.ciclo.eliminar(data['cliente'])
                     self.eliminado = True
-                    print(self.usuarios)
+
 
                 if not self.usuarios[data['cliente']]['jugando'] and not self.color:
                     if not self.eliminado:

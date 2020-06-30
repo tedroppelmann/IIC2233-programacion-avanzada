@@ -76,11 +76,13 @@ class VentanaJuego(WINDOW_NAME, BASE_CLASS):
                 for carta in self.cartas_jugadores[data['cliente']]:
                     carta.hide()
             if diferencia == 1 or diferencia == -3:
-                print('Se pone en la derecha')
                 t = QTransform()
                 t.rotate(-90)
                 self.nombre_jugador_derecha.setText(data['cliente'])
                 self.nombre_jugador_derecha.setStyleSheet("color: white")
+                if data['detalles'] == 0:
+                    self.nombre_jugador_derecha.setText('PERDEDOR')
+                    self.nombre_jugador_derecha.setStyleSheet("color: white")
                 for i in range(0,data['detalles']):
                     carta = QLabel()
                     carta.setMaximumSize(108, 78)
@@ -89,11 +91,13 @@ class VentanaJuego(WINDOW_NAME, BASE_CLASS):
                     self.cartas_jugadores[data['cliente']].append(carta)
                     self.cartas_jugador_derecha.addWidget(carta)
             elif diferencia == -1 or diferencia == 3:
-                print('Se pone en la izquierda')
                 t = QTransform()
                 t.rotate(90)
                 self.nombre_jugador_izquierda.setText(data['cliente'])
                 self.nombre_jugador_izquierda.setStyleSheet("color: white")
+                if data['detalles'] == 0:
+                    self.nombre_jugador_izquierda.setText('PERDEDOR')
+                    self.nombre_jugador_izquierda.setStyleSheet("color: white")
                 for i in range(0, data['detalles']):
                     carta = QLabel()
                     carta.setMaximumSize(108, 78)
@@ -102,11 +106,13 @@ class VentanaJuego(WINDOW_NAME, BASE_CLASS):
                     self.cartas_jugadores[data['cliente']].append(carta)
                     self.cartas_jugador_izquierda.addWidget(carta)
             elif diferencia == 2 or diferencia == -2:
-                print('Se pone arriba')
                 t = QTransform()
                 t.rotate(180)
                 self.nombre_jugador_arriba.setText(data['cliente'])
                 self.nombre_jugador_arriba.setStyleSheet("color: white")
+                if data['detalles'] == 0:
+                    self.nombre_jugador_arriba.setText('PERDEDOR')
+                    self.nombre_jugador_arriba.setStyleSheet("color: white")
                 for i in range(0, data['detalles']):
                     carta = QLabel()
                     carta.setMaximumSize(78, 108)
