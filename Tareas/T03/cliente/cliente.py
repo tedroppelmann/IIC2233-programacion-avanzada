@@ -21,6 +21,8 @@ class Cliente(QObject):
     signal_sala_espera_servidor = pyqtSignal(dict)
     signal_cartas = pyqtSignal(dict)
     signal_enviar_mensaje = None
+    signal_elegir_color = pyqtSignal()
+    signal_color_elegido = None
 
     def __init__(self):
         super().__init__()
@@ -47,6 +49,7 @@ class Cliente(QObject):
         self.signal_usuario.connect(self.enviar_mensaje_servidor)
         self.signal_usuario_espera.connect(self.enviar_mensaje_servidor)
         self.signal_enviar_mensaje.connect(self.enviar_mensaje_servidor)
+        self.signal_color_elegido.connect(self.enviar_mensaje_servidor)
 
     def connect_to_server(self):
         self.socket_client.connect((self.host, self.port))
@@ -145,8 +148,9 @@ class Cliente(QObject):
         elif data['evento'] == 'actualizar datos pantalla':
             self.signal_cartas.emit(data)
         elif data['evento'] == 'eliminar carta':
-            print('llega a eliminar carta')
             self.signal_cartas.emit(data)
+        elif data['evento'] == 'activar carta color':
+            self.signal_elegir_color.emit()
 
     def enviar_mensaje_servidor(self, data):
         if data['evento'] == 'conectarse':
@@ -163,4 +167,7 @@ class Cliente(QObject):
             self.send(data)
         elif data['evento'] == 'sacar carta mazo':
             self.recibir_carta = True
+            self.send(data)
+        elif data['evento'] == 'color seleccionado':
+            data['cliente'] = self.usuario
             self.send(data)

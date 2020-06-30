@@ -33,6 +33,8 @@ class Servidor:
         self.suma = 0
         self.jugando = True
         self.eliminado = None
+        self.carta_color_especial = None
+        self.color = False
 
     def bind_and_listen(self):
         self.socket_server.bind((self.host, self.port))
@@ -134,6 +136,23 @@ class Servidor:
         elif data['evento'] == 'jugar carta' or data['evento'] == 'sacar carta mazo':
             self.jugar_turno(data)
 
+        elif data['evento'] == 'color seleccionado':
+            self.usuarios[self.turno]['jugando'] = False
+            self.turno = self.ciclo.count()
+            self.color = False
+            self.accion = 'ROBA 1 CARTA'
+            self.carta_color_especial = data['detalles']
+            self.update_datos_pantalla()
+            self.carta_color_especial = None
+
+            self.carta_jugada = ('color', data['detalles'])
+            self.send({'cliente': data['cliente'],
+                       'evento': 'eliminar carta',
+                       'detalles': ('color', '')},
+                      self.usuarios[data['cliente']]['socket'])
+            self.actualizar_carta_central()
+            self.usuarios[self.turno]['jugando'] = True
+
     def actualizar_carta_central(self):
         for usuario in self.usuarios:
             self.send({'evento': 'actualizar carta central'},
@@ -193,6 +212,7 @@ class Servidor:
             mensaje['cliente'] = usuario
             mensaje['turno'] = self.turno
             mensaje['accion'] = self.accion
+            mensaje['color'] = self.carta_color_especial
             self.send(mensaje, self.usuarios[usuario]['socket'])
 
     def usuario_valido(self, user, socket):
@@ -243,6 +263,13 @@ class Servidor:
                         self.suma = 0
                         self.usuarios[self.turno]['jugando'] = False
 
+                elif numero == 'color':
+                    self.send({'cliente':data['cliente'],
+                               'evento': 'activar carta color',
+                               'detalles': '-'}, self.usuarios[data['cliente']]['socket'])
+                    self.color = True
+                    self.usuarios[data['cliente']]['cartas'].remove(('color',''))
+
                 else:
                     if self.carta_jugada[0] == numero or self.carta_jugada[1] == color:
 
@@ -281,7 +308,7 @@ class Servidor:
                     self.eliminado = True
                     print(self.usuarios)
 
-                if not self.usuarios[data['cliente']]['jugando']:
+                if not self.usuarios[data['cliente']]['jugando'] and not self.color:
                     if not self.eliminado:
                         print(self.usuarios)
                         for usuario in self.usuarios:

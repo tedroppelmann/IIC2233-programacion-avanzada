@@ -6,6 +6,7 @@ from ventana_inicio import VentanaInicio
 from cliente import Cliente
 from ventana_espera import VentanaEspera
 from ventana_juego import VentanaJuego
+from ventana_color import VentanaColor
 
 
 if __name__ == '__main__':
@@ -20,6 +21,7 @@ if __name__ == '__main__':
     ventana_inicio = VentanaInicio()
     ventana_espera = VentanaEspera()
     ventana_juego = VentanaJuego()
+    ventana_color = VentanaColor()
     cliente = Cliente()
 
     # Conexión señales
@@ -34,11 +36,15 @@ if __name__ == '__main__':
     ventana_juego.signal_cartas = cliente.signal_cartas
     # enviar mensajes desde la ventana de juego al servidor
     cliente.signal_enviar_mensaje = ventana_juego.signal_enviar_mensajes
+    # elegir color:
+    ventana_color.signal_elegir_color = cliente.signal_elegir_color
+    cliente.signal_color_elegido = ventana_color.signal_color_elegido
 
     # Iniciar señales
     ventana_inicio.init_signals()
     ventana_espera.init_signals()
     ventana_juego.init_signals()
+    ventana_color.init_signals()
     cliente.init_signals()
 
     ventana_inicio.show()
