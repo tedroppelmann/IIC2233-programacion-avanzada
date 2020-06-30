@@ -73,7 +73,6 @@ class VentanaJuego(WINDOW_NAME, BASE_CLASS):
                 for usuario in data['usuarios_conectados']:
                     self.cartas_jugadores[usuario] = list()
             else:
-                print(self.cartas_jugadores[data['cliente']])
                 for carta in self.cartas_jugadores[data['cliente']]:
                     carta.hide()
             if diferencia == 1 or diferencia == -3:
