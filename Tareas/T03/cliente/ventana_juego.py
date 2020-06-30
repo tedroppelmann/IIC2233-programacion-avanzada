@@ -22,7 +22,7 @@ class VentanaJuego(WINDOW_NAME, BASE_CLASS):
         super().__init__()
         self.setupUi(self)
         self.usuario = None
-        self.cartas_jugador = dict()
+        self.cartas_jugador = list()
         self.usuarios_conectados = list()
         self.cartas_jugadores = dict()
         self.reverso = None
@@ -42,7 +42,7 @@ class VentanaJuego(WINDOW_NAME, BASE_CLASS):
             carta.setPixmap(pixmap)
             carta.setScaledContents(True)
             self.cartas_usuario.addWidget(carta)
-            self.cartas_jugador[(data['numero'], data['color'])] = carta
+            self.cartas_jugador.append([data['numero'], data['color'], carta])
             carta.clicked.connect(self.label_click)
             self.show()
 
@@ -64,6 +64,7 @@ class VentanaJuego(WINDOW_NAME, BASE_CLASS):
         elif data['evento'] == 'update cartas contrincantes':
             # agrego los otros jugadores
             self.usuarios_conectados = data['usuarios_conectados']
+            print(self.usuarios_conectados)
             self.nombre_jugador_abajo.setText(self.usuario)
             self.nombre_jugador_abajo.setStyleSheet("color: white")
             indice_user = self.usuarios_conectados.index(self.usuario)
@@ -139,9 +140,12 @@ class VentanaJuego(WINDOW_NAME, BASE_CLASS):
             self.show()
 
         elif data['evento'] == 'eliminar carta':
+            i = 0
             for carta in self.cartas_jugador:
-                if carta[0] == data['detalles'][0] and carta[1] == data['detalles'][1]:
-                    self.cartas_jugador[carta].hide()
+                if carta[0] == data['detalles'][0] and carta[1] == data['detalles'][1] and i == 0:
+                    carta[2].hide()
+                    self.cartas_jugador.remove(carta)
+                    i += 1
 
     def label_click(self, data):
         print('CLICK')

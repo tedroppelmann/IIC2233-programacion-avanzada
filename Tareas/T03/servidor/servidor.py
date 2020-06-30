@@ -32,6 +32,7 @@ class Servidor:
         self.accion = None
         self.suma = 0
         self.jugando = True
+        self.eliminado = None
 
     def bind_and_listen(self):
         self.socket_server.bind((self.host, self.port))
@@ -99,7 +100,7 @@ class Servidor:
         elif data['evento'] == 'cerrar':
             response['evento'] = 'cerrar'
             del self.usuarios[data['cliente']]
-            self.lista_usuarios.remove(data['cliente'])
+            self.ciclo.eliminar(data['cliente'])
             response['usuarios_conectados'] = self.lista_usuarios
             self.update_sala_espera(response)
 
@@ -115,7 +116,8 @@ class Servidor:
                 if self.carta_jugada is None:
                     print('Juego listo para empezar')
                     self.accion = 'ROBA 1 CARTA'
-                    self.ciclo = Turnos(self.lista_usuarios)
+                    self.copia_turno = self.lista_usuarios
+                    self.ciclo = Turnos(self.copia_turno)
                     self.turno = self.ciclo.inicial
                     self.usuarios[self.turno]['jugando'] = True
                     carta = sacar_cartas(1)[0]
@@ -177,6 +179,7 @@ class Servidor:
         mensaje['evento'] = 'update cartas contrincantes'
         mensaje['usuarios_conectados'] = self.lista_usuarios
         for usuario in self.lista_usuarios:
+            print(f'Usuario a actualizar contrincantes: {usuario}')
             cartas = self.cantidad_cartas(usuario)
             mensaje['cliente'] = usuario
             mensaje['detalles'] = cartas
@@ -214,6 +217,7 @@ class Servidor:
     def jugar_turno(self, data):
         print(f'Es el turno de: {self.turno}')
         if self.turno == data['cliente']:
+            self.eliminado = False
             numero = data['detalles'][0]
             color = data['detalles'][1]
             if self.usuarios[self.turno]['jugando']:
@@ -269,20 +273,19 @@ class Servidor:
 
                 if self.cantidad_cartas(self.turno) >= parametros['cartas_maximas']:
                     print('Jugador perdió')
-                    for carta in self.usuarios[data['cliente']]['cartas']:
-                        print(carta)
-                        self.send({'cliente': data['cliente'],
-                                   'evento': 'eliminar carta',
-                                   'detalles': carta},
-                                  self.usuarios[data['cliente']]['socket'])
                     self.usuarios[self.turno]['cartas'].clear()
                     for usuario in self.usuarios:
+                        print(f'usuarios eliminados: {usuario}')
                         self.update_cartas_contrincantes(usuario)
                     self.ciclo.eliminar(data['cliente'])
+                    self.eliminado = True
+                    print(self.usuarios)
 
                 if not self.usuarios[data['cliente']]['jugando']:
-                    for usuario in self.usuarios:
-                        self.update_cartas_contrincantes(usuario)
+                    if not self.eliminado:
+                        print(self.usuarios)
+                        for usuario in self.usuarios:
+                            self.update_cartas_contrincantes(usuario)
                     self.jugando = True
                     self.turno = self.ciclo.count()
                     self.usuarios[self.turno]['jugando'] = True
@@ -305,11 +308,11 @@ class Turnos:
 
     def eliminar(self, usuario):
         self.lista.remove(usuario)
-        self.largo = len(self.lista)
+        self.largo -= 1
         if self.contador > 0:
             self.contador -= 1
         elif self.contador == 0:
-            self.contador = self.largo
+            self.contador = self.largo - 1
 
     def invertir(self):
         usuario = self.lista[self.contador]
