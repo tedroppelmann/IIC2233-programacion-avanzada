@@ -10,7 +10,7 @@ import random
 with open('parametros.json') as file:
     parametros = json.load(file)
 
-# Código sacado principalmente de una de las hojas de jupyter de la semana de Networking.
+lock_global = threading.Lock()
 
 class Servidor:
 
@@ -117,27 +117,29 @@ class Servidor:
                 self.enviar_carta(carta, client_socket)
             time.sleep(0.5)
             self.update_cartas_contrincantes(data['cliente'])
-            if self.empezar == self.cantidad_jugadores:
-                if self.carta_jugada is None:
-                    print('Juego listo para empezar')
-                    self.accion = 'ROBA 1 CARTA'
-                    self.turno = self.ciclo.lista[0]
-                    print(f'Es el turno de {self.turno}')
-                    print(self.ciclo.lista)
-                    self.usuarios[self.turno]['jugando'] = True
-                    carta = sacar_cartas(1)[0]
-                    self.carta_jugada = carta
-                    # envío la primera carta a todos los usuarios
-                    self.actualizar_carta_central()
-                    if self.carta_jugada[0] == '+2':
-                        self.suma += 2
-                        self.accion = 'ROBA 2 CARTAS'
-                    elif self.carta_jugada[0] == 'sentido':
-                        self.ciclo.invertir()
-                    elif self.carta_jugada[0] == 'color':
-                        colores = ['amarillo', 'azul', 'rojo', 'verde']
-                        self.carta_jugada = ('color', random.choice(colores))
-                    self.update_datos_pantalla()
+            with lock_global:
+                if self.empezar == self.cantidad_jugadores:
+                    if self.carta_jugada is None:
+                        print('Juego listo para empezar')
+                        self.accion = 'ROBA 1 CARTA'
+                        self.turno = self.ciclo.lista[0]
+                        print(f'Es el turno de {self.turno}')
+                        print(self.ciclo.lista)
+                        self.usuarios[self.turno]['jugando'] = True
+                        carta = sacar_cartas(1)[0]
+                        self.carta_jugada = carta
+                        # envío la primera carta a todos los usuarios
+                        self.actualizar_carta_central()
+                        if self.carta_jugada[0] == '+2':
+                            self.suma += 2
+                            self.accion = 'ROBA 2 CARTAS'
+                        elif self.carta_jugada[0] == 'sentido':
+                            self.ciclo.invertir()
+                        elif self.carta_jugada[0] == 'color':
+                            colores = random.choice(['amarillo', 'azul', 'rojo', 'verde'])
+                            self.carta_jugada = ('color', colores)
+                            self.carta_color_especial = colores
+                        self.update_datos_pantalla()
 
         elif data['evento'] == 'jugar carta' or data['evento'] == 'sacar carta mazo':
             self.jugar_turno(data)
@@ -162,12 +164,65 @@ class Servidor:
         elif data['evento'] == 'reiniciar':
             self.reiniciar_datos()
 
+        elif data['evento'] == 'gritar':
+            with lock_global:
+                print(f'ACTIVADO POR {data["cliente"]}')
+                i = 0
+                for usuario in self.usuarios:
+                    if self.usuarios[usuario]['uno']:
+                        if data['cliente'] == usuario:
+                            print('Bien. Gritaste antes que los otros. No se te suman cartas')
+                        else:
+                            print('Alguien gritó antes. Se suman 4 cartas')
+                            for i in range(0, parametros['cartas_penitencia']):
+                                carta = sacar_cartas(1)[0]
+                                self.usuarios[usuario]['cartas'].append(carta)
+                                self.enviar_carta(carta, self.usuarios[usuario]['socket'])
+
+                            if self.cantidad_cartas(data['cliente']) >= parametros['cartas_maximas']:
+                                print(f'{data["cliente"]} superó el máximo de cartas')
+                                self.usuarios[data['cliente']]['cartas'].clear()
+                                self.send({'cliente': data['cliente'],
+                                           'evento': 'perdedor',
+                                           'detalles': '-'},
+                                          self.usuarios[data['cliente']]['socket'])
+                                self.ciclo.eliminar(data['cliente'])
+
+                        self.usuarios[data['cliente']]['uno'] = False
+                        i += 1
+                if i == 0:
+                    for i in range(0, parametros['cartas_penitencia']):
+                        carta = sacar_cartas(1)[0]
+                        self.usuarios[data['cliente']]['cartas'].append(carta)
+                        self.enviar_carta(carta, self.usuarios[data['cliente']]['socket'])
+                    if self.cantidad_cartas(data['cliente']) >= parametros['cartas_maximas']:
+                        print(f'{data["cliente"]} superó el máximo de cartas')
+                        self.usuarios[data['cliente']]['cartas'].clear()
+                        self.send({'cliente': data['cliente'],
+                                   'evento': 'perdedor',
+                                   'detalles': '-'}, self.usuarios[data['cliente']]['socket'])
+                        self.ciclo.eliminar(data['cliente'])
+                        if data['cliente'] == self.turno:
+                            self.usuarios[self.turno]['jugando'] = False
+                            self.turno = self.ciclo.count()
+                            self.usuarios[self.turno]['jugando'] = True
+                            self.ciclo.contador -= 1
+                        self.ciclo.count()
+                for user in self.usuarios:
+                    self.update_cartas_contrincantes(user)
+                self.update_datos_pantalla()
+                print(self.ciclo.lista)
+                print(self.turno)
+                print(self.ciclo.contador)
+
     def actualizar_carta_central(self):
         for usuario in self.usuarios:
             self.send({'evento': 'actualizar carta central'},
                       self.usuarios[usuario]['socket'])
             self.enviar_carta(self.carta_jugada,
                               self.usuarios[usuario]['socket'])
+            self.send({'evento': 'actualizar carta central_2'},
+                      self.usuarios[usuario]['socket'])
 
     def update_sala_espera(self, response):
         for usuario in self.ciclo.lista:
@@ -206,7 +261,7 @@ class Servidor:
         mensaje = dict()
         mensaje['evento'] = 'update cartas contrincantes'
         mensaje['usuarios_conectados'] = self.ciclo.lista
-        for usuario in self.ciclo.lista:
+        for usuario in self.usuarios:
             print(f'Usuario a actualizar contrincantes: {usuario}')
             cartas = self.cantidad_cartas(usuario)
             mensaje['cliente'] = usuario
@@ -229,7 +284,8 @@ class Servidor:
             self.usuarios[user] = {'nombre_usuario': user,
                                    'socket': socket,
                                    'cartas': [],
-                                   'jugando': False}
+                                   'jugando': False,
+                                   'uno': False}
             return True
         else:
             return False
@@ -286,8 +342,6 @@ class Servidor:
                             self.ciclo.invertir()
 
                         self.carta_jugada = (numero, color)
-                        print(self.carta_jugada)
-                        print(self.usuarios[data['cliente']]['cartas'])
                         self.usuarios[data['cliente']]['cartas'].remove(self.carta_jugada)
                         self.send({'cliente': data['cliente'],
                                    'evento': 'eliminar carta',
@@ -308,16 +362,20 @@ class Servidor:
                         self.usuarios[self.turno]['jugando'] = False
 
                 if self.cantidad_cartas(self.turno) >= parametros['cartas_maximas']:
-                    print('Jugador perdió')
+                    print(f'{self.turno} superó el máximo de cartas')
                     self.usuarios[self.turno]['cartas'].clear()
-                    self.send({'cliente': data['cliente'],
+                    self.send({'cliente': self.turno,
                                'evento': 'perdedor',
-                               'detalles': '-'}, self.usuarios[data['cliente']]['socket'])
+                               'detalles': '-'}, self.usuarios[self.turno]['socket'])
                     for usuario in self.usuarios:
                         print(f'usuarios eliminados: {usuario}')
                         self.update_cartas_contrincantes(usuario)
-                    self.ciclo.eliminar(data['cliente'])
+                    self.ciclo.eliminar(self.turno)
                     self.eliminado = True
+
+                if len(self.usuarios[self.turno]['cartas']) == 1:
+                    print('Te queda una carta')
+                    self.usuarios[self.turno]['uno'] = True
 
                 if self.ciclo.largo == 1:
                     print('Hay un ganador')
@@ -329,14 +387,16 @@ class Servidor:
                     self.ganador = self.turno
                     self.enviar_ganador()
 
-                if not self.usuarios[data['cliente']]['jugando'] and not self.color and not self.fin:
+                if not self.usuarios[self.turno]['jugando'] and not self.color and not self.fin:
                     if not self.eliminado:
                         print(self.usuarios)
                         for usuario in self.usuarios:
                             self.update_cartas_contrincantes(usuario)
                     self.jugando = True
+                    print(self.ciclo.lista)
                     self.turno = self.ciclo.count()
                     print(f'es el turno de {self.turno}')
+                    print(self.ciclo.contador)
                     self.usuarios[self.turno]['jugando'] = True
                     self.update_datos_pantalla()
 
@@ -403,21 +463,3 @@ class Turnos:
         self.lista = invertida
         while self.lista[self.contador] != usuario:
             self.count()
-
-if __name__ == '__main__':
-    ciclo = Turnos()
-    ciclo.agregar(1)
-    ciclo.agregar(2)
-    ciclo.agregar(3)
-    ciclo.agregar(4)
-    print(ciclo.lista)
-    print(ciclo.lista[0])
-    print(ciclo.count())
-    print(ciclo.count())
-    print(ciclo.count())
-    print(ciclo.count())
-    print(ciclo.count())
-    print(ciclo.count())
-    ciclo.eliminar(3)
-    print(ciclo.lista)
-    print(ciclo.count())

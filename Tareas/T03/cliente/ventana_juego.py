@@ -29,6 +29,7 @@ class VentanaJuego(WINDOW_NAME, BASE_CLASS):
 
     def init_signals(self):
         self.signal_cartas.connect(self.init_gui)
+        self.boton_gritar.clicked.connect(self.gritar)
 
     def init_gui(self, data):
 
@@ -62,7 +63,8 @@ class VentanaJuego(WINDOW_NAME, BASE_CLASS):
 
         elif data['evento'] == 'update cartas contrincantes':
             # agrego los otros jugadores
-            self.usuarios_conectados = data['usuarios_conectados']
+            if len(self.usuarios_conectados) == 0:
+                self.usuarios_conectados = data['usuarios_conectados']
             print(self.usuarios_conectados)
             indice_user = self.usuarios_conectados.index(self.usuario)
             indice_otro = self.usuarios_conectados.index(data['cliente'])
@@ -189,6 +191,11 @@ class VentanaJuego(WINDOW_NAME, BASE_CLASS):
             self.signal_enviar_mensajes.emit({'cliente': self.usuario,
                                               'evento': 'jugar carta',
                                               'detalles': [data['numero'], data['color']]})
+
+    def gritar(self):
+        self.signal_enviar_mensajes.emit({'cliente': self.usuario,
+                                          'evento': 'gritar',
+                                          'detalles': '-'})
 
 # http://josbalcaen.com/maya-python-pyqt-delete-all-widgets-in-a-layout/
 

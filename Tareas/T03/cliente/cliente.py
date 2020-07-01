@@ -146,6 +146,8 @@ class Cliente(QObject):
             self.signal_cartas.emit(data)
         elif data['evento'] == 'actualizar carta central':
             self.recibir_carta = False
+        elif data['evento'] == 'actualizar carta central_2':
+            self.recibir_carta = True
         elif data['evento'] == 'actualizar datos pantalla':
             self.signal_cartas.emit(data)
         elif data['evento'] == 'eliminar carta':
@@ -182,6 +184,8 @@ class Cliente(QObject):
             data['cliente'] = self.usuario
             self.send(data)
         elif data['evento'] == 'reiniciar':
+            self.send(data)
+        elif data['evento'] == 'gritar':
             self.send(data)
 
     def reiniciar(self):
