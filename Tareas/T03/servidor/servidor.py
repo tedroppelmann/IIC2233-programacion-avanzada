@@ -21,7 +21,6 @@ class Servidor:
         self.socket_server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.bind_and_listen()
         self.accept_connections()
-
         self.empezar = 0
         self.usuarios = dict()
         self.ciclo = Turnos()
@@ -178,17 +177,15 @@ class Servidor:
                                 carta = sacar_cartas(1)[0]
                                 self.usuarios[usuario]['cartas'].append(carta)
                                 self.enviar_carta(carta, self.usuarios[usuario]['socket'])
-
-                            if self.cantidad_cartas(data['cliente']) >= parametros['cartas_maximas']:
-                                print(f'{data["cliente"]} superó el máximo de cartas')
-                                self.usuarios[data['cliente']]['cartas'].clear()
-                                self.send({'cliente': data['cliente'],
+                            if self.cantidad_cartas(usuario) >= parametros['cartas_maximas']:
+                                print(f'{usuario} superó el máximo de cartas')
+                                self.usuarios[usuario]['cartas'].clear()
+                                self.send({'cliente': usuario,
                                            'evento': 'perdedor',
                                            'detalles': '-'},
-                                          self.usuarios[data['cliente']]['socket'])
-                                self.ciclo.eliminar(data['cliente'])
-
-                        self.usuarios[data['cliente']]['uno'] = False
+                                          self.usuarios[usuario]['socket'])
+                                self.ciclo.eliminar(usuario)
+                        self.usuarios[usuario]['uno'] = False
                         i += 1
                 if i == 0:
                     for i in range(0, parametros['cartas_penitencia']):
@@ -211,9 +208,6 @@ class Servidor:
                 for user in self.usuarios:
                     self.update_cartas_contrincantes(user)
                 self.update_datos_pantalla()
-                print(self.ciclo.lista)
-                print(self.turno)
-                print(self.ciclo.contador)
 
     def actualizar_carta_central(self):
         for usuario in self.usuarios:
