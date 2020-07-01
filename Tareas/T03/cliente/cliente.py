@@ -163,6 +163,9 @@ class Cliente(QObject):
                                           'evento': 'reiniciar',
                                           'detalles': '-'})
             self.reiniciar()
+        elif data['evento'] == 'jugada invalida':
+            print('JUGADA INVALIDA')
+            self.signal_cartas.emit(data)
 
     def enviar_mensaje_servidor(self, data):
         if data['evento'] == 'conectarse':

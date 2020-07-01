@@ -1,11 +1,12 @@
 
 from PyQt5 import uic
 from PyQt5.QtWidgets import QApplication
-from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSignal, QTimer
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtGui import QPixmap, QTransform
 import json
 import sys
+import time
 
 with open('parametros.json') as file:
     data = json.load(file)
@@ -26,6 +27,12 @@ class VentanaJuego(WINDOW_NAME, BASE_CLASS):
         self.cartas_jugadores = dict()
         self.reverso = None
         self.nuevo = True
+        self.indice = 0
+
+        self.timer = QTimer()
+        self.timer.setInterval(500)
+        self.timer.timeout.connect(self.borrar_valido)
+        self.timer.start()
 
     def init_signals(self):
         self.signal_cartas.connect(self.init_gui)
@@ -159,6 +166,9 @@ class VentanaJuego(WINDOW_NAME, BASE_CLASS):
             self.nombre_jugador_abajo.setText('¡PERDISTE! Ahora estás en MODO ESPECTADOR')
             self.nombre_jugador_abajo.setStyleSheet("color: white")
 
+        elif data['evento'] == 'jugada invalida':
+            self.indice += 1
+
         if data['evento'] == 'fin del juego':
             print('llega a la ventana')
             self.hide()
@@ -196,6 +206,19 @@ class VentanaJuego(WINDOW_NAME, BASE_CLASS):
         self.signal_enviar_mensajes.emit({'cliente': self.usuario,
                                           'evento': 'gritar',
                                           'detalles': '-'})
+
+    def borrar_valido(self):
+        if self.indice == 1:
+            self.jugada_invalida.setText('JUGADA INVÁLIDA')
+            self.jugada_invalida.setStyleSheet("color: white")
+            self.show()
+            self.indice += 1
+        elif self.indice == 2:
+            self.jugada_invalida.setText('')
+            self.show()
+            self.indice = 0
+        elif self.indice == 3:
+            self.timer.stop()
 
 # http://josbalcaen.com/maya-python-pyqt-delete-all-widgets-in-a-layout/
 
