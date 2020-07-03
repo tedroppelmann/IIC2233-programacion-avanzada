@@ -1,4 +1,3 @@
-
 import socket
 import threading
 import json
@@ -70,6 +69,8 @@ class Servidor:
             self.tabla.agregar_fila(value['cliente'], value['evento'], ','.join(value['detalles']))
         elif value['evento'] == 'update cartas contrincantes':
             self.tabla.agregar_fila(value['cliente receptor'], value['evento'], f'{value["cliente"]}:{value["detalles"]}')
+        elif value['evento'] == 'conectarse' and self.usuarios[value['cliente']]['socket'] != sock:
+            self.tabla.agregar_fila(value['cliente receptor'], value['evento'], f'{value["cliente"]}:{value["detalles"]}')
         else:
             self.tabla.agregar_fila(value['cliente'], value['evento'], value['detalles'])
 
@@ -96,7 +97,7 @@ class Servidor:
                 if self.empezar == 0 and user is not None:
                     self.ciclo.eliminar(user)
                     del self.usuarios[user]
-                    self.update_sala_espera({'cliente': user,'evento': 'cerrar',
+                    self.update_sala_espera({'cliente': user,'evento': 'cerrar', 'detalles': '-',
                                             'usuarios_conectados': self.ciclo.lista,
                                             'cantidad_jugadores': self.cantidad_jugadores})
                 elif user is not None:
@@ -223,6 +224,7 @@ class Servidor:
 
     def update_sala_espera(self, response):
         for usuario in self.ciclo.lista:
+            response['cliente receptor'] = usuario
             self.send(response, self.usuarios[usuario]['socket'])
 
     def enviar_carta(self, carta, usuario):
