@@ -8,6 +8,7 @@ from ventana_espera import VentanaEspera
 from ventana_juego import VentanaJuego
 from ventana_color import VentanaColor
 from ventana_final import VentanaFinal
+from error import VentanaError
 
 
 if __name__ == '__main__':
@@ -24,6 +25,7 @@ if __name__ == '__main__':
     ventana_juego = VentanaJuego()
     ventana_color = VentanaColor()
     ventana_final = VentanaFinal()
+    ventana_error = VentanaError()
     cliente = Cliente()
 
     # Conexión señales
@@ -44,6 +46,10 @@ if __name__ == '__main__':
     # final del juego:
     ventana_final.signal_final = cliente.signal_final
     ventana_inicio.signal_volver = ventana_final.signal_volver
+    # error servidor:
+    ventana_error.signal_error = cliente.signal_error
+    ventana_espera.signal_error_espera = cliente.signal_error_espera
+    ventana_inicio.signal_error_inicio = cliente.signal_error_inicio
 
     # Iniciar señales
     ventana_inicio.init_signals()
@@ -51,7 +57,9 @@ if __name__ == '__main__':
     ventana_juego.init_signals()
     ventana_color.init_signals()
     ventana_final.init_signal()
+    ventana_error.init_signal()
     cliente.init_signals()
+
 
     ventana_inicio.show()
     sys.exit(app.exec_())

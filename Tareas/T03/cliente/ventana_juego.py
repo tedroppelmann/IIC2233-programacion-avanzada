@@ -189,6 +189,9 @@ class VentanaJuego(WINDOW_NAME, BASE_CLASS):
             self.nombre_jugador_izquierda.setText('')
             self.nombre_jugador_abajo.setText('')
 
+        elif data['evento'] == 'error servidor':
+            self.hide()
+
         else:
             self.show()
 

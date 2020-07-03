@@ -17,6 +17,7 @@ class VentanaInicio(WINDOW_NAME, BASE_CLASS):
     signal_validar_usuario = None
     signal_sala_espera = pyqtSignal(dict)
     signal_volver = None
+    signal_error_inicio = None
 
     def __init__(self):
         super().__init__()
@@ -27,6 +28,10 @@ class VentanaInicio(WINDOW_NAME, BASE_CLASS):
         self.boton_entrar.clicked.connect(self.ingresar)
         self.signal_validar_usuario.connect(self.validar_usuario)
         self.signal_volver.connect(self.init_gui)
+        self.signal_error_inicio.connect(self.error)
+
+    def error(self):
+        self.hide()
 
     def init_gui(self):
         imagen = QPixmap((data['logo_path']))
@@ -44,18 +49,3 @@ class VentanaInicio(WINDOW_NAME, BASE_CLASS):
         else:
             self.signal_sala_espera.emit(data)
             self.hide()
-
-
-if __name__ == '__main__':
-    def hook(type, value, traceback):
-        print(type)
-        print(traceback)
-    sys.__excepthook__ = hook
-
-    app = QApplication([])
-
-    # Instancio clases
-    ventana_inicio = VentanaInicio()
-
-    ventana_inicio.show()
-    sys.exit(app.exec_())

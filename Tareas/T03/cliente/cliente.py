@@ -5,6 +5,7 @@ import json
 from PyQt5.QtCore import QObject
 from PyQt5.QtCore import pyqtSignal
 import base64
+import sys
 
 with open('parametros.json') as file:
     data = json.load(file)
@@ -24,6 +25,9 @@ class Cliente(QObject):
     signal_elegir_color = pyqtSignal()
     signal_color_elegido = None
     signal_final = pyqtSignal(dict)
+    signal_error = pyqtSignal()
+    signal_error_espera = pyqtSignal(dict)
+    signal_error_inicio = pyqtSignal(dict)
 
     def __init__(self):
         super().__init__()
@@ -42,9 +46,7 @@ class Cliente(QObject):
             self.listen()
 
         except ConnectionError:
-            print("Conexión terminada.")
-            self.socket_client.close()
-            exit()
+            self.terminar_conexion()
 
     def init_signals(self):
         self.signal_usuario.connect(self.enviar_mensaje_servidor)
@@ -68,71 +70,79 @@ class Cliente(QObject):
 
     def listen_thread(self):
         while True:
-            id_color_bytes = self.socket_client.recv(4)
-            id_color = int.from_bytes(id_color_bytes, byteorder='big')
-            if id_color == 0:
-                response_bytes_length = self.socket_client.recv(4)
-                response_length = int.from_bytes(
-                    response_bytes_length, byteorder='big')
-                response = bytearray()
-                # Recibimos datos hasta que alcancemos la totalidad de los datos
-                # indicados en los primeros 4 bytes recibidos.
-                while len(response) < response_length:
-                    read_length = min(4096, response_length - len(response))
-                    response.extend(self.socket_client.recv(read_length))
+            try:
+                id_color_bytes = self.socket_client.recv(4)
+                id_color = int.from_bytes(id_color_bytes, byteorder='big')
+                if id_color == 0:
+                    response_bytes_length = self.socket_client.recv(4)
+                    response_length = int.from_bytes(
+                        response_bytes_length, byteorder='big')
+                    response = bytearray()
+                    # Recibimos datos hasta que alcancemos la totalidad de los datos
+                    # indicados en los primeros 4 bytes recibidos.
+                    while len(response) < response_length:
+                        read_length = min(4096, response_length - len(response))
+                        response.extend(self.socket_client.recv(read_length))
 
-                received = response.decode()
-                decoded = json.loads(received)
+                    received = response.decode()
+                    decoded = json.loads(received)
 
-                self.recibir_mensaje_servidor(decoded)
-
-            else:
-                largo_color_bytes = self.socket_client.recv(4)
-                largo_color = int.from_bytes(largo_color_bytes, byteorder='little')
-                color = bytearray()
-                while len(color) < largo_color:
-                    read_length = min(4096, largo_color - len(color))
-                    color.extend(self.socket_client.recv(read_length))
-
-                id_numero_bytes = self.socket_client.recv(4)
-                id_numero = int.from_bytes(id_numero_bytes, byteorder='big')
-                largo_numero_bytes = self.socket_client.recv(4)
-                largo_numero = int.from_bytes(largo_numero_bytes, byteorder='little')
-                numero = bytearray()
-                while len(numero) < largo_numero:
-                    read_length = min(4096, largo_numero - len(numero))
-                    numero.extend(self.socket_client.recv(read_length))
-
-                id_imagen_bytes = self.socket_client.recv(4)
-                id_imagen = int.from_bytes(id_imagen_bytes, byteorder='big')
-                largo_imagen_bytes = self.socket_client.recv(4)
-                largo_imagen = int.from_bytes(largo_imagen_bytes, byteorder='little')
-                imagen = bytearray()
-                while len(imagen) < largo_imagen:
-                    read_length = min(4096, largo_imagen - len(imagen))
-                    imagen.extend(self.socket_client.recv(read_length))
-
-                color_decode = color.decode()
-                numero_decode = numero.decode()
-                imagen_decode = base64.decodebytes(imagen)
-
-                if numero_decode == 'reverso':
-                    self.reverso = imagen_decode
-                    self.signal_cartas.emit({'evento': 'carta reverso', 'detalles': self.reverso})
+                    self.recibir_mensaje_servidor(decoded)
 
                 else:
-                    if self.recibir_carta:
-                        carta = {'evento':'carta jugador',
-                                 'color':color_decode,
-                                 'numero': numero_decode,
-                                 'imagen': imagen_decode}
-                        self.signal_cartas.emit(carta)
+                    largo_color_bytes = self.socket_client.recv(4)
+                    largo_color = int.from_bytes(largo_color_bytes, byteorder='little')
+                    color = bytearray()
+                    while len(color) < largo_color:
+                        read_length = min(4096, largo_color - len(color))
+                        color.extend(self.socket_client.recv(read_length))
+
+                    id_numero_bytes = self.socket_client.recv(4)
+                    id_numero = int.from_bytes(id_numero_bytes, byteorder='big')
+                    largo_numero_bytes = self.socket_client.recv(4)
+                    largo_numero = int.from_bytes(largo_numero_bytes, byteorder='little')
+                    numero = bytearray()
+                    while len(numero) < largo_numero:
+                        read_length = min(4096, largo_numero - len(numero))
+                        numero.extend(self.socket_client.recv(read_length))
+
+                    id_imagen_bytes = self.socket_client.recv(4)
+                    id_imagen = int.from_bytes(id_imagen_bytes, byteorder='big')
+                    largo_imagen_bytes = self.socket_client.recv(4)
+                    largo_imagen = int.from_bytes(largo_imagen_bytes, byteorder='little')
+                    imagen = bytearray()
+                    while len(imagen) < largo_imagen:
+                        read_length = min(4096, largo_imagen - len(imagen))
+                        imagen.extend(self.socket_client.recv(read_length))
+
+                    color_decode = color.decode()
+                    numero_decode = numero.decode()
+                    imagen_decode = base64.decodebytes(imagen)
+
+                    if numero_decode == 'reverso':
+                        self.reverso = imagen_decode
+                        self.signal_cartas.emit({'evento': 'carta reverso', 'detalles': self.reverso})
+
                     else:
-                        carta = {'evento': 'carta central',
-                                 'color': color_decode,
-                                 'numero': numero_decode,
-                                 'imagen': imagen_decode}
-                        self.signal_cartas.emit(carta)
+                        if self.recibir_carta:
+                            carta = {'evento':'carta jugador',
+                                     'color':color_decode,
+                                     'numero': numero_decode,
+                                     'imagen': imagen_decode}
+                            self.signal_cartas.emit(carta)
+                        else:
+                            carta = {'evento': 'carta central',
+                                     'color': color_decode,
+                                     'numero': numero_decode,
+                                     'imagen': imagen_decode}
+                            self.signal_cartas.emit(carta)
+
+            except json.decoder.JSONDecodeError or ConnectionResetError:
+                self.signal_cartas.emit({'evento': 'error servidor'})
+                self.signal_error_espera.emit({'evento': 'error servidor'})
+                self.signal_error_inicio.emit({'evento': 'error servidor'})
+                self.signal_error.emit()
+                break
 
     def recibir_mensaje_servidor(self, data):
         print(data)
@@ -170,9 +180,6 @@ class Cliente(QObject):
     def enviar_mensaje_servidor(self, data):
         if data['evento'] == 'conectarse':
             self.send(data)
-        elif data['evento'] == 'cerrar':
-            data['cliente'] = self.usuario
-            self.send(data)
         elif data['evento'] == 'empezar':
             # GUARDAR USUARIOS ACA
             data['cliente'] = self.usuario
@@ -197,3 +204,8 @@ class Cliente(QObject):
         self.cartas_usuario = list()
         self.recibir_carta = True
         self.reverso = None
+
+    def terminar_conexion(self):
+        print('Conexión terminada señores')
+        self.socket_client.close()
+        exit()

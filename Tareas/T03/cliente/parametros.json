@@ -1,5 +1,5 @@
 {
   "host" : "localhost",
-  "port" : 8080,
+  "port" : 8082,
   "logo_path" : "../sprites/Logo_1.png"
 }

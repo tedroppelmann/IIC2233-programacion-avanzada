@@ -79,10 +79,33 @@ class Servidor:
                 decoded = json.loads(received)
                 if received is not None:
                     self.analizar_mensaje(decoded, client_socket)
-            except json.decoder.JSONDecodeError:
+
+            except json.decoder.JSONDecodeError or ConnectionResetError:
+                user = None
+                for usuario in self.usuarios:
+                    if self.usuarios[usuario]['socket'] == client_socket:
+                        user = usuario
+                if self.empezar == 0 and user is not None:
+                    self.ciclo.eliminar(user)
+                    del self.usuarios[user]
+                    self.update_sala_espera({'cliente': user,'evento': 'cerrar',
+                                            'usuarios_conectados': self.ciclo.lista,
+                                            'cantidad_jugadores': self.cantidad_jugadores})
+                elif user is not None:
+                    self.usuarios[user]['cartas'].clear()
+                    if user == self.turno:
+                        self.usuarios[self.turno]['jugando'] = False
+                        self.turno = self.ciclo.count()
+                        self.usuarios[self.turno]['jugando'] = True
+                    self.ciclo.eliminar(user)
+                    for usuario in self.usuarios:
+                        self.update_cartas_contrincantes(usuario)
+                    del self.usuarios[user]
+                    self.update_datos_pantalla()
+                    if len(self.ciclo.lista) == 1:
+                        self.ganador = self.ciclo.lista[0]
+                        self.enviar_ganador()
                 break
-            except ConnectionResetError:
-                print("Error de conexión con el cliente!")
 
     def analizar_mensaje(self, data, client_socket):
         print("Comando recibido:", data)
@@ -100,12 +123,6 @@ class Servidor:
             else:
                 response['detalles'] = 'rechazado'
                 self.send(response, client_socket)
-        elif data['evento'] == 'cerrar':
-            response['evento'] = 'cerrar'
-            self.ciclo.eliminar(data['cliente'])
-            del self.usuarios[data['cliente']]
-            response['usuarios_conectados'] = self.ciclo.lista
-            self.update_sala_espera(response)
         elif data['evento'] == 'empezar':
             self.enviar_carta(('reverso', 'reverso'), self.usuarios[data['cliente']]['socket'])
             self.empezar += 1
@@ -148,10 +165,7 @@ class Servidor:
             self.update_datos_pantalla()
             self.carta_color_especial = None
             self.carta_jugada = ('color', data['detalles'])
-            self.send({'cliente': data['cliente'],
-                       'evento': 'eliminar carta',
-                       'detalles': ('color', '')},
-                      self.usuarios[data['cliente']]['socket'])
+            self.enviar_mensaje(data['cliente'], 'eliminar carta', ('color', ''))
             self.actualizar_carta_central()
             self.usuarios[self.turno]['jugando'] = True
         elif data['evento'] == 'reiniciar':
@@ -174,10 +188,7 @@ class Servidor:
                                 if self.cantidad_cartas(usuario) >= parametros['cartas_maximas']:
                                     print(f'{usuario} superó el máximo de cartas')
                                     self.usuarios[usuario]['cartas'].clear()
-                                    self.send({'cliente': usuario,
-                                               'evento': 'perdedor',
-                                               'detalles': '-'},
-                                              self.usuarios[usuario]['socket'])
+                                    self.enviar_mensaje(usuario, 'perdedor', '-')
                                     self.ciclo.eliminar(usuario)
                             self.usuarios[usuario]['uno'] = False
                             i += 1
@@ -189,9 +200,7 @@ class Servidor:
                         if self.cantidad_cartas(data['cliente']) >= parametros['cartas_maximas']:
                             print(f'{data["cliente"]} superó el máximo de cartas')
                             self.usuarios[data['cliente']]['cartas'].clear()
-                            self.send({'cliente': data['cliente'],
-                                       'evento': 'perdedor',
-                                       'detalles': '-'}, self.usuarios[data['cliente']]['socket'])
+                            self.enviar_mensaje(data['cliente'], 'perdedor', '-')
                             self.ciclo.eliminar(data['cliente'])
                             if data['cliente'] == self.turno:
                                 self.usuarios[self.turno]['jugando'] = False
@@ -242,12 +251,15 @@ class Servidor:
         mensaje = bytearray(bcolor + bnumero + bimagen)
         sock.send(mensaje)
 
+    def enviar_mensaje(self, cliente, evento, detalles):
+        self.send({'cliente': cliente, 'evento': evento, 'detalles': detalles},
+                  self.usuarios[cliente]['socket'])
+
     def update_cartas_contrincantes(self, user):
         mensaje = dict()
         mensaje['evento'] = 'update cartas contrincantes'
         mensaje['usuarios_conectados'] = self.ciclo.lista
         for usuario in self.usuarios:
-            print(f'Usuario a actualizar contrincantes: {usuario}')
             cartas = self.cantidad_cartas(usuario)
             mensaje['cliente'] = usuario
             mensaje['detalles'] = cartas
@@ -282,7 +294,6 @@ class Servidor:
     def jugar_turno(self, data):
         print(f'Es el turno de: {self.turno}')
         if self.turno == data['cliente']:
-            print('JUGADOR VALIDO')
             self.eliminado = False
             numero = data['detalles'][0]
             color = data['detalles'][1]
@@ -290,11 +301,8 @@ class Servidor:
                 if self.carta_jugada[0] == '+2' and self.suma > 0:
                     if self.carta_jugada[0] == numero:
                         self.carta_jugada = (numero, color)
-                        self.usuarios[data['cliente']]['cartas'].remove(self.carta_jugada)
-                        self.send({'cliente': data['cliente'],
-                                   'evento': 'eliminar carta',
-                                   'detalles': self.carta_jugada},
-                                  self.usuarios[data['cliente']]['socket'])
+                        self.usuarios[self.turno]['cartas'].remove(self.carta_jugada)
+                        self.enviar_mensaje(self.turno, 'eliminar carta', self.carta_jugada)
                         self.actualizar_carta_central()
                         self.suma += 2
                         self.accion = f'ROBA {self.suma} CARTAS'
@@ -302,32 +310,24 @@ class Servidor:
                     elif data['detalles'][0] == 'mazo':
                         for i in range(0, self.suma):
                             carta = sacar_cartas(1)[0]
-                            self.usuarios[data['cliente']]['cartas'].append(carta)
-                            self.enviar_carta(carta, self.usuarios[data['cliente']]['socket'])
+                            self.usuarios[self.turno]['cartas'].append(carta)
+                            self.enviar_carta(carta, self.usuarios[self.turno]['socket'])
                         self.accion = 'ROBA 1 CARTA'
                         self.suma = 0
                         self.usuarios[self.turno]['jugando'] = False
                     else:
-                        self.send({'cliente': data['cliente'],
-                                   'evento': 'jugada invalida',
-                                   'detalles': '-'},
-                                  self.usuarios[data['cliente']]['socket'])
+                        self.enviar_mensaje(self.turno, 'jugada invalida', '-')
                 elif numero == 'color':
-                    self.send({'cliente':data['cliente'],
-                               'evento': 'activar carta color',
-                               'detalles': '-'}, self.usuarios[data['cliente']]['socket'])
+                    self.enviar_mensaje(self.turno, 'activar carta color', '-')
                     self.color = True
-                    self.usuarios[data['cliente']]['cartas'].remove(('color',''))
+                    self.usuarios[self.turno]['cartas'].remove(('color',''))
                 else:
                     if self.carta_jugada[0] == numero or self.carta_jugada[1] == color:
                         if numero == 'sentido':
                             self.ciclo.invertir()
                         self.carta_jugada = (numero, color)
-                        self.usuarios[data['cliente']]['cartas'].remove(self.carta_jugada)
-                        self.send({'cliente': data['cliente'],
-                                   'evento': 'eliminar carta',
-                                   'detalles': self.carta_jugada},
-                                  self.usuarios[data['cliente']]['socket'])
+                        self.usuarios[self.turno]['cartas'].remove(self.carta_jugada)
+                        self.enviar_mensaje(self.turno, 'eliminar carta', self.carta_jugada)
                         self.actualizar_carta_central()
                         self.accion = 'ROBA 1 CARTA'
                         self.usuarios[self.turno]['jugando'] = False
@@ -336,23 +336,16 @@ class Servidor:
                             self.accion = f'ROBA {self.suma} CARTAS'
                     elif data['detalles'][0] == 'mazo':
                         carta = sacar_cartas(1)[0]
-                        self.usuarios[data['cliente']]['cartas'].append(carta)
-                        self.enviar_carta(carta, self.usuarios[data['cliente']]['socket'])
+                        self.usuarios[self.turno]['cartas'].append(carta)
+                        self.enviar_carta(carta, self.usuarios[self.turno]['socket'])
                         self.accion = 'ROBA 1 CARTA'
                         self.usuarios[self.turno]['jugando'] = False
                     else:
-                        self.send({'cliente': data['cliente'],
-                                   'evento': 'jugada invalida',
-                                   'detalles': '-'},
-                                  self.usuarios[data['cliente']]['socket'])
+                        self.enviar_mensaje(self.turno, 'jugada invalida', '-')
                 if self.cantidad_cartas(self.turno) >= parametros['cartas_maximas']:
-                    print(f'{self.turno} superó el máximo de cartas')
                     self.usuarios[self.turno]['cartas'].clear()
-                    self.send({'cliente': self.turno,
-                               'evento': 'perdedor',
-                               'detalles': '-'}, self.usuarios[self.turno]['socket'])
+                    self.enviar_mensaje(self.turno, 'perdedor', '-')
                     for usuario in self.usuarios:
-                        print(f'usuarios eliminados: {usuario}')
                         self.update_cartas_contrincantes(usuario)
                     self.ciclo.eliminar(self.turno)
                     self.eliminado = True
@@ -381,16 +374,10 @@ class Servidor:
                     self.update_datos_pantalla()
 
     def enviar_ganador(self):
-        self.send({'cliente': self.ganador,
-                   'evento': 'fin del juego',
-                   'detalles': 'ganador'},
-                  self.usuarios[self.ganador]['socket'])
+        self.enviar_mensaje(self.ganador, 'fin del juego', 'ganador')
         for usuario in self.usuarios:
             if usuario != self.ganador:
-                self.send({'cliente': usuario,
-                           'evento': 'fin del juego',
-                           'detalles': 'perdedor'},
-                          self.usuarios[usuario]['socket'])
+                self.enviar_mensaje(usuario, 'fin del juego', 'perdedor')
         self.fin = True
 
     def reiniciar_datos(self):

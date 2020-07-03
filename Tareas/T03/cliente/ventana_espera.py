@@ -18,6 +18,7 @@ class VentanaEspera(WINDOW_NAME, BASE_CLASS):
     signal_sala_espera = None
     signal_usuario_espera = pyqtSignal(dict)
     signal_sala_espera_servidor = None
+    signal_error_espera = None
 
     def __init__(self):
         super().__init__()
@@ -28,10 +29,14 @@ class VentanaEspera(WINDOW_NAME, BASE_CLASS):
     def init_signals(self):
         self.signal_sala_espera.connect(self.mostrar)
         self.signal_sala_espera_servidor.connect(self.mostrar)
+        self.signal_error_espera.connect(self.error)
 
     def init_gui(self):
         imagen = QPixmap((data['logo_path']))
         self.logo.setPixmap(imagen)
+
+    def error(self):
+        self.hide()
 
     def mostrar(self, data):
         conectados = data['usuarios_conectados']
@@ -58,10 +63,8 @@ class VentanaEspera(WINDOW_NAME, BASE_CLASS):
                                              'detalles': '-'})
             self.hide()
 
-    def closeEvent(self, event):
-        if event:
-            self.signal_usuario_espera.emit({'evento': 'cerrar', 'detalles': '-'})
-        self.deleteLater()
+        if data['evento'] == 'error servidor':
+            self.hide()
 
 if __name__ == '__main__':
     def hook(type, value, traceback):
