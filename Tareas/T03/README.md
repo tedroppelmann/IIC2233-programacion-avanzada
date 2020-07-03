@@ -74,22 +74,30 @@ Creo haber implementado la mayoría de lo que se pedía de la tarea en mi progra
 * **Bonus**: ❌ No alcancé a hacer ningún bonus 😞
 
 ## Ejecución :computer:
-El módulo principal de la tarea a ejecutar es  ```main.py```. 
+* **Servidor**: El módulo principal a ejecutar es  ```main.py```. 
+* **Cliente**: El módulo principal a ejecutar es  ```main.py```. 
 
 ## Librerías :books:
 ### Librerías externas utilizadas
 La lista de librerías externas que utilicé fue la siguiente:
+* **Servidor**:
+   1. ```json```: ```dumps```,```loads```,```load```
+   2. ```socket```: ```socket```, ```bind```, ```listen```, ```accept```
+   3. ```threading```: ```Thread```, ```Lock```
+   4. ```base64```: ```b64enconde```,```b64encodebytes```
+   5. ```time```: ```sleep```
+   6. ```random```: ```choice```
 
-1. ```sys```: ```exit()```
-2. ```os```: ```path.join()```
-3. ```collections```: ```defauldict()```
-4. ```time```: ```sleep()```
-5. ```random```: ```randint```, ```choice```
-6. ```math```: ```floor()```
-7. ```PyQt5```: ```uic```
-8. ```PyQt5.QtGui```: ```QPixmap```
-9. ```PyQt5.QtWidgets```: ```QLabel```, ```QApplication```
-10. ```PyQt5.QtCore```: ```pyqtSignal```, ```Qt```, ```QRect```, ```QThread```, ```QObject```, ```QMimeData```
+* **Cliente**:
+   1. ```sys```: ```exit()```
+   2. ```PyQt5.QtWidgets```: ```QLabel```, ```QApplication```
+   3. ```PyQt5```: ```uic```
+   4. ```PyQt5.QtCore```: ```pyqtSignal```, ```QTimer```, ```QObject```
+   5. ```PyQt5.QtGui```: ```QPixmap```, ```QTransform```
+   6. ```json```: ```dumps```,```loads```,```load```
+   7. ```threading```: ```Thread```
+   8. ```socket```: ```socket```, ```connect```
+   9. ```base64```: ```b64decodebytes```
 
 ### Librerías propias
 Por otro lado, los módulos que fueron creados fueron los siguientes:
