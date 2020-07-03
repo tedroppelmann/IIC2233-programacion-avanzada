@@ -43,19 +43,3 @@ class Turnos:
         self.lista = invertida
         while self.lista[self.contador] != usuario:
             self.count()
-
-if __name__ == '__main__':
-    ciclo = Turnos()
-    ciclo.agregar(1)
-    ciclo.agregar(2)
-    ciclo.agregar(3)
-    ciclo.agregar(4)
-    print(ciclo.lista)
-    turno = ciclo.lista[0]
-    print(turno)
-    turno = ciclo.count()
-    print(turno)
-    ciclo.eliminar(2)
-    print(ciclo.lista)
-    turno = ciclo.count()
-    print(turno)

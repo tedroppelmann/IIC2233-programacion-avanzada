@@ -1,6 +1,6 @@
 {
   "host" : "localhost",
-  "port" : 8082,
+  "port" : 8080,
   "cantidad_jugadores" : 4,
   "cartas_iniciales": 4,
   "cartas_maximas": 10,

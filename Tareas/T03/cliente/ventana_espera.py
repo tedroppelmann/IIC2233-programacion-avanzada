@@ -5,7 +5,6 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtGui import QPixmap
 import json
-import os
 import sys
 
 with open('parametros.json') as file:

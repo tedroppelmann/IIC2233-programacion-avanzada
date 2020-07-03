@@ -6,7 +6,6 @@ from PyQt5.QtWidgets import QLabel
 from PyQt5.QtGui import QPixmap, QTransform
 import json
 import sys
-import time
 
 with open('parametros.json') as file:
     data = json.load(file)
