@@ -57,24 +57,9 @@ class VentanaEspera(WINDOW_NAME, BASE_CLASS):
         self.show()
 
         if 'ESPERANDO...' not in valores:
-            print('Todos los usuarios conectados')
             self.signal_usuario_espera.emit({'evento': 'empezar',
                                              'detalles': '-'})
             self.hide()
 
         if data['evento'] == 'error servidor':
             self.hide()
-
-if __name__ == '__main__':
-    def hook(type, value, traceback):
-        print(type)
-        print(traceback)
-    sys.__excepthook__ = hook
-
-    app = QApplication([])
-
-    # Instancio clases
-    ventana_espera = VentanaEspera()
-
-    ventana_espera.show()
-    sys.exit(app.exec_())

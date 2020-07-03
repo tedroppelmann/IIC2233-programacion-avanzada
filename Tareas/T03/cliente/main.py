@@ -10,7 +10,6 @@ from ventana_color import VentanaColor
 from ventana_final import VentanaFinal
 from error import VentanaError
 
-
 if __name__ == '__main__':
     def hook(type, value, traceback):
         print(type)
@@ -60,7 +59,5 @@ if __name__ == '__main__':
     ventana_error.init_signal()
     cliente.init_signals()
 
-
     ventana_inicio.show()
     sys.exit(app.exec_())
-

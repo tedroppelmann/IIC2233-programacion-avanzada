@@ -71,7 +71,6 @@ class VentanaJuego(WINDOW_NAME, BASE_CLASS):
             # agrego los otros jugadores
             if len(self.usuarios_conectados) == 0:
                 self.usuarios_conectados = data['usuarios_conectados']
-            print(self.usuarios_conectados)
             indice_user = self.usuarios_conectados.index(self.usuario)
             indice_otro = self.usuarios_conectados.index(data['cliente'])
             diferencia = indice_otro - indice_user
@@ -129,7 +128,6 @@ class VentanaJuego(WINDOW_NAME, BASE_CLASS):
             self.nuevo = False
 
         elif data['evento'] == 'carta reverso':
-            print('Se guarda el reverso')
             pixmap = QPixmap()
             pixmap.loadFromData(data['detalles'], 'png')
             self.reverso = pixmap
@@ -142,7 +140,6 @@ class VentanaJuego(WINDOW_NAME, BASE_CLASS):
             mazo.clicked.connect(self.label_click)
 
         elif data['evento'] == 'actualizar datos pantalla':
-            print('LLEGA CAMBIO DE PANTALLA')
             self.turno.setText(data['turno'])
             self.turno.setStyleSheet("color: white")
             self.accion.setText(data['accion'])
@@ -160,7 +157,6 @@ class VentanaJuego(WINDOW_NAME, BASE_CLASS):
                     i += 1
 
         elif data['evento'] == 'perdedor':
-            print('CAMBIAR PERDEDOR')
             clearLayout(self.cartas_usuario)
             self.nombre_jugador_abajo.setText('¡PERDISTE! Ahora estás en MODO ESPECTADOR')
             self.nombre_jugador_abajo.setStyleSheet("color: white")
@@ -169,7 +165,6 @@ class VentanaJuego(WINDOW_NAME, BASE_CLASS):
             self.indice += 1
 
         if data['evento'] == 'fin del juego':
-            print('llega a la ventana')
             self.hide()
             self.usuario = None
             self.cartas_jugador = list()
@@ -245,17 +240,3 @@ class QLabelClick(QLabel):
 
     def mouseReleaseEvent(self, event):
         self.clicked.emit({'color': self.color, 'numero': self.numero})
-
-if __name__ == '__main__':
-    def hook(type, value, traceback):
-        print(type)
-        print(traceback)
-    sys.__excepthook__ = hook
-
-    app = QApplication([])
-
-    # Instancio clases
-    ventana_juego = VentanaJuego()
-
-    ventana_juego.show()
-    sys.exit(app.exec_())

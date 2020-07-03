@@ -174,7 +174,6 @@ class Cliente(QObject):
                                           'detalles': '-'})
             self.reiniciar()
         elif data['evento'] == 'jugada invalida':
-            print('JUGADA INVALIDA')
             self.signal_cartas.emit(data)
 
     def enviar_mensaje_servidor(self, data):
@@ -206,6 +205,6 @@ class Cliente(QObject):
         self.reverso = None
 
     def terminar_conexion(self):
-        print('Conexión terminada señores')
+        print('Conexión terminada')
         self.socket_client.close()
         exit()
