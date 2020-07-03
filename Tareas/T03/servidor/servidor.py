@@ -7,7 +7,6 @@ from generador_de_mazos import sacar_cartas
 import random
 from turnos import Turnos
 from tabla import Tabla
-
 with open('parametros.json') as file:
     parametros = json.load(file)
 
@@ -65,18 +64,18 @@ class Servidor:
         numero_validacion = 0
         msg_tipo = numero_validacion.to_bytes(4, byteorder='big')
         sock.send(msg_tipo + msg_length + msg_bytes)
-        if type(value['detalles']) == tuple:
-            self.tabla.agregar_fila(value['cliente'], value['evento'], ','.join(value['detalles']))
-        elif value['evento'] == 'update cartas contrincantes':
-            self.tabla.agregar_fila(value['cliente receptor'], value['evento'], f'{value["cliente"]}:{value["detalles"]}')
+        if value['evento'] == 'update cartas contrincantes':
+            self.tabla.add(value['cliente receptor'],'OUT', value['evento'],
+                           str(len(msg_bytes)), value)
         elif value['evento'] == 'conectarse' and self.usuarios[value['cliente']]['socket'] != sock:
-            self.tabla.agregar_fila(value['cliente receptor'], value['evento'], f'{value["cliente"]}:{value["detalles"]}')
+            self.tabla.add(value['cliente receptor'],'OUT', value['evento'],
+                           str(len(msg_bytes)), value)
         else:
-            self.tabla.agregar_fila(value['cliente'], value['evento'], value['detalles'])
+            self.tabla.add(value['cliente'],'OUT', value['evento'], str(len(msg_bytes)), value)
 
     def listen_client_thread(self, client_socket):
         self.id += 1
-        self.tabla.agregar_fila(self.id, 'conexión a servidor', '-')
+        self.tabla.add(self.id, '-', 'conexión a servidor', '-', '-')
         while True:
             try:
                 response_bytes_length = client_socket.recv(4)
@@ -89,6 +88,8 @@ class Servidor:
                 decoded = json.loads(received)
                 if received is not None:
                     self.analizar_mensaje(decoded, client_socket)
+                    self.tabla.add(decoded['cliente'],'IN', decoded['evento'],
+                                   response_length, decoded)
             except json.decoder.JSONDecodeError or ConnectionResetError:
                 user = None
                 for usuario in self.usuarios:
@@ -116,7 +117,7 @@ class Servidor:
                         self.ganador = self.ciclo.lista[0]
                         self.enviar_ganador()
                 if user is not None:
-                    self.tabla.agregar_fila(user, 'desconexión a servidor', '-')
+                    self.tabla.add(user, '-','desconexión a servidor', '-', '-')
                 break
 
     def analizar_mensaje(self, data, client_socket):
@@ -136,7 +137,7 @@ class Servidor:
         elif data['evento'] == 'empezar':
             self.enviar_carta(('reverso', 'reverso'), data['cliente'])
             self.empezar += 1
-            self.poblar_cartas(data['cliente'])
+            self.usuarios[data['cliente']]['cartas'] = sacar_cartas(parametros['cartas_iniciales'])
             for carta in self.usuarios[data['cliente']]['cartas']:
                 self.enviar_carta(carta, data['cliente'])
             time.sleep(0.5)
@@ -209,18 +210,21 @@ class Servidor:
                                 self.usuarios[self.turno]['jugando'] = False
                                 self.turno = self.ciclo.count()
                                 self.usuarios[self.turno]['jugando'] = True
-                                self.ciclo.contador -= 1
-                            self.ciclo.count()
                     for user in self.usuarios:
                         self.update_cartas_contrincantes(user)
                     self.update_datos_pantalla()
+                    if self.ciclo.largo == 1:
+                        self.ganador = self.ciclo.lista[0]
+                        self.enviar_ganador()
 
     def actualizar_carta_central(self):
         for usuario in self.usuarios:
             if self.usuarios[usuario]['activo']:
-                self.send({'cliente': usuario, 'evento': 'actualizar carta central', 'detalles': '-'}, self.usuarios[usuario]['socket'])
+                self.send({'cliente': usuario, 'evento': 'actualizar carta central'},
+                          self.usuarios[usuario]['socket'])
                 self.enviar_carta(self.carta_jugada, usuario)
-                self.send({'cliente': usuario, 'evento': 'actualizar carta central_2', 'detalles': '-'},self.usuarios[usuario]['socket'])
+                self.send({'cliente': usuario, 'evento': 'actualizar carta central_2'},
+                          self.usuarios[usuario]['socket'])
 
     def update_sala_espera(self, response):
         for usuario in self.ciclo.lista:
@@ -256,7 +260,7 @@ class Servidor:
         bimagen = bytes_id_imagen + bytes_largo_imagen + bytes_imagen
         mensaje = bytearray(bcolor + bnumero + bimagen)
         sock.send(mensaje)
-        self.tabla.agregar_fila(usuario, 'enviar carta', f'{numero},{color}')
+        self.tabla.add(usuario, 'OUT','enviar carta', '-',f'{numero},{color}')
 
     def enviar_mensaje(self, cliente, evento, detalles):
         self.send({'cliente': cliente, 'evento': evento, 'detalles': detalles},
@@ -284,19 +288,16 @@ class Servidor:
                 mensaje['turno'] = self.turno
                 mensaje['accion'] = self.accion
                 mensaje['color'] = self.carta_color_especial
-                mensaje['detalles'] = '-'
                 self.send(mensaje, self.usuarios[usuario]['socket'])
 
     def usuario_valido(self, user, socket):
-        if user.isalnum() and user not in self.usuarios and self.ciclo.largo < self.cantidad_jugadores:
+        if user.isalnum() and user not in self.usuarios and \
+                        self.ciclo.largo < self.cantidad_jugadores:
             self.usuarios[user] = {'nombre_usuario': user, 'socket': socket, 'cartas': [],
                                    'jugando': False, 'uno': False, 'activo': True}
             return True
         else:
             return False
-
-    def poblar_cartas(self, usuario):
-        self.usuarios[usuario]['cartas'] = sacar_cartas(parametros['cartas_iniciales'])
 
     def cantidad_cartas(self, usuario):
         return len(self.usuarios[usuario]['cartas'])

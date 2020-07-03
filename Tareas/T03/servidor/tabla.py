@@ -2,13 +2,11 @@
 class Tabla:
 
     def __init__(self):
-        print('{:^15}|{:^30}|{:^20}'.format('cliente', 'evento', 'detalles'))
-        print('-----------------------------------------------------------------')
+        print('{:^15}|{:^8}|{:^30}|{:^8}|{:^20}'.format('cliente', 'tipo','evento',
+                                                        'tamaño', 'mensaje'))
+        print('-----------------------------------------------------------------------------------')
 
-    def agregar_fila(self, cliente, evento, detalles):
-        print('{:^15}|{:^30}|{:^20}'.format(cliente, evento, detalles))
+    def add(self, cliente, tipo, evento, detalles, tamaño):
 
-if __name__ == '__main__':
-    tabla = Tabla()
-    tabla.agregar_fila('Juan', 'conectarse','si')
-    tabla.agregar_fila('miguel', 'conectarse', 'si')
+        print('{:^15}|{:^8}|{:^30}|{:^8}|{:^20}'.format(cliente, tipo, evento,
+                                                        detalles, str(tamaño)))
