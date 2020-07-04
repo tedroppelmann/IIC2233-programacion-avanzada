@@ -1,11 +1,9 @@
 
 from PyQt5 import uic
-from PyQt5.QtWidgets import QApplication
 from PyQt5.QtCore import pyqtSignal, QTimer
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtGui import QPixmap, QTransform
 import json
-import sys
 
 with open('parametros.json') as file:
     data = json.load(file)

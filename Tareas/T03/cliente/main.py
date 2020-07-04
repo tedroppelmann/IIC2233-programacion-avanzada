@@ -1,6 +1,5 @@
 
 import sys
-import json
 from PyQt5.QtWidgets import QApplication
 from ventana_inicio import VentanaInicio
 from cliente import Cliente

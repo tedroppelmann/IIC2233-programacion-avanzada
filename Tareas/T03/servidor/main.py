@@ -1,7 +1,6 @@
 
 from servidor import Servidor
 import json
-import socket
 
 with open('parametros.json') as file:
     data = json.load(file)

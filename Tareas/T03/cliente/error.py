@@ -1,15 +1,5 @@
 
 from PyQt5 import uic
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QLabel
-from PyQt5.QtGui import QPixmap
-import json
-import os
-import sys
-
-with open('parametros.json') as file:
-    data = json.load(file)
 
 WINDOW_NAME, BASE_CLASS = uic.loadUiType("ventana_error.ui")
 

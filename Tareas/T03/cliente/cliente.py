@@ -5,7 +5,6 @@ import json
 from PyQt5.QtCore import QObject
 from PyQt5.QtCore import pyqtSignal
 import base64
-import sys
 
 with open('parametros.json') as file:
     data = json.load(file)
@@ -78,8 +77,6 @@ class Cliente(QObject):
                     response_length = int.from_bytes(
                         response_bytes_length, byteorder='big')
                     response = bytearray()
-                    # Recibimos datos hasta que alcancemos la totalidad de los datos
-                    # indicados en los primeros 4 bytes recibidos.
                     while len(response) < response_length:
                         read_length = min(4096, response_length - len(response))
                         response.extend(self.socket_client.recv(read_length))
