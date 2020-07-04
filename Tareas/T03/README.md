@@ -124,7 +124,7 @@ Los supuestos que realicé durante la tarea son los siguientes:
 5. Si se empieza con un cambio de sentido, cambia el sentido inicial.
 5. El orden inicial de la partida es según el orden de llegada a la sala de espera.
 6. Si se quiere sacar una carta del mazo, se debe apretar la ilustración del mazo a la derecha de la ventana.
-7. IMPORTANTE: Consideré la carpeta sprites dentro del directorio del servidor para el envío de cartas y en el caso del logo del juego, este se encuentra afuera de los dos directorios. Es decir, cuando el cliente busca el logo busca en el directorio externo (ver parámetros del cliente).
+7. IMPORTANTE: Consideré la carpeta sprites dentro del directorio del servidor para el envío de cartas y en el caso del logo del juego este se encuentra afuera en el directorio clientes. Es decir, cuando el cliente busca el logo busca la carpeta sprites en su propio directorio (ver parámetros del cliente).
 
 
 ## Referencias de código externo :book:
