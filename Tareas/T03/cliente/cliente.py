@@ -11,7 +11,8 @@ with open('parametros.json') as file:
 host = data['host']
 port = data['port']
 
-# Código sacado principalmente de una de las hojas de jupyter de la semana de Networking. 
+# Código sacado principalmente de una de las hojas de jupyter de la semana de Networking
+# (para el envío de mensajes entre cliente y servidor).
 
 class Cliente(QObject):
 
@@ -118,7 +119,8 @@ class Cliente(QObject):
 
                     if numero_decode == 'reverso':
                         self.reverso = imagen_decode
-                        self.signal_cartas.emit({'evento': 'carta reverso', 'detalles': self.reverso})
+                        self.signal_cartas.emit({'evento': 'carta reverso',
+                                                 'detalles': self.reverso})
 
                     else:
                         if self.recibir_carta:
@@ -177,7 +179,6 @@ class Cliente(QObject):
         if data['evento'] == 'conectarse':
             self.send(data)
         elif data['evento'] == 'empezar':
-            # GUARDAR USUARIOS ACA
             data['cliente'] = self.usuario
             self.signal_cartas.emit(data)
             self.send(data)

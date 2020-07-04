@@ -6,7 +6,7 @@ from PyQt5.QtGui import QPixmap, QTransform
 import json
 
 with open('parametros.json') as file:
-    data = json.load(file)
+    parametros = json.load(file)
 
 WINDOW_NAME, BASE_CLASS = uic.loadUiType("ventana_juego.ui")
 
@@ -18,6 +18,7 @@ class VentanaJuego(WINDOW_NAME, BASE_CLASS):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+
         self.usuario = None
         self.cartas_jugador = list()
         self.usuarios_conectados = list()
@@ -40,7 +41,7 @@ class VentanaJuego(WINDOW_NAME, BASE_CLASS):
         if data['evento'] == 'carta jugador':
             imagen = data['imagen']
             carta = QLabelClick(data['color'], data['numero'])
-            carta.setMaximumSize(78,108)
+            carta.setMaximumSize(parametros['ancho_carta'], parametros['largo_carta'])
             pixmap = QPixmap()
             pixmap.loadFromData(imagen, 'png')
             carta.setPixmap(pixmap)
@@ -51,7 +52,7 @@ class VentanaJuego(WINDOW_NAME, BASE_CLASS):
 
         elif data['evento'] == 'carta central':
             imagen = data['imagen']
-            self.carta_jugada.setMaximumSize(78, 108)
+            self.carta_jugada.setMaximumSize(parametros['ancho_carta'], parametros['largo_carta'])
             pixmap = QPixmap()
             pixmap.loadFromData(imagen, 'png')
             self.carta_jugada.setPixmap(pixmap)
@@ -88,7 +89,7 @@ class VentanaJuego(WINDOW_NAME, BASE_CLASS):
                     self.nombre_jugador_derecha.setStyleSheet("color: white")
                 for i in range(0,data['detalles']):
                     carta = QLabel()
-                    carta.setMaximumSize(108, 78)
+                    carta.setMaximumSize(parametros['largo_carta'], parametros['ancho_carta'])
                     carta.setPixmap(self.reverso.transformed(t))
                     carta.setScaledContents(True)
                     self.cartas_jugadores[data['cliente']].append(carta)
@@ -103,7 +104,7 @@ class VentanaJuego(WINDOW_NAME, BASE_CLASS):
                     self.nombre_jugador_izquierda.setStyleSheet("color: white")
                 for i in range(0, data['detalles']):
                     carta = QLabel()
-                    carta.setMaximumSize(108, 78)
+                    carta.setMaximumSize(parametros['largo_carta'], parametros['ancho_carta'])
                     carta.setPixmap(self.reverso.transformed(t))
                     carta.setScaledContents(True)
                     self.cartas_jugadores[data['cliente']].append(carta)
@@ -118,7 +119,7 @@ class VentanaJuego(WINDOW_NAME, BASE_CLASS):
                     self.nombre_jugador_arriba.setStyleSheet("color: white")
                 for i in range(0, data['detalles']):
                     carta = QLabel()
-                    carta.setMaximumSize(78, 108)
+                    carta.setMaximumSize(parametros['ancho_carta'], parametros['largo_carta'])
                     carta.setPixmap(self.reverso.transformed(t))
                     carta.setScaledContents(True)
                     self.cartas_jugadores[data['cliente']].append(carta)
@@ -131,7 +132,7 @@ class VentanaJuego(WINDOW_NAME, BASE_CLASS):
             self.reverso = pixmap
             # la agrego al mazo
             mazo = QLabelClick('mazo', 'mazo')
-            mazo.setMaximumSize(78, 108)
+            mazo.setMaximumSize(parametros['ancho_carta'], parametros['largo_carta'])
             mazo.setPixmap(self.reverso)
             mazo.setScaledContents(True)
             self.mazo_layout.addWidget(mazo)
