@@ -101,14 +101,18 @@ La lista de librerías externas que utilicé fue la siguiente:
 
 ### Librerías propias
 Por otro lado, los módulos que fueron creados fueron los siguientes:
+* **Servidor**:
+   * ```servidor.py```: Contiene la clase ```Servidor```, que forma toda la lógica detrás del juego. Recibe, analiza y envía mensajes al cliente.
+   * ```tabla.py```: Contiene la clase ```Tabla```,que le da forma a los logs del servidor de una manera más ordenada.
+   * ```turnos.py```: Contiene la clase ```Turnos```, la cual permite ordenar de mejor manera a los jugadores del juego, desde cambiar el turno, invertir el orden y eliminar a jugadores.
 
-1. ```DCCafe.py```: Es el módulo principal del back-end del programa. Contiene la mayoría del funcionamiento del juego.
-2. ```drag_and_drop.py```: Contiene las clases ```DropLabel```y ```DraggableLabel```que permiten el funcionamineto básico del Drag and Drop. 
-3. ```entidades.py```: Contiene las clases ```Mesero```, ```Chef```y ```Cliente```con sus respectivos métodos. 
-4. ```parametros.py```: Contiene todos los parámetros que se utilizan en el programa. 
-5. ```reloj.py```: Contiene a la clase ```Reloj``` que permite manejar los tiempos de las funcionalidades del juego.
-6. ```ventana_juego.py```: Es el front-end de la página principal del juego.
-7. ```ventanas.py```: Contiene el front-end de las otras ventanas del juego, como la ventana de inicio, la de post ronda y la ventana final. 
+* **Cliente**:
+   * ```cliente.py```: Contiene la clase ```Cliente```y es la encargada de recibir y enviar mensajes entre el cliente y el servidor y transmitir los mensajes por señales al front-end.
+   * ```error.py```: Ventana emergente que avisa si el servidor se desconectó a cada uno de los clientes.
+   * ```ventana_color.py```: Ventana emergente que aparece al jugar la carta color para decidir el nuevo color.
+   * ```ventana_espera.py```: Ventana que visualiza la sala de espera mientras faltan jugadores.
+   * ```ventana_final.py```: Ventana final del juego que señala a cada jugador si fue ganador o perdedor.
+   * ```ventana_juego.py```: Ventana principal del front-end. Muestra el juego en sí y mantiene actualizado a todos los clientes.
 
 ## Supuestos y consideraciones adicionales :thinking:
 Los supuestos que realicé durante la tarea son los siguientes:
