@@ -124,11 +124,12 @@ Los supuestos que realicé durante la tarea son los siguientes:
 5. Si se empieza con un cambio de sentido, cambia el sentido inicial.
 5. El orden inicial de la partida es según el orden de llegada a la sala de espera.
 6. Si se quiere sacar una carta del mazo, se debe apretar la ilustración del mazo a la derecha de la ventana.
+7. IMPORTANTE: Consideré la carpeta sprites dentro del directorio del servidor para el envío de cartas y en el caso del logo del juego, este se encuentra afuera de los dos directorios. Es decir, cuando el cliente busca el logo busca en el directorio externo (ver parámetros del cliente).
 
 
 ## Referencias de código externo :book:
 
 Para realizar mi tarea saqué código de:
-1. https://recursospython.com/guias-y-manuales/drag-and-drop-con-pyqt-4/: modela el Drag and Drop (con algunas modificaciones propias) y está implementado en el archivo ```drag_and_drop.py``` en las líneas 12 y 55. La clase ```DropLabel``` crea el "lugar" en donde caerán los arrastrables. La clase ```DraggableLabel```permite hacer los objetos arrastrables.
-2. https://stackoverflow.com/questions/50232639/drag-and-drop-qlabels-with-pyqt5: al igual que el anterior, modela el Drag and Drop (con algunas modificaciones propias) y está implementado en el archivo ```drag_and_drop.py``` en las líneas 12 y 55. La clase ```DropLabel``` crea el "lugar" en donde caerán los arrastrables. La clase ```DraggableLabel```permite hacer los objetos arrastrables.
-3. https://www.daniweb.com/programming/software-development/code/485072/count-seconds-in-the-background-python: modela la creación del reloj del juego y está implementado en el archivo ```reloj.py``` en las líneas 8 y 37. Crea la clase ```Reloj```que genera un thread que va contando el tiempo que pasa según una velocidad dada por el intervalo que se le da a cada instancia.
+1. La estructura de envíos mediante los socket fue sacada desde un módulo de jupyter de la semana de Networking, solo que a este le agregué el formato JSON (esto es para todos los mensajes excepto el envío de cartas)
+2. http://josbalcaen.com/maya-python-pyqt-delete-all-widgets-in-a-layout/: Utilizo este código para limpiar completamente los Layouts creados de manera más fácil. Es decir, elimina todo QLabel creado dentro del Layout. Se encuentra desde la línea 221 a la 227 del módulo ```ventana-juego.py```.
+3. http://www.3engine.net/wp/2015/11/pyqt-como-hacer-que-qlabel-sea-clicable/: Utilizo este código para hacer clicleable un QLabel, lo cual no viene por defecto. Es utilizado para las cartas. Se ecnuentra entre la línea 231 a la 243 del módulo ```ventana-juego.py```.
