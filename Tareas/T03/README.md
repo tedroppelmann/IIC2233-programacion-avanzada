@@ -131,5 +131,5 @@ Los supuestos que realicé durante la tarea son los siguientes:
 
 Para realizar mi tarea saqué código de:
 1. La estructura de envíos mediante los socket fue sacada desde un módulo de jupyter de la semana de Networking, solo que a este le agregué el formato JSON (esto es para todos los mensajes excepto el envío de cartas).
-2. http://josbalcaen.com/maya-python-pyqt-delete-all-widgets-in-a-layout/: Utilizo este código para limpiar completamente los Layouts creados de manera más fácil. Es decir, elimina todo QLabel creado dentro del Layout. Se encuentra desde la línea 221 a la 227 del módulo ```ventana-juego.py```.
-3. http://www.3engine.net/wp/2015/11/pyqt-como-hacer-que-qlabel-sea-clicable/: Utilizo este código para hacer clicleable un QLabel, lo cual no viene por defecto. Es utilizado para las cartas. Se ecnuentra entre la línea 231 a la 243 del módulo ```ventana-juego.py```.
+2. http://josbalcaen.com/maya-python-pyqt-delete-all-widgets-in-a-layout/: Utilizo este código para limpiar completamente los Layouts creados de manera más fácil. Es decir, elimina todo QLabel creado dentro del Layout. Se encuentra desde la línea 221 a la 227 del módulo ```ventana_juego.py```.
+3. http://www.3engine.net/wp/2015/11/pyqt-como-hacer-que-qlabel-sea-clicable/: Utilizo este código para hacer clicleable un QLabel, lo cual no viene por defecto. Es utilizado para las cartas. Se ecnuentra entre la línea 231 a la 243 del módulo ```ventana_juego.py```.
