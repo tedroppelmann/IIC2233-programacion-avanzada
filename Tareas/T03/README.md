@@ -117,11 +117,14 @@ Por otro lado, los módulos que fueron creados fueron los siguientes:
 ## Supuestos y consideraciones adicionales :thinking:
 Los supuestos que realicé durante la tarea son los siguientes:
 
-1. El mapa que se carga es el mapa que no contiene bordes y tiene la pared en la parte superior. Para que se vea mejor, el mesero se puede mover dentro del piso en un espacio un poco más pequeño que el tamaño del mapa
-2. Los objetos arrastrables tienen limitaciones al poder ubicarse. Además de no poder sobreponerse, agregué que las mesas no puedan quedar tan pegadas y los chefs no pueden ponerse tan a la orilla del mapa para que no quedara un pedazo de la imagen afuera. 
-3. Como los clientes siempre salen a la izquierda de la mesa, en algunos casos se impide que las mesas puedan quedar tan juntas, como al crear un nuevo juego con mesas aleatorias o en Drag and Drop.
-4. Encontré un bug que no sé cómo solucionarlo 😞. Si es que aparece un cliente justo cuando el mesero está en esa posición, este queda "atrapado" hasta que desaparezca el cliente. 
-5. Cuando la reputación llega a 0 al final del juego, se muestra una ventana nueva que solo deja salir y te informa que el juego finalizó. Creo que es lo más coherente. 
+1. Recomiendo jugarlo en pantalla completa, ya que al agregar cartas la pantalla a veces cambia de tamaño, lo que es molesto. 
+2. Al comenzar el juego y cargar las cartas iniciales, las cartas de los contrincantes se demoran un poco más en salir que las del propio cliente, lo que visualmente no es tan bonito, pero afecta el juego. 
+3. Si el juego empieza con una carta color, decidí que se escogiera un color al azar inicial, el cual es informado.
+4. Si se empieza con un +2, también se considera que el primer jugador tendrá que sacar 2 cartas.
+5. Si se empieza con un cambio de sentido, cambia el sentido inicial.
+5. El orden inicial de la partida es según el orden de llegada a la sala de espera.
+6. Si se quiere sacar una carta del mazo, se debe apretar la ilustración del mazo a la derecha de la ventana.
+
 
 ## Referencias de código externo :book:
 
