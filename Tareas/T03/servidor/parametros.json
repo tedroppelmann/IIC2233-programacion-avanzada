@@ -4,5 +4,6 @@
   "cantidad_jugadores" : 4,
   "cartas_iniciales": 4,
   "cartas_maximas": 10,
-  "cartas_penitencia": 4
+  "cartas_penitencia": 4,
+  "path_cartas": "sprites/simple/"
 }

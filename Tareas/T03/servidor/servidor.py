@@ -236,13 +236,13 @@ class Servidor:
         numero = carta[0]
         color = carta[1]
         if carta[0] == 'color':
-            with open(f"sprites/simple/color.png", "rb") as file:
+            with open(f"{parametros['path_cartas']}color.png", "rb") as file:
                 bytes_imagen = base64.b64encode(file.read())
         elif carta[0] == 'reverso':
-            with open(f"sprites/simple/reverso.png", "rb") as file:
+            with open(f"{parametros['path_cartas']}reverso.png", "rb") as file:
                 bytes_imagen = base64.b64encode(file.read())
         else:
-            with open(f"sprites/simple/{numero}_{color}.png", "rb") as file:
+            with open(f"{parametros['path_cartas']}{numero}_{color}.png", "rb") as file:
                 bytes_imagen = base64.encodebytes(file.read())
         id_color = 1
         id_numero = 2
